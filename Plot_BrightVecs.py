@@ -45,6 +45,7 @@ def ColorizeTwinedXWith(twinXList, color):
 
 
 PMP_OE_Bright = GrabPklFile(r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Auswertung\03 Sample-Sweeps\230307_124953 1kV IMax500nA\PMP_ScaledWhereOverexposedBrightnesses.pkl")
+# PMP_OE_Bright = GrabPklFile(r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Auswertung\02 Alle Zusammen\230306_140339 1kV 250nA #2\PMP_ScaledWhereOverexposedBrightnesses.pkl")
 imgWH = [700, 700]
 
 XY = list(PMP_OE_Bright["Spot"].keys())
@@ -75,6 +76,7 @@ for _yKey in yKeys:
     for _xy in XY:
         _ySpot = np.abs(np.array(PMP_OE_Bright["Spot"][_xy]["SpotBright"][_yKey]))
         _yPixl = np.abs(np.array(PMP_OE_Bright["Spot"][_xy]["PxlBright"][_yKey]))
+        _xSSpd = np.abs(np.array(PMP_OE_Bright["Spot"][_xy]["BrightnessFromSS"])) / 1000
 
         _iY, _iX = GetQuadrantOfSpot(_xy, imgWH)
         _iY += 1 # Add the y-Offset
@@ -86,7 +88,7 @@ for _yKey in yKeys:
         subL[-1][0][0].plot(_x, _yPixl, "2--", markersize=4, linewidth=0.5, label=_yKey + f" (Pixl@{_xy})")
 
     PlotSupTitleAndLegend(figs[-1], "ySpot")
-    __SameXYLimitsOnLRSubplots__(subL[-1], [0, 1e8], subR[-1], [0, 35], None)
+    __SameXYLimitsOnLRSubplots__(subL[-1], [0, 1.5e8], subR[-1], [0, 35], None)
     ColorizeTwinedXWith(subR[-1], "#0000CC")
     subL[-1][0][0].set_ylabel("Brightness")
     subL[-1][1][0].set_ylabel("Brightness")

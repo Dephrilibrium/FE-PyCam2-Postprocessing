@@ -15,7 +15,7 @@ import pickle
 
 
 
-def DetectSpots(ImgCollection, pxDetectRadiusMin, pxDetectRadiusMax, Dilate:np.uint8 = -1, Erode:np.uint8 = -1, ShowImg=False):
+def DetectSpots(ImgCollection, pxDetectRadiusMin, pxDetectRadiusMax, Dilate:np.uint8 = 0, Erode:np.uint8 = 0, ShowImg=False):
   '''Searching for contours on the given (already converted) threshhold-image-collection.
      The function is always supposing circles as contours!
      Each contour-radius must be:   0 < r < pxDetectRadiusMax   with r [px]
@@ -80,11 +80,6 @@ def DetectSpots(ImgCollection, pxDetectRadiusMin, pxDetectRadiusMax, Dilate:np.u
   if ShowImg:
     cv.destroyWindow("Image of detection...")
   return _detectionImgs, _imgCircles
-
-
-
-
-
 
 
 

@@ -44,7 +44,9 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 
 # Paths
-parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230307_124953 1kV IMax500nA"
+# parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230307_124953 1kV IMax500nA"
+# parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_140339 1kV 250nA #2"
+parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen"
 picDir = "Pics"
 
 # saveDir = r"D:\05 PiCam\221222 HQCam SOI2x2_0005 (Paper)\Auswertung\01_11 3x Swp nach Aktivierung 1.4kV@IMax 100nA\230117_112848"
@@ -76,17 +78,17 @@ opt.ShowImages_BrightnessExtraction = False                             # True =
 # Image processing
 opt.Image_CropWin = None                                                # None/False or [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
 opt.Image_bThresh = 20                                                 # Brightness Threshold value (only used, when threshold of autodetect-algorithm is smaller than this one!)
-opt.Image_TryOtsu = True                                                # Try autofind threshold by Otsu. If OtsuThresh < bThresh the image will be rethreshed with bThresh
+opt.Image_TryOtsu = False                                               # Try autofind threshold by Otsu. If OtsuThresh < bThresh the image will be rethreshed with bThresh
 opt.Image_UseForMeanNPoints = ".swp"                                    # Amount of measurements per swp-line or use ".swp" for auto-find from sweep-file
 # opt.Image_MeanNPoints = 2                                               # This was the old value set here. Now its set during the code, but left as comment here (avoid confuses)
 opt.Image_MeanNPicsPerSS = 1                                            # Amount of images per Shutterspeed
-opt.Image_OverexposedBrightness = 0xFFFF                                # Value at which a pixel is marked as overexposed. See also option "bDetect_Trustband"
+opt.Image_OverexposedBrightness = 0xFFF0                                # Value at which a pixel is marked as overexposed. See also option "bDetect_Trustband"
 
 # Spot-detection
 opt.SpotDetect_Dilate = 10                                              # Dilates bright threshold-image-contours by <uint> pixels to avoid multiple spots due to very small gaps!
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # Re-Erodes bright threshold-image-contours by <uint> pixels to avoid multiple spots due to very small gaps!
 opt.CircleDetect_pxMinRadius = 5
-opt.CircleDetect_pxMaxRadius = 75                                       # Maximum radius for a valid circle:  1 <= r <= pxMaxRadius
+opt.CircleDetect_pxMaxRadius = 50                                       # Maximum radius for a valid circle:  1 <= r <= pxMaxRadius
 opt.CircleDetect_AddPxRadius = False                                    # The maximum radius for a valid circle is False: pxMaxRadius OR True: circle-radius + pxMaxRadius
 opt.XYKeys_FollowSpots = True                                           # Follows the related circle-centers (means circle-centroids)
 
@@ -98,8 +100,8 @@ opt.CircleDraw_AddPxRadius = False                                      # The dr
 # Brightness-Detection
 opt.bDetect_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness gets extracted
 opt.bDetect_AddPxSideLen = False                                        # The maximum brightness-square is False: pxSidelen OR True: circle-radius + pxSidelen
-opt.bDetect_Trustband = [50, 254]                                       # Brightness-Trustband of the overexposed image for brightness-factor-calculation (replacement of overexposed pixels) [LoTrust, HiTrust]. See also option "Image_OverexposedBrightness"
-opt.bDetect_MinTrust = 50                                                # If: Pixelbrightness < MinTrust -> skips pixels on the replacement-pictures to avoid to high errors and save computation time
+opt.bDetect_Trustband = [16 *256, 250 *256]                             # Brightness-Trustband of the overexposed image for brightness-factor-calculation (replacement of overexposed pixels) [LoTrust, HiTrust]. See also option "Image_OverexposedBrightness"
+opt.bDetect_MinTrust = 8 *256                                           # If: Pixelbrightness < MinTrust -> skips pixels on the replacement-pictures to avoid to high errors and save computation time
 # opt.bDetect_SaveImages = True                                           # Attaches the images to each circle! (May need a lot of disk space!)
 
 # XY-Keys
@@ -175,7 +177,7 @@ for root, dirs, files in os.walk(parentDir):
         LogLineOK("Yes -> Skip measurement")
         continue
       LogLineOK("No -> Process measurement")
-  
+
 
     # Define mean-nPoints
     if type(opt.Image_UseForMeanNPoints) == str:
@@ -227,7 +229,7 @@ for root, dirs, files in os.walk(parentDir):
       # imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(OTH_ImgFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=imgPaths, ShowImg=opt.ShowImages_Read)
       ssData[SS]["Images"]["Cropped"] = imgs
       LogLineOK()
-      
+
 
 
 
@@ -267,7 +269,7 @@ for root, dirs, files in os.walk(parentDir):
       # LogLine(t0, "Convert images to uint8...")
       # # ssData[SS]["Images"]["uint8"] = ConvertImgCollectionDataType(ImgCollection=ssData[SS]["Images"]["uint16"], DataType=np.uint8)
       # ssData[SS]["Images"]["uint8"] = ConvertBitsPerPixel(OriImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
-      # LogLineOK()      
+      # LogLineOK()
       # LogLine(t0, "Saving uint8-images...")
       # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint8"], FileFormat=str.format(OTH_ImgFormat, "Dev101", "{:05d}", SS, "uint8", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint8 SS={}", SS)))
       # LogLineOK()
@@ -328,14 +330,14 @@ for root, dirs, files in os.walk(parentDir):
       LogLine(t0, "Cleanup circle-draw images...")
       ssData[SS]["Images"].pop("DrawedCircles")
       LogLineOK()
-      
+
 
       # Sort them into XY-pairs
       LogLine(t0, "Sort circles into XYKey-pairs...")
       ssData[SS]["Circles"]["XYKeys"] = CollectCirclesAsXYKeys(CircleCollection=circles, pxRadius=opt.XYKeys_pxCollectRadius, AddPxRadius=opt.XYKeys_AddPxCollectRadius, FollowSpots=opt.XYKeys_FollowSpots)
       LogLineOK()
       print("")
-      
+
 
 
     LogLine(t0, "Finished circle detection and XYKey-pairing", end="\n")
@@ -365,7 +367,7 @@ for root, dirs, files in os.walk(parentDir):
     for SS in Shutterspeeds:
       savImgCollection[SS] = ssData[SS]["Images"]
       savSpotCollection[SS] = ssData[SS]["Circles"]
-  
+
     # Raw spot data and images
     _fName = "PMP_ssDetectionData.pkl"
     _fPath = os.path.join(cSaveDir, _fName)
@@ -388,9 +390,12 @@ for root, dirs, files in os.walk(parentDir):
     # ssData, bData, bImages = ExtractBrightnessData(ssData=ssData, ImgKey="uint8", pxSidelen=opt.bDetect_pxSideLen, AddPxSidelen=opt.bDetect_AddPxSideLen, TrustbandBrightness=opt.bDetect_Trustband, TrustBrightnessMin=opt.bDetect_MinTrust, ShowImg=opt.ShowImages_BrightnessExtraction)
 
     # !!! CURRENTLY FOR TEST PURPOSES A VERY UNCLEAN WAY TO CONVERT THE 8BIT-SETTINGS INTO 16BIT SETTINGS !!!
-    Image_OverexposedBrightness_16Bit = (opt.Image_OverexposedBrightness) * 256
-    bDetect_Trustband_16Bit = [(trustVal + 1) * 256 - 1 for trustVal in opt.bDetect_Trustband]
-    bDetect_MinTrust_16Bit = (opt.bDetect_MinTrust) * 256
+    # Image_OverexposedBrightness_16Bit = (opt.Image_OverexposedBrightness) * 256
+    # bDetect_Trustband_16Bit = [(trustVal + 1) * 256 - 1 for trustVal in opt.bDetect_Trustband]
+    # bDetect_MinTrust_16Bit = (opt.bDetect_MinTrust) * 256
+    Image_OverexposedBrightness_16Bit = opt.Image_OverexposedBrightness # Rewrote code that it handles 16bit already
+    bDetect_Trustband_16Bit = opt.bDetect_Trustband                     # Rewrote code that it handles 16bit already
+    bDetect_MinTrust_16Bit = opt.bDetect_MinTrust                       # Rewrote code that it handles 16bit already
     Image_MinBright2CountArea = 3* 0xFF
 
     ssData,                        \
@@ -414,7 +419,7 @@ for root, dirs, files in os.walk(parentDir):
                                                             # PxDivMinBright=opt.bDetect_MinTrust,              # Old 8-bit calls -> Clean re-implementation when it works
                                                             # OverexposedValue=opt.Image_OverexposedBrightness, # Old 8-bit calls -> Clean re-implementation when it works
                                                             ShowImg=opt.ShowImages_BrightnessExtraction)
-  
+
     LogLineOK()
 
 
@@ -435,7 +440,7 @@ for root, dirs, files in os.walk(parentDir):
 
     # Validated and corrected brightness data and -images
     if opt.Save_ImgSets4Brightness == True:
-      _fName = "PMP_ImgSets4Brightness.pkl" 
+      _fName = "PMP_ImgSets4Brightness.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(imgSets, _fHandle)
@@ -444,9 +449,9 @@ for root, dirs, files in os.walk(parentDir):
       LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
     else:
       del imgSets # When not saving them , just delete them to free the RAM
-    
+
     if opt.Save_BrightSets4Brightness == True:
-      _fName = "PMP_BrightSets4Brightness.pkl" 
+      _fName = "PMP_BrightSets4Brightness.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(brightSets, _fHandle)
@@ -456,9 +461,9 @@ for root, dirs, files in os.walk(parentDir):
     else:
       del brightSets # When not saving them , just delete them to free the RAM
 
-    
+
     if opt.Save_PxAreaCnts4Brightness == True:
-      _fName = "PMP_PxAreaCnts4Brightness.pkl" 
+      _fName = "PMP_PxAreaCnts4Brightness.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(areaCntSets, _fHandle)
@@ -469,7 +474,7 @@ for root, dirs, files in os.walk(parentDir):
       del areaCntSets # When not saving them , just delete them to free the RAM
 
     if opt.Save_DivFactors4Brightness == True:
-      _fName = "PMP_DivFactors4Brightness.pkl" 
+      _fName = "PMP_DivFactors4Brightness.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(divFactors, _fHandle)
@@ -481,7 +486,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
     if opt.Save_CombinedFactors4Brightness == True:
-      _fName = "PMP_CombinedFactors4Brightness.pkl" 
+      _fName = "PMP_CombinedFactors4Brightness.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(combinedFactors, _fHandle)
@@ -492,7 +497,7 @@ for root, dirs, files in os.walk(parentDir):
       del combinedFactors # When not saving them , just delete them to free the RAM
 
     if opt.Save_ScaledAnyPxImgs == True:
-      _fName = "PMP_ScaledAnyPxImgs4Brightness.pkl" 
+      _fName = "PMP_ScaledAnyPxImgs4Brightness.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(scaledAnyPxImgs, _fHandle)
@@ -503,7 +508,7 @@ for root, dirs, files in os.walk(parentDir):
       del scaledAnyPxImgs # When not saving them , just delete them to free the RAM
 
     if opt.Save_ScaledAnyBrightnesses == True:
-      _fName = "PMP_ScaledAnyBrightnesses.pkl" 
+      _fName = "PMP_ScaledAnyBrightnesses.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(scaledAnyBright, _fHandle)
@@ -514,7 +519,7 @@ for root, dirs, files in os.walk(parentDir):
       del scaledAnyBright # When not saving them , just delete them to free the RAM
 
     if opt.Save_ScaledWhereOverexposedPxImgs == True:
-      _fName = "PMP_ScaledWhereOverexposedPxImgs.pkl" 
+      _fName = "PMP_ScaledWhereOverexposedPxImgs.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(scaledWhereOverexposedImgs, _fHandle)
@@ -526,7 +531,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
     if opt.Save_ScaledWhereOverexposedBrightnesses == True:
-      _fName = "PMP_ScaledWhereOverexposedBrightnesses.pkl" 
+      _fName = "PMP_ScaledWhereOverexposedBrightnesses.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
       pickle.dump(scaledWhereOverexposedBright, _fHandle)
@@ -538,7 +543,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
     # if opt.bDetect_SaveImages == True:
-    #   _fName = "PMP_correctedImages.pkl" 
+    #   _fName = "PMP_correctedImages.pkl"
     #   _fPath = os.path.join(cSaveDir, _fName)
     #   _fHandle = open(_fPath, "wb")
     #   pickle.dump(bImages, _fHandle)
@@ -546,7 +551,7 @@ for root, dirs, files in os.walk(parentDir):
     #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
 
     # if opt.SaveValidImagePkl == True:
-    #   _fName = "PMP_validImgData.pkl" 
+    #   _fName = "PMP_validImgData.pkl"
     #   _fPath = os.path.join(cSaveDir, _fName)
     #   _fHandle = open(_fPath, "wb")
     #   pickle.dump(bData["Images"], _fHandle)
@@ -555,7 +560,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
     # if opt.SaveBrightnessFactors == True: # Save brightness-factors of spots/pixels
-    #   _fName = "PMP_brightFactors.pkl" 
+    #   _fName = "PMP_brightFactors.pkl"
     #   _fPath = os.path.join(cSaveDir, _fName)
     #   _fHandle = open(_fPath, "wb")
     #   pickle.dump(brightFactorData, _fHandle)
@@ -564,7 +569,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
     # bData.pop("Images")                                           # Remove images from valid data! If wanted, they are saved from the block above!
-    # _fName = "PMP_validSpotData.pkl" 
+    # _fName = "PMP_validSpotData.pkl"
     # _fPath = os.path.join(cSaveDir, _fName)
     # _fHandle = open(_fPath, "wb")
     # pickle.dump(bData, _fHandle)
@@ -586,7 +591,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
     print("\n\n") # Add some space for next iteration
-  
+
 
 
 print("\n")
