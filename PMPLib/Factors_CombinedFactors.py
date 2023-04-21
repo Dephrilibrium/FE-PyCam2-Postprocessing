@@ -9,8 +9,8 @@ import cv2 as cv
 
 
 
-
 def __CalcCombinedFactorSubSet__(divFactorSet):
+
   subSet = dict()
 
   subSet["SpotDiv"] = dict()
@@ -56,36 +56,36 @@ def __CalcCombinedFactorSubSet__(divFactorSet):
 def CalcCombinedFactorSets(divFactorSets):
   cmbFactors = dict()
 
-  _bKeys = list(divFactorSets.keys())
-  for _iBase in range(len(_bKeys)):
-    _bKey = _bKeys[_iBase]
+  # _bKeys = list(divFactorSets.keys())
+  # for _iBase in range(len(_bKeys)):
+  #   _bKey = _bKeys[_iBase]
 
-    cmbFactors[_bKey] = dict()
+  #   cmbFactors[_bKey] = dict()
 
-    _dKeys = list(divFactorSets[_bKey].keys())
-    for _iDiv in range(len(_dKeys)):
-      _dKey = _dKeys[_iDiv]
+  #   _dKeys = list(divFactorSets[_bKey].keys())
+  #   for _iDiv in range(len(_dKeys)):
+  #     _dKey = _dKeys[_iDiv]
 
-      cmbFactors[_bKey][_dKey] = dict()
-      cmbFactors[_bKey][_dKey]["Full"] = __CalcCombinedFactorSubSet__(divFactorSets[_bKey][_dKey]["Full"])
-      cmbFactors[_bKey][_dKey]["Full"]["Theory"] = dict()
-      cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/BlankArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"]["PxAreaDiv"]["Blank"])
-      np.nan_to_num(cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/BlankArea"], copy=False, nan=0, posinf=0, neginf=0)
-      cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/CleanArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"]["PxAreaDiv"]["Clean"])
-      np.nan_to_num(cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/CleanArea"], copy=False, nan=0, posinf=0, neginf=0)
+  #     cmbFactors[_bKey][_dKey] = dict()
+  #     cmbFactors[_bKey][_dKey]["Full"] = __CalcCombinedFactorSubSet__(divFactorSets[_bKey][_dKey]["Full"])
+  #     cmbFactors[_bKey][_dKey]["Full"]["Theory"] = dict()
+  #     cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/BlankArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"]["PxAreaDiv"]["Blank"])
+  #     np.nan_to_num(cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/BlankArea"], copy=False, nan=0, posinf=0, neginf=0)
+  #     cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/CleanArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"]["PxAreaDiv"]["Clean"])
+  #     np.nan_to_num(cmbFactors[_bKey][_dKey]["Full"]["Theory"]["/CleanArea"], copy=False, nan=0, posinf=0, neginf=0)
 
 
-      cmbFactors[_bKey][_dKey]["Spot"] = dict()
-      _xyKeys = list(divFactorSets[_bKey][_dKey]["Spot"].keys())
-      for _iXY in range(len(_xyKeys)):
-        _xyKey = _xyKeys[_iXY]
+  #     cmbFactors[_bKey][_dKey]["Spot"] = dict()
+  #     _xyKeys = list(divFactorSets[_bKey][_dKey]["Spot"].keys())
+  #     for _iXY in range(len(_xyKeys)):
+  #       _xyKey = _xyKeys[_iXY]
 
-        cmbFactors[_bKey][_dKey]["Spot"][_xyKey] = __CalcCombinedFactorSubSet__(divFactorSets[_bKey][_dKey]["Spot"][_xyKey])
-        cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"] = dict()
-        cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/BlankArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Blank"])
-        np.nan_to_num(cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/BlankArea"], copy=False, nan=0, posinf=0, neginf=0)
-        cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/CleanArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Clean"])
-        np.nan_to_num(cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/CleanArea"], copy=False, nan=0, posinf=0, neginf=0)
+  #       cmbFactors[_bKey][_dKey]["Spot"][_xyKey] = __CalcCombinedFactorSubSet__(divFactorSets[_bKey][_dKey]["Spot"][_xyKey])
+  #       cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"] = dict()
+  #       cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/BlankArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Blank"])
+  #       np.nan_to_num(cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/BlankArea"], copy=False, nan=0, posinf=0, neginf=0)
+  #       cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/CleanArea"] = np.divide(divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Clean"])
+  #       np.nan_to_num(cmbFactors[_bKey][_dKey]["Spot"][_xyKey]["Theory"]["/CleanArea"], copy=False, nan=0, posinf=0, neginf=0)
 
 
   return cmbFactors

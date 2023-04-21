@@ -132,37 +132,37 @@ def GetDivFactorSets(imgSets, brightSets, pxAreaCntSets, PxDivTrustband, PxDivMi
 
       factors[_bKey][_dKey] = dict()
       factors[_bKey][_dKey]["Theory"] = [_bKey / _dKey] * len(imgSets[_bKey]["Full"]["Blank"])
-      factors[_bKey][_dKey]["Full"] = dict()
-      factors[_bKey][_dKey]["Spot"] = dict()
+      # factors[_bKey][_dKey]["Full"] = dict()
+      # factors[_bKey][_dKey]["Spot"] = dict()
 
 
-      factors[_bKey][_dKey]["Full"]["SpotDiv"] = __CalcSpotDivFactorSubSet__(brightSets[_bKey]["Full"], brightSets[_bKey]["Div"][_dKey]["Full"])
-      # factors[_bKey][_dKey]["Spot"]["SpotDiv"] = dict()
+      # factors[_bKey][_dKey]["Full"]["SpotDiv"] = __CalcSpotDivFactorSubSet__(brightSets[_bKey]["Full"], brightSets[_bKey]["Div"][_dKey]["Full"])
+      # # factors[_bKey][_dKey]["Spot"]["SpotDiv"] = dict()
 
-      factors[_bKey][_dKey]["Full"]["MeanPxDiv"] = __CalcPxDivFactorSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], PxDivTrustband, PxDivMinBright)
-      # factors[_bKey][_dKey]["Spot"]["MeanPxDiv"] = dict()
+      # factors[_bKey][_dKey]["Full"]["MeanPxDiv"] = __CalcPxDivFactorSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], PxDivTrustband, PxDivMinBright)
+      # # factors[_bKey][_dKey]["Spot"]["MeanPxDiv"] = dict()
 
-      factors[_bKey][_dKey]["Full"]["PxAreaDiv"] = __BrightnessFactors_BuildPxAreaCntDivFactorSubSet__(pxAreaCntSets[_bKey]["Full"], pxAreaCntSets[_bKey]["Div"][_dKey]["Full"])
-      # factors[_bKey][_dKey]["Spot"]["PxAreaDiv"] = dict()
+      # factors[_bKey][_dKey]["Full"]["PxAreaDiv"] = __BrightnessFactors_BuildPxAreaCntDivFactorSubSet__(pxAreaCntSets[_bKey]["Full"], pxAreaCntSets[_bKey]["Div"][_dKey]["Full"])
+      # # factors[_bKey][_dKey]["Spot"]["PxAreaDiv"] = dict()
 
-      _xyKeys = list(imgSets[_bKey]["Spot"].keys())
-      for _iXY in range(len(_xyKeys)):
-        _xyKey = _xyKeys[_iXY]
+      # _xyKeys = list(imgSets[_bKey]["Spot"].keys())
+      # for _iXY in range(len(_xyKeys)):
+      #   _xyKey = _xyKeys[_iXY]
 
-        factors[_bKey][_dKey]["Spot"][_xyKey] = dict()
-        factors[_bKey][_dKey]["Spot"][_xyKey]["SpotDiv"] = __CalcSpotDivFactorSubSet__(brightSets[_bKey]["Spot"][_xyKey], brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey])
-        try:
-          factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"] = __CalcPxDivFactorSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], PxDivTrustband, PxDivMinBright)
-        except Exception as e:
-          factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"] = dict()
-          factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Blank"] = np.zeros(len(imgSets[_bKey]["Full"]["Blank"]))
-          factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Clean"] = factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Blank"] # Because all 0 -> Reuse!
+      #   factors[_bKey][_dKey]["Spot"][_xyKey] = dict()
+      #   factors[_bKey][_dKey]["Spot"][_xyKey]["SpotDiv"] = __CalcSpotDivFactorSubSet__(brightSets[_bKey]["Spot"][_xyKey], brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey])
+      #   try:
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"] = __CalcPxDivFactorSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], PxDivTrustband, PxDivMinBright)
+      #   except Exception as e:
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"] = dict()
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Blank"] = np.zeros(len(imgSets[_bKey]["Full"]["Blank"]))
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Clean"] = factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Blank"] # Because all 0 -> Reuse!
 
-        try:
-          factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"] = __BrightnessFactors_BuildPxAreaCntDivFactorSubSet__(pxAreaCntSets[_bKey]["Spot"][_xyKey], pxAreaCntSets[_bKey]["Div"][_dKey]["Spot"][_xyKey])
-        except Exception as e:
-          factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"] = dict()
-          factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Blank"] = np.zeros(len(imgSets[_bKey]["Full"]["Blank"]))
-          factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Clean"] = factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Blank"] # Because all 0 -> Reuse!
+      #   try:
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"] = __BrightnessFactors_BuildPxAreaCntDivFactorSubSet__(pxAreaCntSets[_bKey]["Spot"][_xyKey], pxAreaCntSets[_bKey]["Div"][_dKey]["Spot"][_xyKey])
+      #   except Exception as e:
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"] = dict()
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Blank"] = np.zeros(len(imgSets[_bKey]["Full"]["Blank"]))
+      #     factors[_bKey][_dKey]["Spot"][_xyKey]["PxAreaDiv"]["Clean"] = factors[_bKey][_dKey]["Spot"][_xyKey]["MeanPxDiv"]["Blank"] # Because all 0 -> Reuse!
 
   return factors

@@ -81,34 +81,34 @@ def __AppendPxImg2All__(pxImg, img):
 def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPxImg, imgIndex):
 
   bright2Append["SpotBright"]["xTheory"]                  .append(scaledAnyBright["SpotBright"]["Blank"]["xTheory"]                  [imgIndex])
-  bright2Append["SpotBright"]["xSpotDivBlank"]            .append(scaledAnyBright["SpotBright"]["Blank"]["xSpotDivBlank"]            [imgIndex])
-  bright2Append["SpotBright"]["xSpotDivClean"]            .append(scaledAnyBright["SpotBright"]["Blank"]["xSpotDivClean"]            [imgIndex])
-  bright2Append["SpotBright"]["xMeanPxDivBlank"]          .append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPxDivBlank"]          [imgIndex])
-  bright2Append["SpotBright"]["xMeanPxDivClean"]          .append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPxDivClean"]          [imgIndex])
-  bright2Append["SpotBright"]["xTheory/BlankArea"]        .append(scaledAnyBright["SpotBright"]["Blank"]["xTheory/BlankArea"]        [imgIndex])
-  bright2Append["SpotBright"]["xTheory/CleanArea"]        .append(scaledAnyBright["SpotBright"]["Blank"]["xTheory/CleanArea"]        [imgIndex])
-  bright2Append["SpotBright"]["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyBright["SpotBright"]["Blank"]["xSpot_Mean(Blank,Clean)"]  [imgIndex])
-  bright2Append["SpotBright"]["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPx_Mean(Blank,Clean)"][imgIndex])
+  # bright2Append["SpotBright"]["xSpotDivBlank"]            .append(scaledAnyBright["SpotBright"]["Blank"]["xSpotDivBlank"]            [imgIndex])
+  # bright2Append["SpotBright"]["xSpotDivClean"]            .append(scaledAnyBright["SpotBright"]["Blank"]["xSpotDivClean"]            [imgIndex])
+  # bright2Append["SpotBright"]["xMeanPxDivBlank"]          .append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPxDivBlank"]          [imgIndex])
+  # bright2Append["SpotBright"]["xMeanPxDivClean"]          .append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPxDivClean"]          [imgIndex])
+  # bright2Append["SpotBright"]["xTheory/BlankArea"]        .append(scaledAnyBright["SpotBright"]["Blank"]["xTheory/BlankArea"]        [imgIndex])
+  # bright2Append["SpotBright"]["xTheory/CleanArea"]        .append(scaledAnyBright["SpotBright"]["Blank"]["xTheory/CleanArea"]        [imgIndex])
+  # bright2Append["SpotBright"]["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyBright["SpotBright"]["Blank"]["xSpot_Mean(Blank,Clean)"]  [imgIndex])
+  # bright2Append["SpotBright"]["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPx_Mean(Blank,Clean)"][imgIndex])
 
   bright2Append["PxlBright"]["xTheory"]                  .append(scaledAnyBright["PxlBright"]["xTheory"]                  [imgIndex])
-  bright2Append["PxlBright"]["xSpotDivBlank"]            .append(scaledAnyBright["PxlBright"]["xSpotDivBlank"]            [imgIndex])
-  bright2Append["PxlBright"]["xSpotDivClean"]            .append(scaledAnyBright["PxlBright"]["xSpotDivClean"]            [imgIndex])
-  bright2Append["PxlBright"]["xMeanPxDivBlank"]          .append(scaledAnyBright["PxlBright"]["xMeanPxDivBlank"]          [imgIndex])
-  bright2Append["PxlBright"]["xMeanPxDivClean"]          .append(scaledAnyBright["PxlBright"]["xMeanPxDivClean"]          [imgIndex])
-  bright2Append["PxlBright"]["xTheory/BlankArea"]        .append(scaledAnyBright["PxlBright"]["xTheory/BlankArea"]        [imgIndex])
-  bright2Append["PxlBright"]["xTheory/CleanArea"]        .append(scaledAnyBright["PxlBright"]["xTheory/CleanArea"]        [imgIndex])
-  bright2Append["PxlBright"]["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyBright["PxlBright"]["xSpot_Mean(Blank,Clean)"]  [imgIndex])
-  bright2Append["PxlBright"]["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyBright["PxlBright"]["xMeanPx_Mean(Blank,Clean)"][imgIndex])
+  # bright2Append["PxlBright"]["xSpotDivBlank"]            .append(scaledAnyBright["PxlBright"]["xSpotDivBlank"]            [imgIndex])
+  # bright2Append["PxlBright"]["xSpotDivClean"]            .append(scaledAnyBright["PxlBright"]["xSpotDivClean"]            [imgIndex])
+  # bright2Append["PxlBright"]["xMeanPxDivBlank"]          .append(scaledAnyBright["PxlBright"]["xMeanPxDivBlank"]          [imgIndex])
+  # bright2Append["PxlBright"]["xMeanPxDivClean"]          .append(scaledAnyBright["PxlBright"]["xMeanPxDivClean"]          [imgIndex])
+  # bright2Append["PxlBright"]["xTheory/BlankArea"]        .append(scaledAnyBright["PxlBright"]["xTheory/BlankArea"]        [imgIndex])
+  # bright2Append["PxlBright"]["xTheory/CleanArea"]        .append(scaledAnyBright["PxlBright"]["xTheory/CleanArea"]        [imgIndex])
+  # bright2Append["PxlBright"]["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyBright["PxlBright"]["xSpot_Mean(Blank,Clean)"]  [imgIndex])
+  # bright2Append["PxlBright"]["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyBright["PxlBright"]["xMeanPx_Mean(Blank,Clean)"][imgIndex])
 
   pxImgs2Append["xTheory"]                  .append(scaledAnyPxImg["xTheory"]                  [imgIndex])
-  pxImgs2Append["xSpotDivBlank"]            .append(scaledAnyPxImg["xSpotDivBlank"]            [imgIndex])
-  pxImgs2Append["xSpotDivClean"]            .append(scaledAnyPxImg["xSpotDivClean"]            [imgIndex])
-  pxImgs2Append["xMeanPxDivBlank"]          .append(scaledAnyPxImg["xMeanPxDivBlank"]          [imgIndex])
-  pxImgs2Append["xMeanPxDivClean"]          .append(scaledAnyPxImg["xMeanPxDivClean"]          [imgIndex])
-  pxImgs2Append["xTheory/BlankArea"]        .append(scaledAnyPxImg["xTheory/BlankArea"]        [imgIndex])
-  pxImgs2Append["xTheory/CleanArea"]        .append(scaledAnyPxImg["xTheory/CleanArea"]        [imgIndex])
-  pxImgs2Append["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyPxImg["xSpot_Mean(Blank,Clean)"]  [imgIndex])
-  pxImgs2Append["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyPxImg["xMeanPx_Mean(Blank,Clean)"][imgIndex])
+  # pxImgs2Append["xSpotDivBlank"]            .append(scaledAnyPxImg["xSpotDivBlank"]            [imgIndex])
+  # pxImgs2Append["xSpotDivClean"]            .append(scaledAnyPxImg["xSpotDivClean"]            [imgIndex])
+  # pxImgs2Append["xMeanPxDivBlank"]          .append(scaledAnyPxImg["xMeanPxDivBlank"]          [imgIndex])
+  # pxImgs2Append["xMeanPxDivClean"]          .append(scaledAnyPxImg["xMeanPxDivClean"]          [imgIndex])
+  # pxImgs2Append["xTheory/BlankArea"]        .append(scaledAnyPxImg["xTheory/BlankArea"]        [imgIndex])
+  # pxImgs2Append["xTheory/CleanArea"]        .append(scaledAnyPxImg["xTheory/CleanArea"]        [imgIndex])
+  # pxImgs2Append["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyPxImg["xSpot_Mean(Blank,Clean)"]  [imgIndex])
+  # pxImgs2Append["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyPxImg["xMeanPx_Mean(Blank,Clean)"][imgIndex])
   return bright2Append, pxImgs2Append
 
 
@@ -203,7 +203,14 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
     for _iXY in range(len(_xyKeys)):
       _xyKey = _xyKeys[_iXY]
 
-      if imgSets[_bKey]["Spot"][_xyKey]["OverexposedMask"][_iImg].max(): # Base-SS-Image has overexposed pixels
+      oeMask = imgSets[_bKey]["Spot"][_xyKey]["OverexposedMask"][_iImg]
+      if oeMask.size > 0:
+        oeMax = oeMask.max() # True or False
+      else:
+        oeMax = False
+
+      # if imgSets[_bKey]["Spot"][_xyKey]["OverexposedMask"][_iImg].max(): # Base-SS-Image has overexposed pixels
+      if oeMax: # Base-SS-Image has overexposed pixels
         _dKeys = list(imgSets[_bKey]["Div"].keys())
         for _iDiv in range(len(_dKeys)):
           _dKey = _dKeys[_iDiv]
@@ -212,7 +219,8 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
           except: # When it fails, jump over SS an try the next one
             continue
 
-          if imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey]["OverexposedMask"][_iImg].max() and _dKey != _dKeys[-1]: # Div-SS-Image also overexposed and it is not already the last shutterspeed
+          # if imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey]["OverexposedMask"][_iImg].max() and _dKey != _dKeys[-1]: # Div-SS-Image also overexposed and it is not already the last shutterspeed
+          if oeMax and _dKey != _dKeys[-1]: # Div-SS-Image also overexposed and it is not already the last shutterspeed
             continue                                                               #  -> Search in next div-SS
 
           else: # Div-SS-Image not overexposed -> Add corresponding upscaled values to brightness-vectors
