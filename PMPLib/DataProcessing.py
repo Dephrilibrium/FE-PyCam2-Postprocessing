@@ -1138,6 +1138,7 @@ def DataExtractionAndUpscaling(ssData,
                                ImgKey="uint16",
                                pxSidelen = 12,
                                AddPxSidelen=False,
+                               TakeSpotBrightFromAllImgs=True,
                                PxDivTrustband=24,
                                PxDivMinBright=150,
                                #AttachImages=False,
@@ -1175,7 +1176,7 @@ def DataExtractionAndUpscaling(ssData,
   # scaledWhereOverexposedBright, scaledWhereOverexposedImgs = __BrightUpscale_WhereOverexposed__(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs)
 
 
-  imgSets                                                  = BuildFactorImgSets(ssData=ssData, ImgKey=ImgKey, pxSidelen=pxSidelen, AddPxSidelen=AddPxSidelen, OverexposedValue=OverexposedValue)
+  imgSets                                                  = BuildFactorImgSets(ssData=ssData, ImgKey=ImgKey, pxSidelen=pxSidelen, AddPxSidelen=AddPxSidelen, OverexposedValue=OverexposedValue, TakeSpotBrightFromAllImgs=TakeSpotBrightFromAllImgs)
   brightSets                                               = GetBrightnessSets(imgSets)
   areaCntSets                                              = GetPxCntSets(imgSets, minBright=MinBright)
   divFactors                                               = GetDivFactorSets(imgSets, brightSets, areaCntSets, PxDivTrustband, PxDivMinBright)

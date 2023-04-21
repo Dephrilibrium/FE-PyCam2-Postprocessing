@@ -99,15 +99,15 @@ xPath = "Pics"  # Subdirectory where extract to. !!! Do not add a leading / or \
 xLog = "_PiCamUnpacker.log"  # Filename to log output
 
 workDirs = [
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230221_115432 Tip Ch1 (aktiviert, 6517)",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230221_124600 Tip Ch2 (aktiviert)",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_095249 Tip Ch3 (aktiviert)",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_103240 Tip Ch4 (aktiviert)",
+r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230221_115432 Tip Ch1 (aktiviert, 6517)",
+r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230221_124600 Tip Ch2 (aktiviert)",
+r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_095249 Tip Ch3 (aktiviert)",
+r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_103240 Tip Ch4 (aktiviert)",
 
 # r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230222_160417 1kV 100nA",
 # r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230223_084426 1kV 250nA",
 # r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_124505 1kV 250nA #1",
-r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_140339 1kV 250nA #2",
+# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_140339 1kV 250nA #2",
 
 # r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230307_124953 1kV IMax500nA",
 # r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230308_085027 1kV IMax 250nA",

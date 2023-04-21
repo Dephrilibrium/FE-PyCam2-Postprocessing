@@ -32,7 +32,8 @@ class PiMageOptions():
     _output += str.format("\n[Image processing]\n")
     _output += str.format("Image_CropWin".ljust(_fill)                           + "={}\n", self.Image_CropWin)
     _output += str.format("Image_bThresh".ljust(_fill)                           + "={}\n", self.Image_bThresh)
-    _output += str.format("Image_TryOtsu".ljust(_fill)                           + "={}\n", self.Image_TryOtsu)
+    _output += str.format("Image_ThreshType".ljust(_fill)                           + "={}\n", self.Image_ThreshType)
+    _output += str.format("Image_OtsuDiv".ljust(_fill)                           + "={}\n", self.Image_OtsuDiv)
     _output += str.format("Image_UseForMeanNPoints".ljust(_fill)                 + "={}\n", self.Image_UseForMeanNPoints)
     _output += str.format("Image_MeanNPoints".ljust(_fill)                       + "={}\n", self.Image_MeanNPoints)
     _output += str.format("Image_MeanNPicsPerSS".ljust(_fill)                    + "={}\n", self.Image_MeanNPicsPerSS)
@@ -55,6 +56,7 @@ class PiMageOptions():
 
     # Brightness-Detection
     _output += str.format("\n[Brightness-detection]\n")
+    _output += str.format("bDetect_SpotBrightFromAllImgs".ljust(_fill)           + "={}\n", self.bDetect_SpotBrightFromAllImgs)
     _output += str.format("bDetect_pxSideLen".ljust(_fill)                       + "={}\n", self.bDetect_pxSideLen)
     _output += str.format("bDetect_AddPxSideLen".ljust(_fill)                    + "={}\n", self.bDetect_AddPxSideLen)
     _output += str.format("bDetect_Trustband".ljust(_fill)                       + "={}\n", self.bDetect_Trustband)

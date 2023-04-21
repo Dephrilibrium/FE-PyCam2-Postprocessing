@@ -139,19 +139,26 @@ def ConvertImgCollectionDataType(ImgCollection, DataType=np.uint8, ShiftRight=4)
 
 
 
-def BuildThreshold(ImgCollection, Threshold, TryOtsu, OverexposedValue):
+def BuildThreshold(ImgCollection, Threshold, ThreshType, OtsuDiv, OverexposedValue):
   
   _thresImgs = list()
   for _iImg in range(len(ImgCollection)):
     _img = ImgCollection[_iImg]
     # _img = _img.copy() # Create separate copy of the image
 
-    if TryOtsu == True:
-      thrVal, threshImg = cv.threshold(_img, 1, OverexposedValue, cv.THRESH_BINARY + cv.THRESH_OTSU) # Auto-Creates a copy of type uint8 (because input is also uint8? or by default? don't know exactly)
+    if ThreshType == cv.THRESH_OTSU: # Otsu determines one threshholdvalue!
+      thrVal, threshImg = cv.threshold(src=_img, thresh=1, maxval=OverexposedValue, type=cv.THRESH_BINARY + cv.THRESH_OTSU) # Auto-Creates a copy of type uint8 (because input is also uint8? or by default? don't know exactly)
+      thrVal /= OtsuDiv
       if thrVal < Threshold: # if found threshhold is smaller than custom value, recalculate the picture!
-        thrVal, threshImg = cv.threshold(_img, Threshold, OverexposedValue, cv.THRESH_BINARY)
-      else:
-        thrVal, threshImg = cv.threshold(_img, thrVal//3, OverexposedValue, cv.THRESH_BINARY)
+        thrVal, threshImg = cv.threshold(src=_img, thresh=Threshold, maxval=OverexposedValue, type=cv.THRESH_BINARY)
+
+      else: # Otherwise use reduced otsu again
+        thrVal, threshImg = cv.threshold(src=_img, thresh=thrVal, maxval=OverexposedValue, type=cv.THRESH_BINARY)
+
+    elif (ThreshType == cv.ADAPTIVE_THRESH_GAUSSIAN_C) or (ThreshType == cv.ADAPTIVE_THRESH_MEAN_C): # This determines a bunch of threshhold-values!
+        threshImg = cv.adaptiveThreshold(src=_img, maxValue=OverexposedValue, adaptiveMethod=ThreshType, thresholdType=cv.THRESH_BINARY, blockSize=11, C=2)
+        # threshImg = cv.adaptiveThreshold(_img, 1, OverexposedValue, cv.THRESH_BINARY + cv.ADAPTIVE_THRESH_GAUSSIAN_C) # Auto-Creates a copy of type uint8 (because input is also uint8? or by default? don't know exactly)
+
     else:
       thrVal, threshImg = cv.threshold(_img, Threshold, OverexposedValue, cv.THRESH_BINARY)
 

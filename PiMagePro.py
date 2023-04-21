@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from FieldEmission import ReadSweepFile
 from FieldEmission import DataProvider
 
+import cv2 as cv
+
 from misc import bcolors
 from misc import DiffTime
 from misc import DiffToNow
@@ -46,7 +48,8 @@ from PMPLib.PiMageOptions import PiMageOptions
 # Paths
 # parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230307_124953 1kV IMax500nA"
 # parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_140339 1kV 250nA #2"
-parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen"
+parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_095249 Tip Ch3 (aktiviert)"
+# parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen"
 picDir = "Pics"
 
 # saveDir = r"D:\05 PiCam\221222 HQCam SOI2x2_0005 (Paper)\Auswertung\01_11 3x Swp nach Aktivierung 1.4kV@IMax 100nA\230117_112848"
@@ -65,7 +68,7 @@ LogLen = 70
 
 # PiMage-sequence
 opt.PiMage_SkipBadSubdirs = True                                        # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
-opt.PiMage_ForceOverride = True                                         # True = Won't check if a measurement is already processed!; False = Checks for already processed and skips in case
+opt.PiMage_ForceOverride = True                                        # True = Won't check if a measurement is already processed!; False = Checks for already processed and skips in case
 
 # Visualization
 opt.ShowImages_Read = False                                             # True = show each image; False = Silent process
@@ -77,8 +80,12 @@ opt.ShowImages_BrightnessExtraction = False                             # True =
 
 # Image processing
 opt.Image_CropWin = None                                                # None/False or [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
-opt.Image_bThresh = 20                                                 # Brightness Threshold value (only used, when threshold of autodetect-algorithm is smaller than this one!)
-opt.Image_TryOtsu = False                                               # Try autofind threshold by Otsu. If OtsuThresh < bThresh the image will be rethreshed with bThresh
+opt.Image_bThresh = 50                                                  # Brightness Threshold value (only used, when threshold of autodetect-algorithm is smaller than this one!)
+opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THRESH_OTSU:                     Tries otsu
+                                                                        # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
+                                                                        # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
+                                                                        # Other else:                         Uses fixed bThres-Value
+opt.Image_OtsuDiv = 10                                                  # When TryOtsu is used, a Otsu-Threshhold is build. The returend found threshhold-value is then divided by this number and reused again if its > than Image_bThres!
 opt.Image_UseForMeanNPoints = ".swp"                                    # Amount of measurements per swp-line or use ".swp" for auto-find from sweep-file
 # opt.Image_MeanNPoints = 2                                               # This was the old value set here. Now its set during the code, but left as comment here (avoid confuses)
 opt.Image_MeanNPicsPerSS = 1                                            # Amount of images per Shutterspeed
@@ -98,10 +105,11 @@ opt.CircleDraw_pxRadius = opt.CircleDetect_pxMaxRadius                  # Draw r
 opt.CircleDraw_AddPxRadius = False                                      # The drawn circle-radius is False: pxRadius OR True: circle-radius + pxRadius
 
 # Brightness-Detection
+opt.bDetect_SpotBrightFromAllImgs = True                                # True: The brightness is extracted from ALL images based on the xy-key position!; False: Brightness is only extracted from Images where a circle was detected!
 opt.bDetect_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness gets extracted
 opt.bDetect_AddPxSideLen = False                                        # The maximum brightness-square is False: pxSidelen OR True: circle-radius + pxSidelen
-opt.bDetect_Trustband = [16 *256, 250 *256]                             # Brightness-Trustband of the overexposed image for brightness-factor-calculation (replacement of overexposed pixels) [LoTrust, HiTrust]. See also option "Image_OverexposedBrightness"
-opt.bDetect_MinTrust = 8 *256                                           # If: Pixelbrightness < MinTrust -> skips pixels on the replacement-pictures to avoid to high errors and save computation time
+opt.bDetect_Trustband = [180 *256, 250 *256]                             # Brightness-Trustband of the overexposed image for brightness-factor-calculation (replacement of overexposed pixels) [LoTrust, HiTrust]. See also option "Image_OverexposedBrightness"
+opt.bDetect_MinTrust = 50 *256                                           # If: Pixelbrightness < MinTrust -> skips pixels on the replacement-pictures to avoid to high errors and save computation time
 # opt.bDetect_SaveImages = True                                           # Attaches the images to each circle! (May need a lot of disk space!)
 
 # XY-Keys
@@ -284,7 +292,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
       LogLine(t0, "Creating threshold-images...")
-      ssData[SS]["Images"]["Threshold"] = BuildThreshold(ImgCollection=ssData[SS]["Images"]["uint16"], Threshold=opt.Image_bThresh, TryOtsu=opt.Image_TryOtsu, OverexposedValue=opt.Image_OverexposedBrightness)
+      ssData[SS]["Images"]["Threshold"] = BuildThreshold(ImgCollection=ssData[SS]["Images"]["uint16"], Threshold=opt.Image_bThresh, ThreshType=opt.Image_ThreshType, OtsuDiv=opt.Image_OtsuDiv, OverexposedValue=opt.Image_OverexposedBrightness)
       LogLineOK()
       print("")
 
@@ -396,7 +404,7 @@ for root, dirs, files in os.walk(parentDir):
     Image_OverexposedBrightness_16Bit = opt.Image_OverexposedBrightness # Rewrote code that it handles 16bit already
     bDetect_Trustband_16Bit = opt.bDetect_Trustband                     # Rewrote code that it handles 16bit already
     bDetect_MinTrust_16Bit = opt.bDetect_MinTrust                       # Rewrote code that it handles 16bit already
-    Image_MinBright2CountArea = 3* 0xFF
+    Image_MinBright2CountArea = 1* 0xFF
 
     ssData,                        \
     imgSets,                       \
@@ -411,6 +419,7 @@ for root, dirs, files in os.walk(parentDir):
                                                             ImgKey="uint16",
                                                             pxSidelen=opt.bDetect_pxSideLen,
                                                             AddPxSidelen=opt.bDetect_AddPxSideLen,
+                                                            TakeSpotBrightFromAllImgs=opt.bDetect_SpotBrightFromAllImgs,
                                                             PxDivTrustband=bDetect_Trustband_16Bit,
                                                             PxDivMinBright=bDetect_MinTrust_16Bit,
                                                             MinBright=Image_MinBright2CountArea,

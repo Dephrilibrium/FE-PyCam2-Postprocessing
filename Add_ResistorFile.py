@@ -6,11 +6,11 @@ from misc import bcolors, Time2Human, DiffToNow, LogLine, LogLineOK
 
 
 opt = PiMageOptions()
-opt.SkipBadSubdirs = True                                   # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
+opt.SkipBadSubdirs = False                                   # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
 
 
 
-parentDir = r"C:\Users\ham38517\Downloads\PiCam\221202 PiCam Paper Messung\Messung"
+parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Auswertung"
 picDir = "Pics"
 
 
@@ -35,7 +35,8 @@ for root, dirs, files in os.walk(parentDir):
 
   #Check if current directory contains measurement-files
   #  Directory found when it contains a Pics directory and *.dat files
-  if not dirs.__contains__(picDir) or not any(f.endswith(".dat") for f in files):
+  # if not dirs.__contains__(picDir) or not any(f.endswith(".dat") for f in files): # Old one, but sometime i want to have value.resistor also in folders were the pictures are not extracted yet!
+  if not any(f.endswith(".dat") for f in files):
     print("".rjust(18) + bcolors.WARNING + " Nothing interesting here" + bcolors.ENDC + root)
   else:
     print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Possible directory found: " + bcolors.ENDC + root)

@@ -131,7 +131,7 @@ def CollectEachValueOnceFromVector(vec):
 
 
 
-def PlotSupTitleAndLegend(fig, suptitle):
+def PlotSupTitleAndLegend(fig, suptitle, loc="upper right", ncol=1):
   lines = []
   labels = []
   for axis in fig.axes:
@@ -142,7 +142,7 @@ def PlotSupTitleAndLegend(fig, suptitle):
         continue
       lines.append(Line[_iLab])
       labels.append(Label[_iLab])
-  fig.legend(lines, labels, loc="upper right")
+  fig.legend(lines, labels, loc=loc, ncol=ncol)
   fig.suptitle(suptitle)
   # deriFig.suptitle("Brightness-factors of each pixels (mean)")
   return
@@ -224,3 +224,4 @@ def GetQuadrantOfSpot(spotCoord, imgWH):
         x = 1
     
     return y, x
+
