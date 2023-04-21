@@ -1,0 +1,10 @@
+### Ignored folders ###
+__pycache__/
+.vscode/
+#######################
+
+### Ignored files (wildcard) ###
+################################
+
+### Ignored files (specific) ###
+################################
