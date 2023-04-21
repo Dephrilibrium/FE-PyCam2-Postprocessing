@@ -104,7 +104,7 @@ def SubtractFromImgCollection(ImgCollection, ImgOrBlacklevel:int, ShowImg=False)
   for _iImg in range(len(ImgCollection)):
     _img = ImgCollection[_iImg]
     # _img = _img.copy() # Create separate copy of the image
-    _img = np.subtract(_img, ImgOrBlacklevel).astype(np.uint16) # Remove darkfield
+    _img = np.subtract(_img, ImgOrBlacklevel, dtype=np.uint16) # Remove darkfield
     _img[_img > 0xFFF] = 0 # Where _subImg is negative ) -> set 0
     # _whereNegative = np.where(_subImg.astype(np.int16) < 0)
     # for ix,iy in zip(_whereNegative[0], _whereNegative[1]):

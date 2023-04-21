@@ -96,36 +96,11 @@ def DeleteFiles(FilepathCollection):
 
 
 folders = [
-r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230221_115432 Tip Ch1 (aktiviert, 6517)",
-r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230221_124600 Tip Ch2 (aktiviert)",
-r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_095249 Tip Ch3 (aktiviert)",
-r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_103240 Tip Ch4 (aktiviert)",
-
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230222_160417 1kV 100nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230223_084426 1kV 250nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_124505 1kV 250nA #1",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\02 Alle Zusammen\230306_140339 1kV 250nA #2",
-
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230307_124953 1kV IMax500nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\03 Sample-Sweeps\230308_085027 1kV IMax 250nA",
-
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\04 USwp für bessere Charakteristik\230308_133039",
-
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_143559 USwp 1kV, IMax250nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_151018 ZickZack 1by1 linStps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_154416 ZickZack 1by1 linStps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_164837 USwp 1kV, IMax250nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_172255 ZickZack 1by1 log10Stps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_175658 ZickZack 1by1 log10Stps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\05 ZigZag 1b1\230308_190251 USwp 1kV, IMax250nA",
-
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_200641 USwp 1kV, IMax250nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_202958 ZickZack 1while1 linStps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_205330 ZickZack 1while1 linStps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_215722 USwp 1kV, IMax250nA",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_222134 ZickZack 1by1 log10Stps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_224524 ZickZack 1by1 log10Stps",
-# r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\06 ZigZag 1w1\230308_234915 USwp 1kV, IMax250nA",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)\230406_185118 Tip Ch1",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)\230406_193753 Tip Ch2",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)\230406_202712 Tip Ch3",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)\230408_114847 Tip Ch4",
+r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\03_02 Unreg Kombis (IMax5V)\230408_131817 Tip1-4 1kV 250nA (Reg. for Tip-Quality)",
 ]
 
 bayerType = "raw"           # raw bayer
@@ -136,9 +111,10 @@ nMeasPnts = 1               # Amount of measurements were taken per line (Rpts o
 # https://www.strollswithmydog.com/pi-hq-cam-sensor-performance/
 # Black-Level typically 256 .. 257.3 depending on gain; For Gain=1 typically 256.3DN
 # zeroPxlsBelow < 0: No zeroing
-# zeroPxlsBelow = 0: Use Darkimage-Mean
+# zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
 # zeroPxlsBelow > 0: Set "pxls < Value = 0"
-sensBlackLevel = 256 + 12
+# sensBlackLevel = 256 + 12
+sensBlackLevel = 0
 
 
 
@@ -186,11 +162,14 @@ for _fold in folders:
         if sensBlackLevel >= 0:
             print(f"Subtracting black-level from 12Bit Images...")
             if sensBlackLevel == 0:
-                sensBlackLevel = int(np.mean(blckImgs) + 1)
+                blackMean = int(np.mean(blckImgs) + 1)
+                blackStd = int(np.std(blckImgs) * 6 + 1) # 6 sigma
+                sensBlackLevel = blackMean + blackStd
                 print(f"Using mean of dark-image: ", end="")
             else:
                 print(f"Using fix value: ", end="")
             print(f"if(pixelbright < {sensBlackLevel:.2f}) = 0")
+            
                 
             blckImgs = SubtractFromImgCollection(blckImgs, sensBlackLevel)
             measImgs = SubtractFromImgCollection(measImgs, sensBlackLevel)
@@ -199,6 +178,30 @@ for _fold in folders:
 
         # print(f"Subtracting Darkfield- from Measurement-Images...")
         # measImgs = SubtractFromImgCollection(ImgCollection=measImgs, ImgOrBlacklevel=blckImgs[0], ShowImg=False) # MeasImgs - Darkfield
+
+
+        # #### Paper-Examples 12-bit -> 16-bit)
+        # paper12Bit = np.array([
+        #     measImgs[805],
+        #     measImgs[806],
+        #     measImgs[807],
+        # ])
+        # paths12Bit = [
+        #     r"C:\Users\ham38517\Downloads\save\805 12bit_0000.png",
+        #     r"C:\Users\ham38517\Downloads\save\806 12bit_0000.png",
+        #     r"C:\Users\ham38517\Downloads\save\807 12bit_0000.png",
+        # ]
+        # paths16Bit = [
+        #     r"C:\Users\ham38517\Downloads\save\805 16bit_0000.png",
+        #     r"C:\Users\ham38517\Downloads\save\806 16bit_0000.png",
+        #     r"C:\Users\ham38517\Downloads\save\807 16bit_0000.png",
+        # ]
+
+
+        # savPath = DumpCollectionAs16BitPNG(paper12Bit, paths12Bit)
+        # paper16Bit = ConvertBitsPerPixel(ImgCollection=paper12Bit, originBPP=12, targetBPP=16)    
+        # savPath = DumpCollectionAs16BitPNG(paper16Bit, paths16Bit)
+
         
         print(f"12Bit Measurement-Images -> 16Bit Images...")
         measImgs = ConvertBitsPerPixel(ImgCollection=measImgs, originBPP=12, targetBPP=16)    

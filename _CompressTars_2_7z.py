@@ -41,15 +41,16 @@ import natsort
 
 xCmd = 'C:\\Program Files\\7-Zip\\7z.exe'  # Path to 7zip
 xArg = 'a -mx9 -sdel'
+# xArg = 'a -mx9'
 
 targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 
 globSearch4TarName = '*_rPiHQCam2-*.tar'
 
-verbose = False
+verbose = True
 
 wds = [
-r"\\rfhmik164\Samba\_FEMDAQ V2 for Measurement\Hausi\230215",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\230404 HQCam SOI2x2_0014",
 ]
 
 
@@ -75,20 +76,22 @@ for wd in wds:
 
 
 
-        print(f"Scanning for tars")
+        print(f"Scanning for tars in: \"{root}\"".ljust(100), end="")
         tarFiles = glob.glob(join(root, globSearch4TarName))
         tarFiles = natsort.os_sorted(tarFiles)
         nTars = len(tarFiles)
         if nTars > 0:
-            print(f"Found {nTars} tar-archives in {root}")
+            print("") # new line
+            print(f" - Found {nTars} tar-archives")
             archivePath = join(root, targetArchiveName)
-            cmprsFiles = '" "'.join(tarFiles)
-            cmd = f'"{xCmd}" {xArg} "{archivePath}" "{cmprsFiles}"'
+            print(f" - Archiving to: {archivePath}")
+            # cmprsFiles = '" "'.join(tarFiles)  # First and last " is missing, but added in cmd-concatenation!
+            cmd = f'"{xCmd}" {xArg} "{archivePath}" "{root}/*.tar"'
             if verbose:
-                print(f"Cmd: {cmd}")
-            print(f"Starting compression...")
+                print(f" - Cmd: {cmd}")
+            print(f" - Starting compression...")
             subprocess.call(cmd)
-            print("Compression done")
+            print(" - Compression done")
         else:
             print(f"Nothing found, going on...")
             continue
