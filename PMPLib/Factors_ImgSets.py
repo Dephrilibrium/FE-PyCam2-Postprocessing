@@ -123,6 +123,7 @@ def BuildFactorImgSets(ssData, ImgKey, pxSidelen, AddPxSidelen, OverexposedValue
       _dKey = _ssKeys[_iDiv]
 
       # Prepare dict for div
-      bImgs[_bKey]["Div"][_dKey] = __BuildImgSubSet__(ImgCollection=pickle.loads(pickle.dumps(ssData[_dKey]["Images"][ImgKey])), XYCollection=ssData[_dKey]["Circles"]["XYKeys"], pxSidelen=pxSidelen, AddPxSidelen=AddPxSidelen, OverexposedBright=OverexposedValue, CleanMask=bImgs[_bKey]["Full"]["OverexposedMask"], TakeSpotBrightFromAllImgs=TakeSpotBrightFromAllImgs)
+      # bImgs[_bKey]["Div"][_dKey] = __BuildImgSubSet__(ImgCollection=pickle.loads(pickle.dumps(ssData[_dKey]["Images"][ImgKey])), XYCollection=ssData[_dKey]["Circles"]["XYKeys"], pxSidelen=pxSidelen, AddPxSidelen=AddPxSidelen, OverexposedBright=OverexposedValue, CleanMask=bImgs[_bKey]["Full"]["OverexposedMask"], TakeSpotBrightFromAllImgs=TakeSpotBrightFromAllImgs)
+      bImgs[_bKey]["Div"][_dKey] = __BuildImgSubSet__(ImgCollection=pickle.loads(pickle.dumps(ssData[_dKey]["Images"][ImgKey])), XYCollection=ssData[_bKey]["Circles"]["XYKeys"], pxSidelen=pxSidelen, AddPxSidelen=AddPxSidelen, OverexposedBright=OverexposedValue, CleanMask=bImgs[_bKey]["Full"]["OverexposedMask"], TakeSpotBrightFromAllImgs=TakeSpotBrightFromAllImgs)
 
   return bImgs

@@ -12,14 +12,14 @@ import numpy as np
 def __GenerateEmptySubSetStructure__():
   struct = dict()
   struct["xTheory"]                   = list()
-  struct["xSpotDivBlank"]             = list()
-  struct["xSpotDivClean"]             = list()
-  struct["xMeanPxDivBlank"]           = list()
-  struct["xMeanPxDivClean"]           = list()
-  struct["xTheory/BlankArea"]         = list()
-  struct["xTheory/CleanArea"]         = list()
-  struct["xSpot_Mean(Blank,Clean)"]   = list()
-  struct["xMeanPx_Mean(Blank,Clean)"] = list()
+  # struct["xSpotDivBlank"]             = list()
+  # struct["xSpotDivClean"]             = list()
+  # struct["xMeanPxDivBlank"]           = list()
+  # struct["xMeanPxDivClean"]           = list()
+  # struct["xTheory/BlankArea"]         = list()
+  # struct["xTheory/CleanArea"]         = list()
+  # struct["xSpot_Mean(Blank,Clean)"]   = list()
+  # struct["xMeanPx_Mean(Blank,Clean)"] = list()
   return struct
 
 
@@ -29,24 +29,24 @@ def __GenerateEmptySubSetStructure__():
 
 def __AppendBright2All__(bright, bValue):
   bright["SpotBright"]["xTheory"]                  .append(bValue)
-  bright["SpotBright"]["xSpotDivBlank"]            .append(bValue)
-  bright["SpotBright"]["xSpotDivClean"]            .append(bValue)
-  bright["SpotBright"]["xMeanPxDivBlank"]          .append(bValue)
-  bright["SpotBright"]["xMeanPxDivClean"]          .append(bValue)
-  bright["SpotBright"]["xTheory/BlankArea"]        .append(bValue)
-  bright["SpotBright"]["xTheory/CleanArea"]        .append(bValue)
-  bright["SpotBright"]["xSpot_Mean(Blank,Clean)"]  .append(bValue)
-  bright["SpotBright"]["xMeanPx_Mean(Blank,Clean)"].append(bValue)
+  # bright["SpotBright"]["xSpotDivBlank"]            .append(bValue)
+  # bright["SpotBright"]["xSpotDivClean"]            .append(bValue)
+  # bright["SpotBright"]["xMeanPxDivBlank"]          .append(bValue)
+  # bright["SpotBright"]["xMeanPxDivClean"]          .append(bValue)
+  # bright["SpotBright"]["xTheory/BlankArea"]        .append(bValue)
+  # bright["SpotBright"]["xTheory/CleanArea"]        .append(bValue)
+  # bright["SpotBright"]["xSpot_Mean(Blank,Clean)"]  .append(bValue)
+  # bright["SpotBright"]["xMeanPx_Mean(Blank,Clean)"].append(bValue)
 
   bright["PxlBright"]["xTheory"]                  .append(bValue)
-  bright["PxlBright"]["xSpotDivBlank"]            .append(bValue)
-  bright["PxlBright"]["xSpotDivClean"]            .append(bValue)
-  bright["PxlBright"]["xMeanPxDivBlank"]          .append(bValue)
-  bright["PxlBright"]["xMeanPxDivClean"]          .append(bValue)
-  bright["PxlBright"]["xTheory/BlankArea"]        .append(bValue)
-  bright["PxlBright"]["xTheory/CleanArea"]        .append(bValue)
-  bright["PxlBright"]["xSpot_Mean(Blank,Clean)"]  .append(bValue)
-  bright["PxlBright"]["xMeanPx_Mean(Blank,Clean)"].append(bValue)
+  # bright["PxlBright"]["xSpotDivBlank"]            .append(bValue)
+  # bright["PxlBright"]["xSpotDivClean"]            .append(bValue)
+  # bright["PxlBright"]["xMeanPxDivBlank"]          .append(bValue)
+  # bright["PxlBright"]["xMeanPxDivClean"]          .append(bValue)
+  # bright["PxlBright"]["xTheory/BlankArea"]        .append(bValue)
+  # bright["PxlBright"]["xTheory/CleanArea"]        .append(bValue)
+  # bright["PxlBright"]["xSpot_Mean(Blank,Clean)"]  .append(bValue)
+  # bright["PxlBright"]["xMeanPx_Mean(Blank,Clean)"].append(bValue)
   return bright
 
 
@@ -58,14 +58,14 @@ def __AppendBright2All__(bright, bValue):
 
 def __AppendPxImg2All__(pxImg, img):
   pxImg["xTheory"]                  .append(img)
-  pxImg["xSpotDivBlank"]            .append(img)
-  pxImg["xSpotDivClean"]            .append(img)
-  pxImg["xMeanPxDivBlank"]          .append(img)
-  pxImg["xMeanPxDivClean"]          .append(img)
-  pxImg["xTheory/BlankArea"]        .append(img)
-  pxImg["xTheory/CleanArea"]        .append(img)
-  pxImg["xSpot_Mean(Blank,Clean)"]  .append(img)
-  pxImg["xMeanPx_Mean(Blank,Clean)"].append(img)
+  # pxImg["xSpotDivBlank"]            .append(img)
+  # pxImg["xSpotDivClean"]            .append(img)
+  # pxImg["xMeanPxDivBlank"]          .append(img)
+  # pxImg["xMeanPxDivClean"]          .append(img)
+  # pxImg["xTheory/BlankArea"]        .append(img)
+  # pxImg["xTheory/CleanArea"]        .append(img)
+  # pxImg["xSpot_Mean(Blank,Clean)"]  .append(img)
+  # pxImg["xMeanPx_Mean(Blank,Clean)"].append(img)
   return pxImg
 
 

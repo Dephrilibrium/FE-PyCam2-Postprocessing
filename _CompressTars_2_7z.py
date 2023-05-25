@@ -50,7 +50,7 @@ globSearch4TarName = '*_rPiHQCam2-*.tar'
 verbose = True
 
 wds = [
-r"Z:\_FEMDAQ V2 for Measurement\Hausi\230404 HQCam SOI2x2_0014",
+r"\\rfhmik164\Samba\_FEMDAQ V2 for Measurement\Jachym",
 ]
 
 

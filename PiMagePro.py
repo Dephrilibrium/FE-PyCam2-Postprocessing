@@ -47,7 +47,17 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 # Paths
 # parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_095249 Tip Ch3 (aktiviert)"
-parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen"
+
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\03_02 Unreg Kombis (IMax5V)"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\04_02 Weitere Kombis"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\05_02 Tips einzeln, Rest floatend"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\08_02 Reaktivierungsversuche"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\08_03 Kombis"
+# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check"
+parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded"
+
 picDir = "Pics"
 
 # saveDir = r"D:\05 PiCam\221222 HQCam SOI2x2_0005 (Paper)\Auswertung\01_11 3x Swp nach Aktivierung 1.4kV@IMax 100nA\230117_112848"
@@ -66,7 +76,7 @@ LogLen = 70
 
 # PiMage-sequence
 opt.PiMage_SkipBadSubdirs = True                                        # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
-opt.PiMage_ForceOverride = True                                        # True = Won't check if a measurement is already processed!; False = Checks for already processed and skips in case
+opt.PiMage_ForceOverride = True                                         # True = Won't check if a measurement is already processed!; False = Checks for already processed and skips in case
 
 # Visualization
 opt.ShowImages_Read = False                                             # True = show each image; False = Silent process
@@ -78,12 +88,12 @@ opt.ShowImages_BrightnessExtraction = False                             # True =
 
 # Image processing
 opt.Image_CropWin = None                                                # None/False or [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
-opt.Image_bThresh = 50                                                  # Brightness Threshold value (only used, when threshold of autodetect-algorithm is smaller than this one!)
+opt.Image_bThresh = 35                                                 # Brightness Threshold value (only used, when threshold of autodetect-algorithm is smaller than this one!)
 opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THRESH_OTSU:                     Tries otsu
                                                                         # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
                                                                         # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
                                                                         # Other else:                         Uses fixed bThres-Value
-opt.Image_OtsuDiv = 10                                                  # When TryOtsu is used, a Otsu-Threshhold is build. The returend found threshhold-value is then divided by this number and reused again if its > than Image_bThres!
+opt.Image_OtsuDiv = 8                                                   # When TryOtsu is used, a Otsu-Threshhold is build. The returend found threshhold-value is then divided by this number and reused again if its > than Image_bThres!
 opt.Image_UseForMeanNPoints = ".swp"                                    # Amount of measurements per swp-line or use ".swp" for auto-find from sweep-file
 # opt.Image_MeanNPoints = 2                                               # This was the old value set here. Now its set during the code, but left as comment here (avoid confuses)
 opt.Image_MeanNPicsPerSS = 1                                            # Amount of images per Shutterspeed
@@ -119,7 +129,7 @@ opt.XYKeys_pxCorrectionRadius = opt.XYKeys_pxCollectRadius              # Valid 
 opt.XYKeySort_Rowdistance = opt.CircleDetect_pxMaxRadius                # Maximum perpendicular XYKey-distance [px] to be part of a row
 
 # Saving
-opt.SaveSSImagePkl = True                                              # Save internal shutterspeed data images
+opt.SaveSSImagePkl = False                                              # Save internal shutterspeed data images
 #opt.SaveValidImagePkl = False                                           # Save internal valid brightness images                                    !!!MAYBE OBSOLET!!!
 #opt.SaveBrightnessFactors = True                                        # Calculate and save brightness-factors of spots and corresponding pixels  !!!MAYBE OBSOLET!!!
 opt.Save_ImgSets4Brightness                 = False                     # Save "Imageset"                             for Brightnesses and it's correction as pickle
@@ -129,7 +139,7 @@ opt.Save_DivFactors4Brightness              = True                      # Save "
 opt.Save_CombinedFactors4Brightness         = True                      # Save "Combined Factors"                     from DivFactors & PixelAreaCounts as pickle
 opt.Save_ScaledAnyPxImgs                    = False                     # Save "Any upscaled pixelcorrected images"   as pickle (huge!)
 opt.Save_ScaledAnyBrightnesses              = True                      # Save "Any upscaled spotbrightness"          as pickle
-opt.Save_ScaledWhereOverexposedPxImgs       = True                      # Save "Any upscaled spotbrightness images"   as pickle
+opt.Save_ScaledWhereOverexposedPxImgs       = False                     # Save "Any upscaled spotbrightness images"   as pickle
 opt.Save_ScaledWhereOverexposedBrightnesses = True                      # Save "Any upscaled spotbrightness"          as pickle
 
 

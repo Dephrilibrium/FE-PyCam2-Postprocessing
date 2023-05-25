@@ -131,7 +131,7 @@ def CollectEachValueOnceFromVector(vec):
 
 
 
-def PlotSupTitleAndLegend(fig, suptitle, loc="upper right", ncol=1):
+def PlotLegend(fig, loc, ncol=1):
   lines = []
   labels = []
   for axis in fig.axes:
@@ -143,6 +143,21 @@ def PlotSupTitleAndLegend(fig, suptitle, loc="upper right", ncol=1):
       lines.append(Line[_iLab])
       labels.append(Label[_iLab])
   fig.legend(lines, labels, loc=loc, ncol=ncol)
+  return
+
+def PlotSupTitleAndLegend(fig, suptitle, loc="upper right", ncol=1):
+  PlotLegend(fig, loc, ncol)
+#   lines = []
+#   labels = []
+#   for axis in fig.axes:
+#     Line, Label = axis.get_legend_handles_labels()
+#     # print(Label)
+#     for _iLab in range(len(Label)):
+#       if labels.__contains__(Label[_iLab]):
+#         continue
+#       lines.append(Line[_iLab])
+#       labels.append(Label[_iLab])
+#   fig.legend(lines, labels, loc=loc, ncol=ncol)
   fig.suptitle(suptitle)
   # deriFig.suptitle("Brightness-factors of each pixels (mean)")
   return

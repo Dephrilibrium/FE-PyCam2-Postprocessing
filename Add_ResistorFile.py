@@ -10,7 +10,7 @@ opt.SkipBadSubdirs = False                                   # If a parent folde
 
 
 
-parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Auswertung"
+parentDir = r"P:\MIKRO\Mikrosensorik\Mitarbeiter\Hausladen\Veröffentlichung, Vorträge, etc\230403 IEEE PyCam2\Measurements"
 picDir = "Pics"
 
 
