@@ -1,10 +1,18 @@
 ### Ignored folders ###
 __pycache__/
 .vscode/
+_alt/
+_originale/
+_TestImages/
+_Turned out as Fail/
+_Tests/
+PMPLib/Correction/
 #######################
 
 ### Ignored files (wildcard) ###
 ################################
 
 ### Ignored files (specific) ###
+RenameFiles_OTH-Ketek.py
+ArtificialOverexposing.py
 ################################

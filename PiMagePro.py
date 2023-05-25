@@ -1,4 +1,28 @@
-from copyreg import pickle
+##################################################################################
+# 
+#                                                                                #
+# How to use (variable explanation):                                             #
+# xCmd:             Path to the 7-zip executable.                                #
+# parentDir:        Folder which is scanned recursevly for measurement-files.    #
+# picDir:           Foldername of the subdir where the images for the data-      #
+#                    extraction are stored (mean-images of                       #
+#                    _ConvertBayerToGrayScale.py)                                #
+# saveDir:          The second argument of the replace-function determines the   #
+#                    folder in which the extraction results are stored.          #
+#                    This can be used to separate source and destination folder. #
+# opt:              Is an instance of the PiMagePro options. This class has a    #
+#                    built in store-function to have the used extraction-option  #
+#                    as file on disk (see options below).                        #
+# LogFilePath:      If a filename is given, a logger-instance is created which   #
+#                    print the console messages to console as wall as to a file. #
+# LogLen:           Defines the length of a log-line (so that all logs have the  #
+#                    same length).                                               #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
+
+
 from genericpath import exists
 import os
 import sys
@@ -239,10 +263,7 @@ for root, dirs, files in os.walk(parentDir):
 
       # Read float64 pictures and subtract
       LogLine(t0, "Read and crop images...")
-      # imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(OTH_BlkFormat, "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
-      # ssData[SS]["Black"]["Cropped"] = imgs
       imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(OTH_ImgFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
-      # imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(OTH_ImgFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=imgPaths, ShowImg=opt.ShowImages_Read)
       ssData[SS]["Images"]["Cropped"] = imgs
       LogLineOK()
 
@@ -250,30 +271,16 @@ for root, dirs, files in os.walk(parentDir):
 
 
       LogLine(t0, "Meaning images...")
-      # ssData[SS]["Black"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Black"]["Cropped"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean)   # Mean nPicsPerSS together
       ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Cropped"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean) # Mean nPicsPerSS together
-      ssData[SS]["Images"]["uint16"] = ssData[SS]["Images"]["Mean"][1:]                                                                                             # Remove the "init-datapoint" directly after measurement start
+      ssData[SS]["Images"]["uint16"] = ssData[SS]["Images"]["Mean"][1:]                                                                                           # Remove the "init-datapoint" directly after measurement start
       if opt.Image_MeanNPoints > 1:
         ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Mean"], ImgsPerMean=opt.Image_MeanNPoints, ShowImg=opt.ShowImages_Mean)     # Meaning measurement points together
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup cropped (f64) images...")
-      # ssData[SS]["Black"] .pop("Cropped")
       ssData[SS]["Images"].pop("Cropped")
       ssData[SS]["Images"].pop("Mean")
       LogLineOK()
-
-
-
-
-      # LogLine(t0, "Subtract darkfield image...")
-      # ssData[SS]["Images"]["uint16"] = SubtractDarkfield(ImgCollection=ssData[SS]["Images"]["Mean"], DarkfieldImage=ssData[SS]["Black"]["Mean"][0], ShowImg=opt.ShowImages_Subtract)
-      # LogLineOK()
-      # # Cleanup old ressources
-      # LogLine(t0, "Cleanup darkfield (f64) & mean (f64) images...")
-      # ssData[SS].pop("Black") # Black image not used anymore
-      # ssData[SS]["Images"].pop("Mean")
-      # LogLineOK()
 
 
       if SS == Shutterspeeds[0]:
@@ -281,19 +288,6 @@ for root, dirs, files in os.walk(parentDir):
         SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(OTH_ImgFormat, "Dev101", "{:05d}", SS, "uint16", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
         LogLineOK()
 
-
-      # LogLine(t0, "Convert images to uint8...")
-      # # ssData[SS]["Images"]["uint8"] = ConvertImgCollectionDataType(ImgCollection=ssData[SS]["Images"]["uint16"], DataType=np.uint8)
-      # ssData[SS]["Images"]["uint8"] = ConvertBitsPerPixel(OriImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
-      # LogLineOK()
-      # LogLine(t0, "Saving uint8-images...")
-      # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint8"], FileFormat=str.format(OTH_ImgFormat, "Dev101", "{:05d}", SS, "uint8", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint8 SS={}", SS)))
-      # LogLineOK()
-
-      # Cleanup old ressources
-      # LogLine(t0, "Cleanup uint8 save-collection...")
-      # ssData[SS]["Images"].pop("uint8")
-      # LogLineOK()
 
 
 
@@ -403,7 +397,6 @@ for root, dirs, files in os.walk(parentDir):
 
     # Extract img brightness of detection
     LogLine(t0, "Extracting brightness data...")
-    # ssData, bData, bImages = ExtractBrightnessData(ssData=ssData, ImgKey="uint8", pxSidelen=opt.bDetect_pxSideLen, AddPxSidelen=opt.bDetect_AddPxSideLen, TrustbandBrightness=opt.bDetect_Trustband, TrustBrightnessMin=opt.bDetect_MinTrust, ShowImg=opt.ShowImages_BrightnessExtraction)
 
     # !!! CURRENTLY FOR TEST PURPOSES A VERY UNCLEAN WAY TO CONVERT THE 8BIT-SETTINGS INTO 16BIT SETTINGS !!!
     # Image_OverexposedBrightness_16Bit = (opt.Image_OverexposedBrightness) * 256
@@ -438,21 +431,6 @@ for root, dirs, files in os.walk(parentDir):
                                                             ShowImg=opt.ShowImages_BrightnessExtraction)
 
     LogLineOK()
-
-
-    # print("")
-    # LogLine(t0, "Create xy-plot data from valid exposed xy-keys...")
-    # bData = CreateImagePlotXY(ValidData=bData)
-    # LogLineOK()
-
-
-
-    # if opt.SaveBrightnessFactors == True: # Calculate brighntess-factors of spots/pixels
-    #   print("")
-    #   LogLine(t0, "Generating brightness-factors...")
-    #   brightFactorData = CalculateAllSpotpixelFactors(ssData=ssData, imgKey="uint8", pxSidelen=opt.bDetect_pxSideLen, AddPxSidelen=opt.bDetect_AddPxSideLen)
-    #   LogLineOK()
-
 
 
     # Validated and corrected brightness data and -images
@@ -558,40 +536,6 @@ for root, dirs, files in os.walk(parentDir):
     else:
       del scaledWhereOverexposedBright # When not saving them , just delete them to free the RAM
 
-
-    # if opt.bDetect_SaveImages == True:
-    #   _fName = "PMP_correctedImages.pkl"
-    #   _fPath = os.path.join(cSaveDir, _fName)
-    #   _fHandle = open(_fPath, "wb")
-    #   pickle.dump(bImages, _fHandle)
-    #   _fHandle.close()
-    #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-
-    # if opt.SaveValidImagePkl == True:
-    #   _fName = "PMP_validImgData.pkl"
-    #   _fPath = os.path.join(cSaveDir, _fName)
-    #   _fHandle = open(_fPath, "wb")
-    #   pickle.dump(bData["Images"], _fHandle)
-    #   _fHandle.close()
-    #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-
-
-    # if opt.SaveBrightnessFactors == True: # Save brightness-factors of spots/pixels
-    #   _fName = "PMP_brightFactors.pkl"
-    #   _fPath = os.path.join(cSaveDir, _fName)
-    #   _fHandle = open(_fPath, "wb")
-    #   pickle.dump(brightFactorData, _fHandle)
-    #   _fHandle.close()
-    #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-
-
-    # bData.pop("Images")                                           # Remove images from valid data! If wanted, they are saved from the block above!
-    # _fName = "PMP_validSpotData.pkl"
-    # _fPath = os.path.join(cSaveDir, _fName)
-    # _fHandle = open(_fPath, "wb")
-    # pickle.dump(bData, _fHandle)
-    # _fHandle.close()
-    # LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
 
 
     print("")

@@ -1,3 +1,19 @@
+##################################################################################
+# This script can be used, to change the file-extension from srcExtension into   #
+# dstExtension. It scans recursively all subfolders of the wds paths. Folders    #
+# which ending with _XX are ignored.                                             #
+#                                                                                #
+# How to use (variable explanation):                                             #
+# wds:              contains a list of paths which is scanned for files with the #
+#                    srcExtension                                                #
+# srcExtension:     wds are searched for ending with this string                 #
+# dstExtension:     The files srcExtension gets replaced with this string        #
+# SkipBadSubdirs:   If this is enabled, the subfolders of any _XX marked parent  #
+#                    are skipped in addition.                                    #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
 # Imports
 import os
 from os.path import join, basename, dirname
@@ -8,22 +24,20 @@ import natsort
 srcExtension = '.tar.gz'
 dstExtension = '.tar'
 
-verbose = True
-
 wds = [
-r"Z:\_FEMDAQ V2 for Measurement\Hausi\230404\Messungen\03_02 Unreg Kombis (IMax5V)",
+r"<Drive>\<My folderpath here>",
 ]
 
 
 SkipBadSubdirs = True
 
 _XXBadDirs = list()
-for wd in wds:
+for wd in wds: # Iterate wds
     os.chdir(wd)
     wd = os.getcwd()
     print(f"wd is now: {wd}")
     
-    for root, dirs, files in os.walk("."):
+    for root, dirs, files in os.walk("."):  # Iterate all folders recursively
         # Firstly check if path contains one of the already marked bad measurement-folders
         if any(root.__contains__(_bDir) for _bDir in _XXBadDirs):
             print("Bad parent - skipped:" + root)
@@ -36,7 +50,7 @@ for wd in wds:
             continue
 
 
-
+        
         print(f"Scanning for tars in: \"{root}\"".ljust(100), end="")
         tarFiles = glob.glob(join(root, "*"+srcExtension))
         tarFiles = natsort.os_sorted(tarFiles)

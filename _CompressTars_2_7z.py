@@ -1,3 +1,29 @@
+##################################################################################
+# This script uses 7-zip (standard windows installation path) to compress the    #
+# uncompressed tar-archives which were captured by the PyCam2-Server as 7z.      #
+# Note:                                                                          #
+# Tar-archives with a size of 21GB can be compressed to 1.4GB as most of the     #
+# images are dark.                                                               #
+#                                                                                #
+# How to use (variable explanation):                                             #
+# xCmd:                 Path to the 7-zip executable.                            #
+# xArg:                 7-zip arguments (see options below).                     #
+# globSearch4TarName:   The script filters the files using this filter-string    #
+#                        (can contian reg-exp).                                  #
+# targetArchiveName:    7-zip compresses the filtered files into an 7z-archive   #
+#                        with this filename into the same folder.                #
+# verbose:              When true, extra information is printed to the console.  #
+# wds:                  A list of strings with the working-directories which are #
+#                        scanned iteratively for tar-archives using the          #
+#                        globSearch4Tarname filter.                              #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
+
+
+
+
 # Imports
 import os
 from os.path import join, basename, dirname
@@ -40,12 +66,13 @@ import natsort
 # 7z a -mx9 -md128m -mfb128 -mmt24 -sdel <archive_name> [<file_names>...]
 
 xCmd = 'C:\\Program Files\\7-Zip\\7z.exe'  # Path to 7zip
-xArg = 'a -mx9 -sdel'
-# xArg = 'a -mx9'
+xArg = 'a -mx9 -sdel'       # 7-zip will delete the compressed tar-archives after successful compression
+# xArg = 'a -mx9'             # 7-zip will keep the tars (test-flags for debug-reasons)
 
-targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 
 globSearch4TarName = '*_rPiHQCam2-*.tar'
+targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
+
 
 verbose = True
 

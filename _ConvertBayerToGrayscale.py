@@ -1,3 +1,50 @@
+##################################################################################
+# This script converts raw bayer data into 16 bit grayscale images and means     #
+# nPicsPerSS * nMeasPnts = nPicsToMean together.                                 #
+# E.g.:                                                                          #
+#  nPicsPerSS = 3, nMeasPnts = 1: [mean(imgs[0:3]), mean(imgs[3:6]), etc...]     #
+#  nPicsPerSS = 3, nMeasPnts = 2: [mean(imgs[0:6]), mean(imgs[6:12]), etc...]    #
+#                                                                                #
+# The PyCam2-Server already supports this conversion, but its implemented as an  #
+# option which can be deactivated, as the conversion consumes much time which    #
+# can be avoided by converting the images via post-processing.                   #
+#                                                                                #
+# As PNGs further compress the images, the resulting image-folder only have a    #
+# datasize of a view tens of MB.                                                 #
+#                                                                                #
+# How to use (variable explanation):                                             #
+# wds:              List of folders which are  scanned recursevly for raw bayer- #
+#                    data
+# bayerType:        Extension-filter string to search for the bayer-data-files.  #
+# demosaicType:     Extension in which the files should be stored.               #
+# nPicsPerSS:       Defines how much images are meaned together pixel by pixel.  #
+# nMeasPnts:        Defines how much measurement points were carried out in a    #
+#                    row.                                                        #
+# sensBlackLevel:   Is used to subtract the black-level (see options below!)     #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
+
+bayerType = "raw"           # raw bayer
+demosaicType = "png"        # gs for gray-scale
+nPicsPerSS = 3              # Images taken per SS
+nMeasPnts = 1               # Amount of measurements were taken per line (Rpts of sweep per line)
+
+# https://www.strollswithmydog.com/pi-hq-cam-sensor-performance/
+# Black-Level typically 256 .. 257.3 depending on gain; For Gain=1 typically 256.3DN
+# zeroPxlsBelow < 0: No zeroing
+# zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
+# zeroPxlsBelow > 0: Set "pxls < Value = 0"
+# sensBlackLevel = 256 + 12
+sensBlackLevel = 0
+
+
+
+
+
+
+
 import os
 from os.path import join, basename, dirname, isdir, exists, isfile
 import numpy as np
@@ -23,24 +70,38 @@ from misc import DurationOfLambda
 
 
 def DumpCollectionAs16BitPNG(ImgCollection, PathCollection):
+    """Saves the iterable ImgCollection as 16 bit grayscale PNGs with the names of PathCollection. Normally the mean images are stored with this function.
+
+    Args:
+        ImgCollection (iterable image data): Iterable object of 16bit images
+        PathCollection (iterable strings): Iterable object containing the filenames (including folder) of the "0000" images (first image of a measurement-point)
+
+    Returns:
+        iterable strings: Iterable object containing the actual filenames the images were saved as.
+    """
     savePaths = []
-    for _i in range(len(ImgCollection)):
+    for _i in range(len(ImgCollection)): # Iterate through images
         img = ImgCollection[_i]                                                         # Grab image
         path = PathCollection[_i]                                                       # Grab corresponding path
         savePaths.append(path.replace("_0000." + bayerType, "_mean." + demosaicType))   # Replace to target-path
 
         # Save 16bit PNG
-        # npng.write_png(savePaths[-1], img)
         cv.imwrite(savePaths[-1], img)
-        # plt.imsave(savePaths[-1], img, cmap="gray")
-        # pilim = Image.fromarray(img.astype(np.uint32))
-        # pilim.save(savePaths[-1])
         print(f"Wrote {basename(savePaths[-1])}", end="\r")                                                # Log for how far it's already gone
     print("")
     return savePaths
 
 
 def DumpCollectionIntoPNG8(ImgCollection, PathCollection):
+    """Saves the iterable ImgCollection as 8 bit grayscale PNGs with the names of PathCollection. Normally the mean images are stored with this function.
+
+    Args:
+        ImgCollection (iterable image data): Iterable object of 8bit images
+        PathCollection (iterable strings): Iterable object containing the filenames (including folder) of the "0000" images (first image of a measurement-point)
+
+    Returns:
+        iterable strings: Iterable object containing the actual filenames the images were saved as.
+    """
     savePaths = []
 
     png8Target = "PNG8"
@@ -70,6 +131,15 @@ def DumpCollectionIntoPNG8(ImgCollection, PathCollection):
 
 
 def DumpCollectionAsGray(ImgCollection, PathCollection):
+    """Saves the iterable ImgCollection binary pickle-files (.gray extension) with the names of PathCollection. Normally the mean images are stored with this function.
+
+    Args:
+        ImgCollection (iterable image data): Iterable object of images
+        PathCollection (iterable strings): Iterable object containing the filenames (including folder) of the "0000" images (first image of a measurement-point)
+
+    Returns:
+        iterable strings: Iterable object containing the actual filenames the images were saved as.
+    """
     savePaths = []
     for _i in range(len(ImgCollection)):
         img = ImgCollection[_i]                                     # Grab image
@@ -88,6 +158,11 @@ def DumpCollectionAsGray(ImgCollection, PathCollection):
 
 
 def DeleteFiles(FilepathCollection):
+    """Deletes all files from the iterable filepath-collection.
+
+    Args:
+        FilepathCollection (iterable): Iterable object of filepaths (strings) which should be deleted.
+    """
     for _path in FilepathCollection:
         os.remove(_path)
     return
@@ -95,7 +170,7 @@ def DeleteFiles(FilepathCollection):
 
 
 
-folders = [
+wds = [
 # ### Before Cam-Change!
 # r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)\230406_185118 Tip Ch1",
 # r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)\230406_193753 Tip Ch2",
@@ -191,9 +266,9 @@ sensBlackLevel = 0
 
 
 
-for _fold in folders:
+for _fold in wds: # Iterate working directories
 
-    for root, dirs, files in os.walk(_fold):
+    for root, dirs, files in os.walk(_fold): # Iterate current wd recurively
 
         print(f"Postprocessing: {root}")
         files = glob.glob(join(root, "*." + bayerType))
@@ -213,6 +288,7 @@ for _fold in folders:
         print(f"Demosaic Measurement-Bayer 2 Grayscale...")
         measImgs = DemosaicBayer(measImgs)
         
+        # Meaning nPicsPerSS
         if nPicsPerSS > 1:
             print(f"Meaning Darkfield-Images (nPicsPerSS)...")
             blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
@@ -222,6 +298,7 @@ for _fold in folders:
             measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
             measClipPaths = measPaths[::nPicsPerSS]
 
+        # Meaning nMeasPnts
         if nMeasPnts > 1:
             print(f"Meaning Darkfield-Images (nMeasPnts)...")
             blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
@@ -231,6 +308,7 @@ for _fold in folders:
             measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
             measPaths = measPaths[::nMeasPnts]
 
+        # Subtract blacklevel
         if sensBlackLevel >= 0:
             print(f"Subtracting black-level from 12Bit Images...")
             if sensBlackLevel == 0:
@@ -247,121 +325,20 @@ for _fold in folders:
             measImgs = SubtractFromImgCollection(measImgs, sensBlackLevel)
             measImgs = StretchBrightness(measImgs, blackLevel=sensBlackLevel, whiteLevel=0xFFF) # 12bit max
 
-
-        # print(f"Subtracting Darkfield- from Measurement-Images...")
-        # measImgs = SubtractFromImgCollection(ImgCollection=measImgs, ImgOrBlacklevel=blckImgs[0], ShowImg=False) # MeasImgs - Darkfield
-
-
-        # #### Paper-Examples 12-bit -> 16-bit)
-        # paper12Bit = np.array([
-        #     measImgs[805],
-        #     measImgs[806],
-        #     measImgs[807],
-        # ])
-        # paths12Bit = [
-        #     r"C:\Users\ham38517\Downloads\save\805 12bit_0000.png",
-        #     r"C:\Users\ham38517\Downloads\save\806 12bit_0000.png",
-        #     r"C:\Users\ham38517\Downloads\save\807 12bit_0000.png",
-        # ]
-        # paths16Bit = [
-        #     r"C:\Users\ham38517\Downloads\save\805 16bit_0000.png",
-        #     r"C:\Users\ham38517\Downloads\save\806 16bit_0000.png",
-        #     r"C:\Users\ham38517\Downloads\save\807 16bit_0000.png",
-        # ]
-
-
-        # savPath = DumpCollectionAs16BitPNG(paper12Bit, paths12Bit)
-        # paper16Bit = ConvertBitsPerPixel(ImgCollection=paper12Bit, originBPP=12, targetBPP=16)    
-        # savPath = DumpCollectionAs16BitPNG(paper16Bit, paths16Bit)
-
-        
+        # 12 bit -> 16 bit shift (values pixelwise << 4)
         print(f"12Bit Measurement-Images -> 16Bit Images...")
         measImgs = ConvertBitsPerPixel(ImgCollection=measImgs, originBPP=12, targetBPP=16)    
 
 
-
-        # print("Starting black images PNG Dump...")
-        # start = time()
-        # pngPaths = DumpCollectionAs16BitPNG(blckImgs, blckClipPaths)
-        # print(f"PNG-Dump of Black images took: {(time()-start):.3f}s")
-
-        # print("Starting measurement images PNG8 Dump...")
-        # start = time()
-        # pngPaths = DumpCollectionAs8BitPNG(blckImgs, blckClipPaths)
-        # print(f"PNG8-Dump of Measurement images took: {(time()-start):.3f}s")
-
-
-        # print("Starting black images PKL Dump...")
-        # start = time()
-        # pklPaths = DumpCollectionAsGray(blckImgs, blckClipPaths)
-        # print(f"PKL-Dump of Black images took: {(time()-start):.3f}s")
-
-
-
-
-        # blckSubImgs = []
-        # blckSubImgMinMax = []
-        # fPng, aPng = plt.subplots()
-        # fPkl, aPkl = plt.subplots()
-        # for _iPath in range(len(pngPaths)):
-        #     # Grab pkl-image again
-        #     pklPath = pklPaths[_iPath]
-        #     fTest_Pkl = open(pklPath, "rb")
-        #     imgPkl = pickle.load(fTest_Pkl)
-        #     fTest_Pkl.close()
-
-        #     # Grab 16bit png again
-        #     pngPath = pngPaths[_iPath]
-        #     imgPng = cv.imread(pngPath, cv.IMREAD_ANYDEPTH)
-
-        #     blckSubImgs.append(np.subtract(imgPkl, imgPng))
-        #     blckSubImgMinMax.append({"min": np.min(blckSubImgs[-1]), "max": np.max(blckSubImgs[-1])})
-
-        #     aPkl.cla()
-        #     aPng.cla()
-        #     aPkl.imshow(imgPkl)
-        #     aPng.imshow(imgPng)
-
-        # print("Starting measurement images PNG Dump...")
-        # start = time()
-        # pngPaths = DumpCollectionAs16BitPNG(measImgs, measClipPaths)
-        # print(f"PNG-Dump of Measurement images took: {(time()-start):.3f}s")
-
-        # print("Dumping Measurement-Images as PNG8 for ocular observance...")
-        # start = time()
-        # png8Imgs = ConvertBitsPerPixel(OriImgCollection=measImgs, originBPP=16, targetBPP=8)
-        # png8Imgs = png8Imgs.astype(np.uint8)
-        # png8Paths = DumpCollectionIntoPNG8(png8Imgs.astype(np.uint8), measClipPaths)
-        # print(f"PNG8-Dump of Measurement images took: {(time()-start):.3f}s")
-
+        # Saving 16bit PNGs
         print("Dumping Measurement-Images as 16bit-PNGs for PiMagePro...")
         start = time()
         # pklPaths = DumpCollectionAsGray(measImgs, measClipPaths)
         png16Paths = DumpCollectionAs16BitPNG(measImgs, measClipPaths)
         print(f"PNG-Dump of Measurement images took: {(time()-start):.3f}s")
 
-        # measSubImgs = []
-        # measSubImgMinMax = []
-        # for _iPath in range(len(pngPaths)):
-        #     # Grab pkl-image again
-        #     pklPath = pklPaths[_iPath]
-        #     fTest_Pkl = open(pklPath, "rb")
-        #     imgPkl = pickle.load(fTest_Pkl)
-        #     fTest_Pkl.close()
 
-        #     # Grab 16bit png again
-        #     pngPath = pngPaths[_iPath]
-        #     imgPng = cv.imread(pngPath, cv.IMREAD_ANYDEPTH)
-
-        #     measSubImgs.append(np.subtract(imgPkl, imgPng))
-        #     measSubImgMinMax.append({"min": np.min(measSubImgs[-1]), "max": np.max(measSubImgs[-1])})
-
-        #     aPkl.cla()
-        #     aPng.cla()
-        #     aPkl.imshow(imgPkl)
-        #     aPng.imshow(imgPng)
-
-
+        # Remove the original bayer data files
         print("Deleting obsolet .raw-files...")
         DeleteFiles(blckPaths)
         DeleteFiles(measPaths)

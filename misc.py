@@ -1,3 +1,9 @@
+##################################################################################
+# misc contains some helper-functions used by other scripts                      #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
 import os
 from os.path import join, split, dirname, basename, exists
 import subprocess
@@ -22,9 +28,15 @@ class bcolors:
     UNDERLINE = "\033[4m"
 
 
+
+
+
 class Logger():
+    """Creates a Logger-Instance writing to console as well as to a file.
+    """
+
     def __init__(self, LogFilePath):
-        """_summary_
+        """Creates a Logger-Instance writing to console as well as to a file.
 
         Args:
             LogFilePath (string): Filepath of logfile. (existing one gets overwritten)
@@ -55,15 +67,51 @@ class Logger():
         self.log.close() # Close file
 
 
+
+
+
+
 def DiffTime(t0, t1):
-  """t1 - t0"""
-  return t1 - t0
+    """t1 - t0
+
+    Args:
+        t0 (time): Timestamp
+        t1 (time): Timestamp
+
+    Returns:
+        time: Difference time between t1 and t0
+    """
+    return t1 - t0
+
+
+
+
+
 
 def DiffToNow(t0):
-  """Current time - t0"""
-  return DiffTime(t0, time())
+    """Current time - t0
+
+    Args:
+        t0 (time): Timestamp
+
+    Returns:
+        time: Difference time between now and t0
+    """
+    return DiffTime(t0, time())
+
+
+
+
 
 def Time2Human(time):
+    """Converts the given time into \"[dd hh mm ss ms]\"
+
+    Args:
+        time (time): Time-value
+
+    Returns:
+        _type_: None
+    """
     DD = int(time / (3600 * 24))  # Get integer days
     time = time - (3600 * 24 * DD)  # Remove days from time
     HH = int(time / 3600)  # Get integer hours
@@ -85,11 +133,27 @@ def Time2Human(time):
     else:
         return "[%03dms]" % (MS)
 
+
+
+
+
 def ClearLine():
+    """Cleans the current written line of the console
+    """
     print("\r\033[K", end="\r", flush=True)
 
 
 def LogLine(t0, yellowMsg="", whiteMessage="", yFill = 0, wFill=65, end=""):
+    """Writes a colorized log-line
+
+    Args:
+        t0 (time): Time-value
+        yellowMsg (str, optional): Yellow infotext. Defaults to "".
+        whiteMessage (str, optional): White infotext. Defaults to "".
+        yFill (int, optional): Ensures the yellow messages is int chars long. Defaults to 0.
+        wFill (int, optional): Ensured the entire message is int chars long. Defaults to 65.
+        end (str, optional): Custom line-end. Defaults to "".
+    """
     wFill -= yellowMsg.__len__()
     if yFill > wFill:
         wFill = yFill
@@ -105,21 +169,44 @@ def LogLineOK(greenMsg="Ok"):
     print(bcolors.OKGREEN + greenMsg + bcolors.ENDC)
 
 
+
+
+
+
 def GrabPklFile(PklPath):
+    """Loads a binary pickle file.
 
-  _pklPath = glob.glob(PklPath)
-  if _pklPath.__len__() == 1:
-    LogLine(None, " - Found: ", basename(_pklPath[0]), yFill=15, wFill=0, end="\n")
-    f = open(_pklPath[0], "rb")
-    pkl = pickle.load(f)
-    f.close()
-    return pkl
+    Args:
+        PklPath (str): Path to pickle file
 
-  LogLine(None, " - Missing: ", "Wasn't able to find any " + basename(PklPath), yFill=15, wFill=0, end="\n")
-  return
+    Returns:
+        var: pickle content
+    """
+    _pklPath = glob.glob(PklPath)
+    if _pklPath.__len__() == 1:
+        LogLine(None, " - Found: ", basename(_pklPath[0]), yFill=15, wFill=0, end="\n")
+        f = open(_pklPath[0], "rb")
+        pkl = pickle.load(f)
+        f.close()
+        return pkl
+
+    LogLine(None, " - Missing: ", "Wasn't able to find any " + basename(PklPath), yFill=15, wFill=0, end="\n")
+    return
+
+
+
+
 
 
 def CollectEachValueOnceFromVector(vec):
+    """Collects each value only once from a given iterable object.
+
+    Args:
+        vec (iterable): Iterable object.
+
+    Returns:
+        iterable: List containing the different vec-values once.
+    """
     onceVals = list()
 
     for v in vec:
@@ -131,44 +218,61 @@ def CollectEachValueOnceFromVector(vec):
 
 
 
+
+
+
 def PlotLegend(fig, loc, ncol=1):
-  lines = []
-  labels = []
-  for axis in fig.axes:
-    Line, Label = axis.get_legend_handles_labels()
-    # print(Label)
-    for _iLab in range(len(Label)):
-      if labels.__contains__(Label[_iLab]):
-        continue
-      lines.append(Line[_iLab])
-      labels.append(Label[_iLab])
-  fig.legend(lines, labels, loc=loc, ncol=ncol)
-  return
+    """Plots the legend of a figure, but removes double labels.
+
+    Args:
+        fig (iterable): Figure object.
+        loc (str): Location of the legend.
+        ncol (int, optional): Defines n columns for the legend. Defaults to 1.
+    """
+    lines = []
+    labels = []
+    for axis in fig.axes:
+        Line, Label = axis.get_legend_handles_labels()
+        # print(Label)
+        for _iLab in range(len(Label)):
+            if labels.__contains__(Label[_iLab]):
+                continue
+            lines.append(Line[_iLab])
+            labels.append(Label[_iLab])
+    fig.legend(lines, labels, loc=loc, ncol=ncol)
+    return
+
+
+
+
+
+
 
 def PlotSupTitleAndLegend(fig, suptitle, loc="upper right", ncol=1):
-  PlotLegend(fig, loc, ncol)
-#   lines = []
-#   labels = []
-#   for axis in fig.axes:
-#     Line, Label = axis.get_legend_handles_labels()
-#     # print(Label)
-#     for _iLab in range(len(Label)):
-#       if labels.__contains__(Label[_iLab]):
-#         continue
-#       lines.append(Line[_iLab])
-#       labels.append(Label[_iLab])
-#   fig.legend(lines, labels, loc=loc, ncol=ncol)
-  fig.suptitle(suptitle)
-  # deriFig.suptitle("Brightness-factors of each pixels (mean)")
-  return
+    """Plots a suptitle and the legend of a figure, but removes double labels.
+
+    Args:
+        fig (figure): Figure object.
+        suptitle (str): String used as suptitle.
+        loc (str): Location of the legend.
+        ncol (int, optional): Defines n columns for the legend. Defaults to 1.
+    """
+    PlotLegend(fig, loc, ncol)
+    fig.suptitle(suptitle)
+    return
 
 
 
 
 def SaveFigList(figList, saveFolder, figSize, dpi):
-    # cmPerInch = 2.54
+    """Accepts a list of figures which are stored using their title as savename.
 
-
+    Args:
+        figList (iterable): Iterable of figures.
+        saveFolder (str): Folder-location where the figures are saved.
+        figSize (tuple): Size of the figure as (<w>, <h>). w, h = inches.
+        dpi (uint): Resoluton (dots per inch).
+    """
     if type(figList) != list:
         figList = [figList] # encapsulate
 
@@ -189,27 +293,25 @@ def SaveFigList(figList, saveFolder, figSize, dpi):
         if dpi == None:
             dpi = 150
         if size != None:
-            fig.set_size_inches(size) #np.divide(size, cmPerInch))
+            fig.set_size_inches(size)
 
         fig.savefig(sFilepath, dpi=dpi)
         fig.clf()
         LogLineOK()
 
-    # LogLine(None, "Saving figures:", end="\n")
-    # if not exists(saveFolder):
-    #     os.makedirs(saveFolder)
-    # for _iFig in range(len(figs)):
-    #     figFilename = join(saveFolder, figNames[_iFig] + ".png")
-    #     LogLine(None, "Saving: ", basename(figFilename), wFill=90)
-    #     figs[_iFig].set_size_inches(figWidth_cm / cmPerInch, figHeight_cm / cmPerInch)
-    #     figs[_iFig].savefig(figFilename, dpi=figDPI)
-    #     figs[_iFig].clf()
-    #     LogLineOK()
-    # plt.close('all')
+
+
+
 
 
 
 def DurationOfLambda(msg:str, process):
+    """Measures the time consumed by the given lambda-function.
+
+    Args:
+        msg (str): String describing the process-functionality.
+        process (function): Executable function.
+    """
     start = time()
     process()
     print(f"{msg} took {time()-start:.4f}s")
@@ -218,7 +320,20 @@ def DurationOfLambda(msg:str, process):
 
 
 
+
+
+
+
 def GetQuadrantOfSpot(spotCoord, imgWH):
+    """Returns the x, y indicies of the quadrant in which the given spotCoord is located within an target image size of imgWH.
+
+    Args:
+        spotCoord (tuple): X and y coordinate (x, y).
+        imgWH (tuple): Width and height (w, h) in which the XY-quadrant should be determined.
+
+    Returns:
+        int, int: y, x quadrant indicies.
+    """
     imgW2 = imgWH[0]//2
     imgH2 = imgWH[1]//2
 

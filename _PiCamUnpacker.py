@@ -1,73 +1,48 @@
+##################################################################################
+# This script uses 7-zip (standard windows installation path) to extract the     #
+# images which were captured by the PyCam2-Server and stores it into a new sub-  #
+# directory (selectable foldername) for subsequent pre-clipping or data-extrac-  #
+# tion.                                                                          #
+# Because of file size reasons the tars additionally compressed by the PyCam2-   #
+# Server as tar.gz directly (server option/command) or the tars are manually     #
+# compressed to a 7z using 7-zip (see _CompressTars_2_7z.py).                    #
+#                                                                                #
+# How to use (variable explanation):                                             #
+# xCmd:             Path to the 7-zip executable.                                #
+# xPath:            Name of the new subfolder where the images decompressed to.  #
+# xLog:             Filename of the additional logfile. (None = only console)    #
+# workDirs:         This folder is scanned recursevly for possible candidates of #
+#                    a possible measurement-folder.                              #
+# picDir:           Name of the subfolder where the PyCam2 pictures are stored   #
+#                    in.                                                         #
+# SkipBadSubdirs:   If this is enabled, the subfolders of any _XX marked parent  #
+#                    are skipped in addition.                                    #
+# imgWin:           Is used to define the area of interest:                      #
+#                   1.) [w, h]:       Defines width and height of the image      #
+#                                      around the image center                   #
+#                    1.) [x, y, w, h]: Defines the left upper corner (x, y) and  #
+#                                      the image size (width, height).           #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
+
 # Imports
 import os
 import os.path
 import subprocess
 import sys
 import time
+from misc import bcolors, Logger, ClearLine, DiffTime, Time2Human
 
 
 # Preamble & Helpers
-class bcolors:
-    HEADER = "\033[95m"
-    OKBLUE = "\033[94m"
-    OKCYAN = "\033[96m"
-    OKGREEN = "\033[92m"
-    WARNING = "\033[93m"
-    FAIL = "\033[91m"
-    ENDC = "\033[0m"
-    BOLD = "\033[1m"
-    UNDERLINE = "\033[4m"
-
-
-class Logger(object):
-    def __init__(self):
-        self.terminal = sys.stdout
-        self.log = open(xLog, "w")
-
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
-
-    def flush(self):
-        # this flush method is needed for python 3 compatibility.
-        # this handles the flush command by doing nothing.
-        # you might want to specify some extra behavior here.
-        pass
-
-def ClearLine():
-    print("\r\033[K", end="\r", flush=True)
-
-def TimeDelta(t0, t1):
-    return t1 - t0
-
-
-def ConvertTime2Human(time):
-    DD = int(time / (3600 * 24))  # Get integer days
-    time = time - (3600 * 24 * DD)  # Remove days from time
-    HH = int(time / 3600)  # Get integer hours
-    time = time - (3600 * HH)  # Remove hours from time
-    MM = int(time / 60)  # Get integer minutes
-    time = time - (60 * MM)  # Remove hours from time
-    SS = int(time % 60)  # Get integer minutes
-    MS = int((time % 1) * 100)  # Get integer milliseconds
-
-    # Check the cases and return correct string
-    if not DD == 0:
-        return "%02dd %02dh %02dm %02ds %03dms" % (DD, HH, MM, SS, MS)
-    elif not HH == 0:
-        return "%02dh %02dm %02ds %03dms" % (HH, MM, SS, MS)
-    elif not MM == 0:
-        return "%02dm %02ds %03dms" % (MM, SS, MS)
-    elif not SS == 0:
-        return "%02ds %03dms" % (SS, MS)
-    else:
-        return "%03dms" % (MS)
 
 
 def PrintProcessStats(t0, t1, t2):
     print("Processed files:" + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
-    print("Process time:   " + bcolors.OKBLUE + ConvertTime2Human(TimeDelta(t1, t2)).rjust(24) + bcolors.ENDC)
-    print("Cumulative time:" + bcolors.OKBLUE + ConvertTime2Human(TimeDelta(t0, t2)).rjust(24) + bcolors.ENDC)
+    print("Process time:   " + bcolors.OKBLUE + Time2Human(DiffTime(t1, t2)).rjust(24) + bcolors.ENDC)
+    print("Cumulative time:" + bcolors.OKBLUE + Time2Human(DiffTime(t0, t2)).rjust(24) + bcolors.ENDC)
 
 
 def PrintVerbosePaths(fPath, xPath, fPathAbs, xPathAbs):
@@ -178,8 +153,6 @@ r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, R
 r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_131423 650V T4=5, T1,2,3=gnd",
 ]
 
-# rmCmd = "del /f"  # delete command to delete files; Obsolet, del doesn't support UNC-paths! -> os.remove(fPath)
-
 fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # List of filetype which is counted at the end for statistics
 
 # Debug flags
@@ -192,20 +165,16 @@ SkipBadSubdirs      = True       # If a parent folder is marked as bad measureme
 
 ###### DO NOT TOUCH AREA ######
 t0 = time.time()  # Script starts
-# Prepare format-string for 7zip
-szCmd = xCmd + ' x "{}" -o"{}" -r -y'
-
-# # Prepare format-string for file-delete
-# rmCmd = rmCmd + ' "{}"' # Replaced with os.remove(fPath)
+szCmd = xCmd + ' x "{}" -o"{}" -r -y' # Prepared format-string for 7zip
 
 
 # Change working-directory
 owdPath = os.getcwd()
 pyPath = os.path.dirname(__file__)
 
-for workDir in workDirs:
-    os.chdir(workDir)
-    cwdPath = os.getcwd()
+for workDir in workDirs:                # Iterate the working directories
+    os.chdir(workDir)                   # Change path to wd
+    cwdPath = os.getcwd()               #  read back for debugging-resons
     if verbose == True:
         print(bcolors.WARNING + "Changing WD..." + bcolors.ENDC)
         print(bcolors.FAIL + "Old" + bcolors.ENDC + " working dir:\t" + owdPath)
@@ -220,7 +189,7 @@ for workDir in workDirs:
 
 
 
-    # Extract tar.gz
+    # Extract tar.gz or 7z files
     print("\r\n")
     print("Extracting *.tar.gz/*.7z:")
     fCnt = 0

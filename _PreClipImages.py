@@ -1,3 +1,24 @@
+##################################################################################
+# This script is used to clip the reconverted 16bit grayscale PNGs to the area   #
+# of interest. This can greatly reduce the consumed time for the data-extraction #
+# of the images.                                                                 #
+#                                                                                #
+# How to use (variable explanation):                                             #
+# parentDir:        This folder is scanned recursevly for possible candidates of #
+#                    a possible measurement-folder.                              #
+# picDir:           Name of the subfolder where the PyCam2 pictures are stored   #
+#                    in.                                                         #
+# SkipBadSubdirs:   If this is enabled, the subfolders of any _XX marked parent  #
+#                    are skipped in addition.                                    #
+# imgWin:           Is used to define the area of interest:                      #
+#                    1.) [w, h]:       Defines width and height of the image     #
+#                                      around the image center                   #
+#                    1.) [x, y, w, h]: Defines the left upper corner (x, y) and  #
+#                                      the image size (width, height).           #
+#                                                                                #
+# 2023 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
 import os
 import time
 
@@ -99,10 +120,6 @@ r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, R
 picDir = "Pics"
 skipBadSubDir = True
 
-# imgWin = [x, y, w, h] -     x, y = Left upper cornder; w(idth), h(eight)
-# imgWin = [1730, 1237, 550, 550]  # r"D:\05 PiCam\221222 HQCam SOI2x2_0005 (Paper)\Messungen\_alte Cam (KS-Test + Aktivierung ok)_XX"
-# imgWin = [415, 573, 700, 700]  # r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen"
-
 # PyCam2 Paper measurements!
 # imgWin = [299, 713, 650, 650]   # r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen" !!!! Before Cam-Change !!!!
 imgWin = [399, 690, 650, 650]      # r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen" !!!! After Cam-Chane !!!!
@@ -127,8 +144,8 @@ h = imgWin[3]
 
 
 _XXBadDirs = list()
-for parentDir in parentDirs:
-  for root, dirs, files in os.walk(parentDir):
+for parentDir in parentDirs: # Iterate through parentDirs
+  for root, dirs, files in os.walk(parentDir): # Iterate recursively through the parentDirs
     # Firstly check if path contains one of the already marked bad measurement-folders
     if any(root.__contains__(_bDir) for _bDir in _XXBadDirs):
       LogLine(None, "Bad parent - skipped: ", root, wFill=0, end="\n")
@@ -160,19 +177,8 @@ for parentDir in parentDirs:
     loadPicDir = os.path.join(root, picDir)
     savePicDir = loadPicDir
 
-    # if not os.path.exists(savePicDir):
-    #   LogLine(t0, "Created Savedirectory: ", savePicDir, wFill=0, end="\n")
-    #   os.makedirs(savePicDir)
-
-    # LogLine(t0, "Copying FEMDAQ data...")
-    # for file in files:
-    #   if any(file.endswith(ext) for ext in [".png", ".dat", ".swp", ".resistor"]):
-    #     shutil.copy2(os.path.join(root, file), saveDir)
-    # LogLineOK()
-
     picFiles = os.listdir(loadPicDir)
     picFiles = natsort.natsorted(picFiles, alg=natsort.ns.IGNORECASE) # Be sure that all pictures sorted correctly!
-    # scaleFac = str.format("{:+03.1f}%", (factor-1) * 100)
     fileIsJPG = False
     for pFile in picFiles:
       if pFile.endswith(".jpg"):
@@ -188,18 +194,13 @@ for parentDir in parentDirs:
         sPath = sPath.replace(".jpg", ".png")
 
       LogLine(None, yellowMsg=pFile, whiteMessage="Processing Image    ", yFill=50, wFill=0, end="\r")
-      # LogLine(None, yellowMsg=pFile, whiteMessage="Load RGB-Image", yFill=50, wFill=0, end="")
-      # img = cv.imread(lPath)
       img = cv.imread(lPath, cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE)
 
-      # LogLine(-1, whiteMessage="-> Clipping image", yFill=0, wFill=0, end="")
       img = img[y:y+h, x:x+w]
 
       # Override the image!
-      # LogLine(-1, whiteMessage="-> Saving RGB.png", yFill=0, wFill=0, end="")
       cv.imwrite(sPath, img)
 
-      # LogLine(-1, whiteMessage="-> Delete old RGB.jpg", yFill=0, wFill=25, end="")
       if fileIsJPG:
         os.remove(lPath) # Do not remove. PNG already overwrites PNG
     LogLineOK()
