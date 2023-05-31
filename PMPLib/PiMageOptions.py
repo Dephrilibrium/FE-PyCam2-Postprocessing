@@ -38,7 +38,8 @@ class PiMageOptions():
     _output += str.format("Image_UseForMeanNPoints".ljust(_fill)                + "={}\n", self.Image_UseForMeanNPoints)            # <int>: Means together n measurement-points; ".swp": Tryies to find a sweep-file where it can extract the number of n measurement points
     _output += str.format("Image_MeanNPicsPerSS".ljust(_fill)                   + "={}\n", self.Image_MeanNPicsPerSS)               # Means n pics (in row) together
     _output += str.format("Image_OverexposedBrightness".ljust(_fill)            + "={}\n", self.Image_OverexposedBrightness)        # Defines at which 16bit value a pixel counts as overexposed
-
+    _output += str.format("Image_MinBright2CountArea".ljust(_fill)              + "={}\n", self.Image_MinBright2CountArea)          # Defines at which 16bit value a pixel counts as brightness-contributing pixel
+ 
     # Spot-detection
     _output += str.format("\n[Spot-detection]\n")
     _output += str.format("SpotDetect_Dilate".ljust(_fill)                      + "={}\n", self.SpotDetect_Dilate)                  # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot

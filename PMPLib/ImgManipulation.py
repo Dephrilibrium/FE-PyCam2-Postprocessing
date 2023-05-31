@@ -8,8 +8,18 @@ import matplotlib.pyplot as plt
 
 
 def CropImage(Image, CropWindow):
-  # Image = Image.copy() # Create own copy! -> Copy only the cropped image! -> RAM-usage-improvement was unbelievable 😅
+  """Crops a given image.
 
+  Args:
+      Image (image): Image which should be cropped.
+      CropWindow (Quadtuple): [x,y,w,h], xy = left upper corner, wh = image size; None = No crop
+
+  Raises:
+      Exception: If CropWindow is not in the right format.
+
+  Returns:
+      image: Returns a cropped copy of the input-image
+  """
   if type(CropWindow) == list and CropWindow.__len__() == 4:
     x = CropWindow[0]
     y = CropWindow[1]
@@ -31,30 +41,20 @@ def CropImage(Image, CropWindow):
 
 
 
-# def CropImages(imgCollection, cropWindow):
-#   """Simple function which opens, crops and means all paths of the given list of filenames together into one image
-
-#   Input:
-#   ----------
-#   picPathVector: List of image-paths which will combined to one mean-image
-
-#   Return:
-#   ----------
-#   imgMean: Represents the cropped and meaned image
-#   """
-#   croppedImgs = list()
-#   for cImg in imgCollection:
-#     cImg = CropImage(cImg, cropWindow)
-#     croppedImgs.append(cImg) # read image as np-array (380x507), 0 means grayscale
-
-#   return croppedImgs
-
-
-
-
-
-
 def MeanImages(ImgCollection, ImgsPerMean, ShowImg=False):
+  """Means always n pictures into one mean image.
+
+  Args:
+      ImgCollection (iterable, images): A iterable collection of images (must have an integer length of ImgsPerMean)
+      ImgsPerMean (int): Always n images in a row meaned together.
+      ShowImg (bool, optional): Show each image (during debugging). Defaults to False.
+
+  Raises:
+      Exception: If the amount of images is not an integer of ImgsPerMean.
+
+  Returns:
+      ImageCollection: A list of meaned images with length = len(ImgCollection/ImgsPerMean)
+  """
   if ImgsPerMean < 2:
     return ImgCollection.copy()
 
@@ -88,27 +88,28 @@ def MeanImages(ImgCollection, ImgsPerMean, ShowImg=False):
 
 
 
-
-
-def SubtractFromImgCollection(ImgCollection, ImgOrBlacklevel:int, ShowImg=False):
   '''
-  Subtracts samesize-img or value. Func is designed for 12-bit images! (necessary for overflow-detection")
+  
   ImgCollection: Iterable of images
   ImgOrBlacklevel: Single image (same size) or single value (blacklevel)
   ShowImg=False'''
-  # if type(ImgOrBlacklevel) != np.ndarray:  # Now also black-levels supported!
-  #   raise Exception("Darkfield-image should be a single image (2d-array, np.ndarray)")
 
-  # int   # ? here because of input error?
+def SubtractFromImgCollection(ImgCollection, ImgOrBlacklevel:int, ShowImg=False):
+  """Subtracts a samesize-image or an int-value from each image of the given ImgCollection.
+
+  Args:
+      ImgCollection (iterable, image): Iterable collection of images
+      ImgOrBlacklevel (int): Integer value or samesize-image which is subtracted from each ImgCollection-element.
+      ShowImg (bool, optional): Show each image (during debugging). Defaults to False.
+
+  Returns:
+      subtracted images: A list of images from which ImgOrBlacklevel was subtracted.
+  """
   _subImgs = list()
   for _iImg in range(len(ImgCollection)):
     _img = ImgCollection[_iImg]
-    # _img = _img.copy() # Create separate copy of the image
     _img = np.subtract(_img, ImgOrBlacklevel, dtype=np.uint16) # Remove darkfield
     _img[_img > 0xFFF] = 0 # Where _subImg is negative ) -> set 0
-    # _whereNegative = np.where(_subImg.astype(np.int16) < 0)
-    # for ix,iy in zip(_whereNegative[0], _whereNegative[1]):
-    #   _subImg[ix][iy] = 0
 
     _subImgs.append(_img)
 
@@ -125,22 +126,19 @@ def SubtractFromImgCollection(ImgCollection, ImgOrBlacklevel:int, ShowImg=False)
 
 
 
-def ConvertImgCollectionDataType(ImgCollection, DataType=np.uint8, ShiftRight=4):
-  _uint8Imgs = list()
-  for _img in ImgCollection:
-    # _img = _img.copy() # Create separate copy of the image
-    _uint8Imgs.append(np.right_shift(_img, ShiftRight).astype(DataType))
+def BuildThreshold(ImgCollection, Threshold:int, ThreshType, OtsuDiv:int, OverexposedValue:int):
+  """Builds a set of threshold images from the incoming ImgCollection.
 
-  return _uint8Imgs
+  Args:
+      ImgCollection (iterable, image): Iterable object containing the images which should be thresholded
+      Threshold (int): Minimum threshold which is applied to the images
+      ThreshType (cv.THRESH-Flags): Defines the auto-thres-algorithm
+      OtsuDiv (int): Divides the resulting auto-threshold value to fine tune the value.
+      OverexposedValue (int): Defines the value which is inserted into threshed pixels
 
-
-
-
-
-
-
-def BuildThreshold(ImgCollection, Threshold, ThreshType, OtsuDiv, OverexposedValue):
-  
+  Returns:
+      images: List of thresholded images
+  """
   _thresImgs = list()
   for _iImg in range(len(ImgCollection)):
     _img = ImgCollection[_iImg]
@@ -170,25 +168,20 @@ def BuildThreshold(ImgCollection, Threshold, ThreshType, OtsuDiv, OverexposedVal
 
 
 
+def CircleDraw(ImgCollection, CircleCollection, bgrColor:tuple = (255, 255, 255), pxRadius:int = 12, AddPxRadius:bool = False, ShowImg:bool = False):
+  """Draws all circle of the given circleCollection on the images of the given image-collection
 
-
-
-def CircleDraw(ImgCollection, CircleCollection, bgrColor=(255, 255, 255), pxRadius = 12, AddPxRadius=False, ShowImg=False):
-  '''Draws all circle of the given circleCollection on the images of the given image-collection
-  
-  Inputs:
-  ----------
-  imgCollection: List of images to draw the circles on
-  circleCollection: List with circles for all images
-  bgrColor: Triple with color values for the circles
-  pxRadius: Radius of the drawn circles
-  addPxRadius: False: pxRadius is fix; True: pxRadius is added to the circle-radius!
-  showImg: False: Silent process; True: Shows a preview
+  Args:
+      ImgCollection (iterable, image): Iterable object with images on which should be drawn on.
+      CircleCollection (iterable, circle): Iterable object of circles with same length. Their center-coordinates to a circle with pxRadius around.
+      bgrColor (Trituple, optional): 24bit color of the circle in (R, G, B). Defaults to (255, 255, 255).
+      pxRadius (int, optional): Radius of the draw-circles. Defaults to 12.
+      AddPxRadius (bool, optional): The circles radius is added to pxRadius. Defaults to False.
+      ShowImg (bool, optional): Show each image (during debugging). Defaults to False.
 
   Returns:
-  ----------
-  drawnImgs: List of images with the circles drawn in
-  '''
+      images: A list with images containing circles around the centers of the given CircleCollection
+  """
   _drawnImgs = list()
   if not AddPxRadius: # When pxRadius is not added it's a constant -> Saves computation time
     _radius = pxRadius
@@ -220,12 +213,16 @@ def CircleDraw(ImgCollection, CircleCollection, bgrColor=(255, 255, 255), pxRadi
 
 
 
-def DemosaicBayer(BayerCollection): #, showImgs=True):
-  grayCollection = []
+def DemosaicBayer(BayerCollection):
+  """Decodes the raw Bayer-Images into visible 16bit image-data
 
-  # if showImgs:
-  #   fRIm, aRIm = plt.subplots()
-  #   fCIm, aCIm = plt.subplots()
+  Args:
+      BayerCollection (iterable, bayer-image): Iterable object of RAW-Bayer-Images
+
+  Returns:
+      images: List of 16bit images.
+  """
+  grayCollection = []
 
   for _iImg in range(len(BayerCollection)):
     bayerImg = BayerCollection[_iImg].astype(np.uint16)
@@ -237,27 +234,24 @@ def DemosaicBayer(BayerCollection): #, showImgs=True):
     
     grayCollection.append(gsImg)
 
-    # if showImgs:
-    #   aRIm.cla()
-    #   aCIm.cla()
-    #   if "cbR" in locals():
-    #     cbR.remove()
-    #   if "cbC" in locals():
-    #     cbC.remove()
-    #   iS = aRIm.imshow(bayerImg)
-    #   cbR = plt.colorbar(iS, ax=aRIm)
-    #   iS = aCIm.imshow(gsImg)
-    #   cbC = plt.colorbar(iS, ax=aCIm)
-    #   aRIm.set_xlabel("x coordinate")
-    #   aCIm.set_xlabel("x coordinate")
-    #   aRIm.set_ylabel("y coordinate")
-    #   aCIm.set_ylabel("y coordinate")
-
   grayCollection = np.array(grayCollection)
   return grayCollection
 
 
+
+
+
 def ConvertBitsPerPixel(ImgCollection, originBPP:int, targetBPP:int):
+    """Converts the incoming ImgCollection into another value-range and adjusts the data-type if necessary.
+
+    Args:
+        ImgCollection (iterable, image): Iterable object of images.
+        originBPP (int): The current images color-bit-width
+        targetBPP (int): The target color-bit-width
+
+    Returns:
+        converted images: NDArray of converted images
+    """
     bitshift = targetBPP - originBPP
 
     shiftFunc = None
@@ -287,20 +281,26 @@ def ConvertBitsPerPixel(ImgCollection, originBPP:int, targetBPP:int):
     return targetImgs
 
 
-def StretchBrightness(ImgCollection, blackLevel:256, whiteLevel=0xFFF):
-  '''
-  Designed for 12bit images!
-  OriImgCollection: Collection of images which should be subtracted
-  zeroValue:int
-  maxVal:int=0xFFF
-  '''
-  
-  stretchedImgs = []
-  stretchFac = whiteLevel / (whiteLevel - blackLevel)
-  for _iImg in range(len(ImgCollection)):
-    _img = np.around(np.multiply(ImgCollection[_iImg], stretchFac)).astype(np.uint16)
-    _img[_img > whiteLevel] = whiteLevel # Should not be possible, but added to be absolute sure!
-    stretchedImgs.append(_img)
-  stretchedImgs = np.array(stretchedImgs)
 
-  return stretchedImgs
+
+def StretchBrightness(ImgCollection, blackLevel:int = 256, whiteLevel:int = 0xFFF):
+    """Stretches the pixel-values by: whitelevel / (whiteLevel - blackLevel)
+    !!!ATTENTION!!! Function assumes images with 12bit values!
+
+    Args:
+        ImgCollection (iterable, images): Iterable object of images.
+        blackLevel (int, optional): Blacklevel-value. Defaults to 256.
+        whiteLevel (int, optional): _description_. Defaults to 0xFFF.
+
+    Returns:
+        _type_: _description_
+    """
+    stretchedImgs = []
+    stretchFac = whiteLevel / (whiteLevel - blackLevel)
+    for _iImg in range(len(ImgCollection)):
+        _img = np.around(np.multiply(ImgCollection[_iImg], stretchFac)).astype(np.uint16)
+        _img[_img > whiteLevel] = whiteLevel # Should not be possible, but added to be absolute sure!
+        stretchedImgs.append(_img)
+    stretchedImgs = np.array(stretchedImgs)
+
+    return stretchedImgs

@@ -61,7 +61,7 @@ from time import time
 from PIL import Image
 import cv2 as cv
 
-from PMPLib.ImgFileHandling import ReadImages, OTH_BlkFormat, OTH_ImgFormat
+from PMPLib.ImgFileHandling import ReadImages, BlackFormat, ImageFormat
 from PMPLib.ImgManipulation import MeanImages, SubtractFromImgCollection, DemosaicBayer, ConvertBitsPerPixel, StretchBrightness
 from misc import DurationOfLambda
 
@@ -278,10 +278,10 @@ for _fold in wds: # Iterate working directories
             continue
 
         print(f"Reading Darkfield-Images...")
-        blckImgs, blckPaths = ReadImages(fPaths=root, Format=str.format(OTH_BlkFormat, "*", "*", "*", "raw")     , CropWindow=None, IgnorePathVector=None, ShowImg=False)
+        blckImgs, blckPaths = ReadImages(fPaths=root, Format=str.format(BlackFormat, "*", "*", "*", "raw")     , CropWindow=None, IgnorePathVector=None, ShowImg=False)
 
         print(f"Reading Measurement-Images...")
-        measImgs, measPaths = ReadImages(fPaths=root, Format=str.format(OTH_ImgFormat, "*", "*", "*", "*", "raw"), CropWindow=None, IgnorePathVector=blckPaths, ShowImg=None)
+        measImgs, measPaths = ReadImages(fPaths=root, Format=str.format(ImageFormat, "*", "*", "*", "*", "raw"), CropWindow=None, IgnorePathVector=blckPaths, ShowImg=None)
 
         print(f"Demosaic Darkfield-Bayer 2 Grayscale...")
         blckImgs = DemosaicBayer(blckImgs)

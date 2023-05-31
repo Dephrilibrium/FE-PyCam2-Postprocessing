@@ -46,7 +46,7 @@ from misc import Logger
 from misc import LogLine
 from misc import LogLineOK
 
-from PMPLib.ImgFileHandling import OTH_BlkFormat, OTH_ImgFormat, OTH_LoadFileTypes, OTH_SaveFileType, OTH_SS_Index
+from PMPLib.ImgFileHandling import BlackFormat, ImageFormat, OTH_LoadFileTypes, OTH_SaveFileType, SS_Index
 from PMPLib.ImgFileHandling import GrabSSFromFilenames
 from PMPLib.ImgFileHandling import ReadImages
 from PMPLib.ImgFileHandling import SaveImageCollection
@@ -97,17 +97,18 @@ LogFilePath = os.path.join(saveDir, "PiMage.log")
 _logger = Logger(LogFilePath) # Keep instance for closing logger
 LogLen = 70
 
+
 # PiMage-sequence
 opt.PiMage_SkipBadSubdirs = True                                        # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
 opt.PiMage_ForceOverride = True                                         # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
 
+
 # Visualization
 opt.ShowImages_Read = False                                             # True = show each image (during debugging); False = Silent process
 opt.ShowImages_Mean = False                                             # True = show each image (during debugging); False = Silent process
-# opt.ShowImages_Subtract = False                                         # True = show each image (during debugging); False = Silent process
 opt.ShowImages_SpotDetection = False                                    # True = show each image (during debugging); False = Silent process
 opt.ShowImages_Draw = False                                             # True = show each image (during debugging); False = Silent process
-# opt.ShowImages_BrightnessExtraction = False                             # True = show each image (during debugging); False = Silent process
+
 
 # Image processing
 opt.Image_CropWin = None                                                # None/False: Images not cropped; [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
@@ -118,30 +119,28 @@ opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THR
                                                                         # Other else:                         Uses fixed bThres-Value
 opt.Image_AutoThresDiv = 8                                              # When ThrehType is used for auto-thresh, the returend threshold is divided by AutoThreshDiv and used to build the actual threshold (used for fine-tuning of threshhold)
 opt.Image_UseForMeanNPoints = ".swp"                                    # <int>: Means together n measurement-points; ".swp": Tryies to find a sweep-file where it can extract the number of n measurement points
-# # opt.Image_MeanNPoints = 2                                               # This was the old value set here. Now its set during the code, but left as comment here (avoid confuses)
 opt.Image_MeanNPicsPerSS = 1                                            # Means n pics (in row) together
 opt.Image_OverexposedBrightness = 0xFFF0                                # Defines at which 16bit value a pixel counts as overexposed
+opt.Image_MinBright2CountArea = 1* 0xFF                                 # Defines at which 16bit value a pixel counts as brightness-contributing pixel
+
 
 # Spot-detection
 opt.SpotDetect_Dilate = 10                                              # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
 opt.CircleDetect_pxMinRadius = 5                                        # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
 opt.CircleDetect_pxMaxRadius = 50                                       # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
-# opt.CircleDetect_AddPxRadius = False                                    # The maximum radius for a valid circle is False: pxMaxRadius OR True: circle-radius + pxMaxRadius
 
 
 # Spot-Draw on Images
-# #  Images with drawed circles are saved for use in papers or for gif-creation
 opt.CircleDraw_pxRadius = opt.CircleDetect_pxMaxRadius                  # Draws a circle using pxRadius to visualize the detected spots on the "circle-draw-images"
 opt.CircleDraw_AddPxRadius = False                                      # When enabled, the circles detected spot-radius is added to pxRadius
+
 
 # Brightness-Detection
 opt.bDetect_SpotBrightFromAllImgs = True                                # When enabled, the brightness is extracted from ALL images based on the xy-key position! (NOTE: This ensures, that all vectors have the same)
 opt.bDetect_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness is extracted
 opt.bDetect_AddPxSideLen = False                                        # When enabled, the circles radius is added to bDetect_pxSideLen
-# # opt.bDetect_Trustband = [180 *256, 250 *256]                             # 16bit brightness-Trustband of the overexposed image for brightness-factor-calculation (replacement of overexposed pixels) [LoTrust, HiTrust]. See also option "Image_OverexposedBrightness"
-# # opt.bDetect_MinTrust = 50 *256                                           # If: Pixelbrightness < MinTrust -> skips pixels on the replacement-pictures to avoid to high errors and save computation time
-# # opt.bDetect_SaveImages = True                                           # Attaches the images to each circle! (May need a lot of disk space!)
+
 
 # XY-Keys
 opt.XYKeys_pxCollectRadius = opt.CircleDetect_pxMaxRadius               # Valid radius around a xy-coordinate a detected image-spot is collected under, when located within this area.
@@ -149,23 +148,29 @@ opt.XYKeys_AddPxCollectRadius = False                                   # When e
 opt.XYKeys_FollowSpots = True                                           # When enabled, the xy-key follows the related circle-centers by meaning them
 opt.XYKeys_pxCorrectionRadius = opt.XYKeys_pxCollectRadius              # For each SS a set of XY-Key-Pairs can be found. To assign them together, this radius is used as a tolerance and is then re-attached to ssData.
 
+
 # XY-Key Sorting
 opt.XYKeySort_Rowdistance = opt.CircleDetect_pxMaxRadius                # Each leftmost spot of a row does a horizontal raycast to the right. XYKeySort_Rowdistance (in [px]) defines the vertical distance to that ray, in which a spot needs to be located to count as part of the row.
 
+
 # Saving
 opt.SaveSSImagePkl                          = False                     # Save internal raw ssData structure
-# #opt.SaveValidImagePkl = False                                           # Save internal valid brightness images                                    !!!MAYBE OBSOLET!!!
-# #opt.SaveBrightnessFactors = True                                        # Calculate and save brightness-factors of spots and corresponding pixels  !!!MAYBE OBSOLET!!!
 opt.Save_ImgSets4Brightness                 = False                     # Save "Imageset"                                             for Brightnesses and it's correction as pickle
 opt.Save_BrightSets4Brightness              = True                      # Save "Brightnesses"                                         from Imageset as pickle
 opt.Save_PxAreaCnts4Brightness              = True                      # Save "PixelArea-Counts & -Factors"                          from Imageset as pickle
 opt.Save_DivFactors4Brightness              = True                      # Save "Division-Correction-Factors"                          from BrightSets as pickle
-# opt.Save_CombinedFactors4Brightness         = True                      # Save "Combined Factors"                                     from DivFactors & PixelAreaCounts as pickle
 opt.Save_ScaledAnyPxImgs                    = False                     # Save "Any upscaled pixelcorrected images"                   as pickle (huge!)
 opt.Save_ScaledAnyBrightnesses              = True                      # Save "Any upscaled spotbrightness"                          as pickle
 opt.Save_ScaledWhereOverexposedPxImgs       = False                     # Save "Any upscaled spotbrightness images"                   as pickle
 opt.Save_ScaledWhereOverexposedBrightnesses = True                      # Save "Upscaled spotbrightness where overexposure occured"   as pickle
 opt.Save_FEMDAQCopies                       = True                      # Creates copies of the relevant FEMDAQ-data (if FEMDAQ was used as measurement-tool!)
+
+
+
+
+
+
+
 
 
 # Iterate through entire measurement-folder
@@ -243,7 +248,7 @@ for root, dirs, files in os.walk(parentDir):
     ##### Do Picture stuff #####
     # Collect shutterspeeds
     LogLine(t0, "Grabbing shutterspeeds: ", wFill=0, end="\n")
-    Shutterspeeds, DetectedFiletype = GrabSSFromFilenames(picsPath, OTH_ImgFormat, OTH_LoadFileTypes, OTH_SS_Index)
+    Shutterspeeds, DetectedFiletype = GrabSSFromFilenames(picsPath, ImageFormat, OTH_LoadFileTypes, SS_Index)
     Shutterspeeds.reverse()
     # Shutterspeeds.pop(0)
     for SS in Shutterspeeds:
@@ -264,7 +269,7 @@ for root, dirs, files in os.walk(parentDir):
 
       # Read float64 pictures and subtract
       LogLine(t0, "Read and crop images...")
-      imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(OTH_ImgFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
+      imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(ImageFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
       ssData[SS]["Images"]["Cropped"] = imgs
       LogLineOK()
 
@@ -285,7 +290,7 @@ for root, dirs, files in os.walk(parentDir):
 
       if SS == Shutterspeeds[0]:
         LogLine(t0, "Saving uint16-images...")
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(OTH_ImgFormat, "Dev101", "{:05d}", SS, "uint16", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
+        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "uint16", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
         LogLineOK()
 
 
@@ -316,7 +321,7 @@ for root, dirs, files in os.walk(parentDir):
       ssData[SS]["Circles"] = dict()
       ssData[SS]["Circles"]["Raw"] = circles
       if SS == Shutterspeeds[0]:
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["CircleDetection"], FileFormat=str.format(OTH_ImgFormat, "Dev101", "{:05d}", SS, "CircleDetection", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
+        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["CircleDetection"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "CircleDetection", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup threshold (uint8) images...")
@@ -334,7 +339,7 @@ for root, dirs, files in os.walk(parentDir):
       ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
       del drawImgs
       if SS == Shutterspeeds[0]:
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(OTH_ImgFormat, "Dev101", "{:05d}", SS, "DrawnCircles", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
+        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup circle-draw images...")
@@ -398,17 +403,6 @@ for root, dirs, files in os.walk(parentDir):
     # Extract img brightness of detection
     LogLine(t0, "Extracting brightness data...")
 
-    # !!! CURRENTLY FOR TEST PURPOSES A VERY UNCLEAN WAY TO CONVERT THE 8BIT-SETTINGS INTO 16BIT SETTINGS !!!
-    # # Image_OverexposedBrightness_16Bit = (opt.Image_OverexposedBrightness) * 256
-    # # bDetect_Trustband_16Bit = [(trustVal + 1) * 256 - 1 for trustVal in opt.bDetect_Trustband]
-    # # bDetect_MinTrust_16Bit = (opt.bDetect_MinTrust) * 256
-    Image_OverexposedBrightness_16Bit = opt.Image_OverexposedBrightness # Rewrote code that it handles 16bit already
-    # # bDetect_Trustband_16Bit = opt.bDetect_Trustband                     # Rewrote code that it handles 16bit already
-    # # bDetect_MinTrust_16Bit = opt.bDetect_MinTrust                       # Rewrote code that it handles 16bit already
-    Image_MinBright2CountArea = 1* 0xFF
-
-    
-    # combinedFactors,               \ # Old returnm not used since signal-linearity was proven
     ssData,                        \
     imgSets,                       \
     brightSets,                    \
@@ -422,14 +416,8 @@ for root, dirs, files in os.walk(parentDir):
                                                             pxSidelen=opt.bDetect_pxSideLen,
                                                             AddPxSidelen=opt.bDetect_AddPxSideLen,
                                                             TakeSpotBrightFromAllImgs=opt.bDetect_SpotBrightFromAllImgs,
-                                                            # PxDivTrustband=bDetect_Trustband_16Bit,          # Old params, not used since signal-linearity was proven
-                                                            # PxDivMinBright=bDetect_MinTrust_16Bit,           # Old params, not used since signal-linearity was proven
                                                             MinBright=Image_MinBright2CountArea,
-                                                            OverexposedValue=Image_OverexposedBrightness_16Bit,
-                                                            # PxDivTrustband=opt.bDetect_Trustband,             # Old 8-bit calls -> Clean re-implementation when it works
-                                                            # PxDivMinBright=opt.bDetect_MinTrust,              # Old 8-bit calls -> Clean re-implementation when it works
-                                                            # OverexposedValue=opt.Image_OverexposedBrightness, # Old 8-bit calls -> Clean re-implementation when it works
-                                                            # ShowImg=opt.ShowImages_BrightnessExtraction       # Not used anymore
+                                                            OverexposedValue=Image_OverexposedBrightness,
                                                             )
 
     LogLineOK()
@@ -481,17 +469,6 @@ for root, dirs, files in os.walk(parentDir):
     else:
       del divFactors # When not saving them , just delete them to free the RAM
 
-
-    # if opt.Save_CombinedFactors4Brightness == True:
-    #   _fName = "PMP_CombinedFactors4Brightness.pkl"
-    #   _fPath = os.path.join(cSaveDir, _fName)
-    #   _fHandle = open(_fPath, "wb")
-    #   pickle.dump(combinedFactors, _fHandle)
-    #   _fHandle.close()
-    #   del combinedFactors      # Remove to clear RAM
-    #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    # else:
-    #   del combinedFactors # When not saving them , just delete them to free the RAM
 
     if opt.Save_ScaledAnyPxImgs == True:
       _fName = "PMP_ScaledAnyPxImgs4Brightness.pkl"

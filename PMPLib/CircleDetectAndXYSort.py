@@ -12,26 +12,26 @@ import pickle
 
 
 
-
-
-
-def DetectSpots(ImgCollection, pxDetectRadiusMin, pxDetectRadiusMax, Dilate:np.uint8 = 0, Erode:np.uint8 = 0, ShowImg=False):
-  '''Searching for contours on the given (already converted) threshhold-image-collection.
+def DetectSpots(ImgCollection, pxDetectRadiusMin:int, pxDetectRadiusMax:int, Dilate:np.uint8 = 0, Erode:np.uint8 = 0, ShowImg:bool = False):
+  """Searching for contours on the given (already converted) threshhold-image-collection.
      The function is always supposing circles as contours!
      Each contour-radius must be:   0 < r < pxDetectRadiusMax   with r [px]
 
-  Inputs:
-  ----------
-  imgCollection: List of threshhold-images used for contour-detection
-  pxDetectRadiusMax: Maximum radius a spot can occur without beeing in the range of another spot!
-  DilateErode: Iteration steps for 1px-dilations (fill small gaps) and 1px-erodes (fix dialation)
-  showImg: False: Silent process; True: Shows a preview-window
+  Args:
+      ImgCollection (iterable, image): Iterable object of threshold images.
+      pxDetectRadiusMin (int): Minimum radius a spot has to exhibit.
+      pxDetectRadiusMax (int): Maximum radius a spot has to exhibit.
+      Dilate (np.uint8, optional): n pixels around threshold-areas are added. Defaults to 0.
+      Erode (np.uint8, optional): n pixels around threshold-areas are removed. Defaults to 0.
+      ShowImg (bool, optional): Show each image (during debugging). Defaults to False.
+
+  Raises:
+      Exception: Threshold needs to be in 8bit range!
 
   Returns:
-  ----------
-  detectionImgs: List of images used for the spot-detection
-  imgCircles: List of circles found on each img
-  '''
+      images: A list of images used for detection (depending on dilate, erode they can differ from the incoming ImgCollection)
+      circles: A list of circles which was detected on the returned images
+  """
   _detectionImgs = list()
   _imgCircles = list()
 
@@ -86,21 +86,18 @@ def DetectSpots(ImgCollection, pxDetectRadiusMin, pxDetectRadiusMax, Dilate:np.u
 
 
 
+def CollectCirclesAsXYKeys(CircleCollection, pxRadius:int = 12, AddPxRadius:bool = False, FollowSpots:bool = False):
+  """Iterates the incoming CircleCollection and sorts them under XY-Keypairs.
 
-def CollectCirclesAsXYKeys(CircleCollection, pxRadius = 12, AddPxRadius=False, FollowSpots=False):
-  '''Loops through all circles and tries to sort them by its location + tolerance
-
-  Inputs:
-  ----------
-  circleCollection: List of circles detected on each image
-  pxTolerance: Tolerance-Radius in [px]
-  addPxRadius: False: pxTolerance is fix; True: pxTolerance is added to the circle-radius!
-  SavePath: Savepath including filename and extension where to save!
+  Args:
+      CircleCollection (iterable, circle): Iterable object of circles.
+      pxRadius (int, optional): Tolerance-Radius in which a circle needs to be located to get associated to one of the XY-Keypairs. Defaults to 12.
+      AddPxRadius (bool, optional): Add the circle radius to pxRadius. Defaults to False.
+      FollowSpots (bool, optional): Mean the detected centercoordinates to find their balance point. Defaults to False.
 
   Returns:
-  ----------
-  spotsByXY: Dictionary of circles with (xMean, yMean)-tuple-Key
-  '''
+      xy spots: XY sorted collection of the circles.
+  """
   _spotsByXY = dict()
 
   # Create a working copy of the circle-list (deep-copy)
@@ -135,10 +132,6 @@ def CollectCirclesAsXYKeys(CircleCollection, pxRadius = 12, AddPxRadius=False, F
         cmpCircleCnt = _cCol[iCmpImg].__len__() # Get amount of circles of current image
         if cmpCircleCnt == 0: # Skip empty images
           continue
-
-        # Old check! Is not possible anymore since range(currentImg + 1, LastImage)
-        # if iImg == iCmpImg: # Skip itself
-        #   continue
 
         for iCmpCrcl in range(cmpCircleCnt):
           cmpCircle = _cCol[iCmpImg].pop(0) # Grab first one and remove from list. When it matches to "circle" it keeps removed, otherwise it gets attached again! -> see below @: if x² + y² > r²
@@ -195,7 +188,6 @@ def CollectCirclesAsXYKeys(CircleCollection, pxRadius = 12, AddPxRadius=False, F
       _spotsByXY[(x, y)]["ImgCircles"] = _associatedCircles
 
 
-  # SaveSpotsByXY(spotsByXY, savePath)
   return _spotsByXY
 
 
@@ -210,16 +202,14 @@ def CollectCirclesAsXYKeys(CircleCollection, pxRadius = 12, AddPxRadius=False, F
 
 
 
-def CorrectXYSortKeys(ssData, pxCorrectionRadius = 12):
-  '''Searching for the XY-Keypairs and sort them under their SS. (re-attached as referenced dataset)
-  !!!ATTENTION!!!
-  Function directly manipulates the data in ssData!'''
-  # i = index
-  # uncor = uncorrected
-  # cor = corrected
-  # srtd = sorted
-  # Coll = Collection
+def CorrectXYSortKeys(ssData, pxCorrectionRadius:int = 12):
+  """Iterates through all XY-Keypairs for each SS and builds a set of XY-Keypairs under the SS when they were found.
+  The result is reattched as a dictionary (data is referenced, not copied!).
 
+  Args:
+      ssData (_type_): Main data structure.
+      pxCorrectionRadius (int, optional): _description_. Defaults to 12.
+  """
   # Collect spot-sorts of all shutterspeeds in local list (faster access)
   _srtdColl = list()
   for _ss in ssData.keys():
@@ -281,7 +271,21 @@ def CorrectXYSortKeys(ssData, pxCorrectionRadius = 12):
 
 
 
-def SortXYFromLUtoRL(ssData, pxRowband):
+def SortXYFromLUtoRL(ssData, pxRowband:int):
+  """Sorts the created XY-Keypairs from left upper to right lower, from left to right, and top to bottom.
+  For that:
+   1.) Finds mostleft and topmost residual spot
+   2.) Carries out a horizontal raycast to the right
+   3.) XY-Keypairs checked if being in the range of the perpendicular vertical tolerance (pxRowBand)
+       If yes: Append to row
+   4.) When no spots can be attached to the row, it restarts with 1.) unitl now XY-Keypairs are left
+
+   !!! ATTENTION !!! ssData is manipulated directly! -> No Return-value
+
+  Args:
+      ssData (_type_): Main data structure.
+      pxRowband (int): Vertical tolerance-band which defines a row
+  """
   # Get keys for sorting by x and then y to get an ordered vector like:
   # 1   2 3
   # 4 5   6

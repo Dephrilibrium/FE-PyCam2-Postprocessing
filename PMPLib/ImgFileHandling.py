@@ -16,14 +16,11 @@ from misc import bcolors
 from PMPLib.ImgManipulation import CropImage
 
 
-# OTH_SS_Index  = 2
-# OTH_BlkFormat = "{}_rPiHQCam-BlackSubtraction_ss={}_{}.{}"
-# OTH_ImgFormat = "{}_rPiHQCam-{}_ss={}_{}.{}"
-OTH_SS_Index  = 2
-# OTH_BlkFormat = "{}_HQCam-BlackSubtraction_ss={}_{}.{}"        # PiCam1
-# OTH_ImgFormat = "{}_HQCam-{}_ss={}_{}.{}"                      # PiCam1
-OTH_BlkFormat = "{}_rPiHQCam2-BlackSubtraction_ss={}_{}.{}"      # PiCam2
-OTH_ImgFormat = "{}_rPiHQCam2-{}_ss={}_{}.{}"                    # PiCam2
+SS_Index  = 2                                                  # Index of the ShutterSpeed within the ImageFormat
+# BlackFormat = "{}_HQCam-BlackSubtraction_ss={}_{}.{}"        # PiCam1
+# ImageFormat = "{}_HQCam-{}_ss={}_{}.{}"                      # PiCam1
+BlackFormat = "{}_rPiHQCam2-BlackSubtraction_ss={}_{}.{}"      # PiCam2
+ImageFormat = "{}_rPiHQCam2-{}_ss={}_{}.{}"                    # PiCam2
 
 OTH_LoadPickleTypes = ["gray", "raw"]
 OTH_LoadFileTypes = OTH_LoadPickleTypes + ["jpg", "png"]
@@ -35,19 +32,19 @@ OTH_SaveFileType  = "png"
 
 
 
-def GrabSSFromFilenames(ImgDir, Format, FileTypes, iSSPlaceholder):
+def GrabSSFromFilenames(ImgDir:str, Format:str, FileTypes, iSSPlaceholder:int):
   """Reading all files of the given folder, parsing the numbers and trying to collect all shutterspeeds in ascending order.
 
-  Inputs:
-  ----------
-  Path: Path with files to scan
-  Format: Parse-String (see default for how to use)
-  iSS: Index of {} where the Shutterspeed-values are located in "Format".
+  Args:
+      ImgDir (str): Path with image-files to scan.
+      Format (str): Parse-Format-String (see default for how to use)
+      FileTypes (iterable, str): Iterable object of strings containing valid file-types
+      iSSPlaceholder (int): Index of {} in which the Shutterspeed-value is located in Format
 
   Returns:
-  ----------
-  SS: List of shutterspeeds (sorted ascending) as [int]
-    """
+      list, int: List of ascending sorted shutterspeeds
+      str: File-extension (of the last read image-file)
+  """
   fList = os.listdir(ImgDir)
 
   SS = list()
@@ -71,34 +68,34 @@ def GrabSSFromFilenames(ImgDir, Format, FileTypes, iSSPlaceholder):
 
 
 
+def ReadImages(FolderPath, Format:str, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE, CropWindow=None, IgnorePathVector=None, ShowImg=False):
+  """Simple function which opens and crops all the given image-paths and returns images and paths.
 
+  Args:
+      FolderPath (str): String to the image-folder.
+      Format (str): Filter-Format to filter specific filenames (attached to fPath)
+      cvFlags (cv.IMREAD-Flags, optional): A combination of opencvs IMREAD-Flags. Defaults to cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE.
+      CropWindow (Quadtuple, optional): If [x, y, w, h] given xy defines the left upper corner and wh the image size. None does no image-clipping. Defaults to None.
+      IgnorePathVector (iterable, str, optional): A list of strings which should be ignored during read (e.g. skip black images). Defaults to None.
+      ShowImg (bool, optional): Shows each image during debug. Defaults to False.
 
-
-
-def ReadImages(fPaths, Format, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE, CropWindow=None, IgnorePathVector=None, ShowImg=False):
-  """Simple function which opens, crops and means all paths of the given list of filenames together into one image
-
-  Input:
-  ----------
-  picPathVector: List of image-paths which will combined to one mean-image
-
-  Return:
-  ----------
-  imgMean: Represents the cropped and meaned image
+  Returns:
+      _imgList: A list of the read images.
+      _imgPaths: A list of the corresponding paths of read images.
   """
-  filter = os.path.join(fPaths, Format)
-  fPaths = glob.glob(filter)
-  fPaths = natsort.natsorted(fPaths, alg=natsort.ns.IGNORECASE) # Be sure that all pictures sorted correctly!
+  filter = os.path.join(FolderPath, Format)
+  _fPaths = glob.glob(filter)
+  _fPaths = natsort.natsorted(_fPaths, alg=natsort.ns.IGNORECASE) # Be sure that all pictures sorted correctly!
 
   _imgPaths = list()
   _imgList = list()
 
   if IgnorePathVector != None and type(IgnorePathVector) == list:
     for _ignorePath in IgnorePathVector:
-      if fPaths.__contains__(_ignorePath):
-        fPaths.remove(_ignorePath)
+      if _fPaths.__contains__(_ignorePath):
+        _fPaths.remove(_ignorePath)
 
-  for _imgPath in fPaths:
+  for _imgPath in _fPaths:
     if _imgPath.endswith((".gray", ".raw")):
       fImg = open(_imgPath, "rb")
       cImg = pickle.load(fImg)
@@ -124,10 +121,7 @@ def ReadImages(fPaths, Format, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE,
 
 
 
-
-
-def SaveImageCollection(ImgCollection, FileFormat,  SaveDir):
-  '''Simply saves a given image-collection under the given fileFormat in the save-dir with increasing picture-number.
+  '''
 
   Inputs:
   ----------
@@ -141,6 +135,18 @@ def SaveImageCollection(ImgCollection, FileFormat,  SaveDir):
   ----------
   paths: List of the file-savepaths
   '''
+
+def SaveImageCollection(ImgCollection, FileFormat,  SaveDir):
+  """Saves a given image-collection under the given fileFormat in the save-dir with increasing picture-number.
+
+  Args:
+      ImgCollection (iterable, images): A iterable image-dataset.
+      FileFormat (str): A format string, containing a {} where the picture number is written to.
+      SaveDir (str): Folderpath where the images should be stored
+
+  Returns:
+      paths: A list of the stored filepaths.
+  """
   paths = list()
   if not os.path.exists(SaveDir):
     os.makedirs(SaveDir)
