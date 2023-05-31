@@ -211,9 +211,9 @@ def CollectCirclesAsXYKeys(CircleCollection, pxRadius = 12, AddPxRadius=False, F
 
 
 def CorrectXYSortKeys(ssData, pxCorrectionRadius = 12):
-  '''Correcting the shutterspeed circle sorting keys
+  '''Searching for the XY-Keypairs and sort them under their SS. (re-attached as referenced dataset)
   !!!ATTENTION!!!
-  Function directly manupulates the data in ssData!'''
+  Function directly manipulates the data in ssData!'''
   # i = index
   # uncor = uncorrected
   # cor = corrected

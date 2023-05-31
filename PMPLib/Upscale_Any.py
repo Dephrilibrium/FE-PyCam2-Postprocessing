@@ -163,7 +163,7 @@ def __BuildUpscaleAnyPxSubSet__(hiSSImgSet, loSSImgSet, theoryFactors, divFactor
 
 
 
-def UpscaleAny(imgSets, brightSets, divFactorSets, combinedFactorSets):
+def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
   upscaledBright = dict()
   upscaledPxImgs = dict()
   # upscaled["Full"] = __BrightUpscale_AnySubSet__()

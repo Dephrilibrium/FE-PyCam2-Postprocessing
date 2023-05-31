@@ -117,7 +117,7 @@ def __BrightnessFactors_BuildPxAreaCntDivFactorSubSet__(bAreaCntSet, dAreaCntSet
 
 
 
-def GetDivFactorSets(imgSets, brightSets, pxAreaCntSets, PxDivTrustband, PxDivMinBright):
+def GetDivFactorSets(imgSets): #, brightSets, pxAreaCntSets, PxDivTrustband, PxDivMinBright):
   factors = dict()
 
   _bKeys = list(imgSets.keys())
