@@ -46,7 +46,7 @@ from misc import Logger
 from misc import LogLine
 from misc import LogLineOK
 
-from PMPLib.ImgFileHandling import BlackFormat, ImageFormat, OTH_LoadFileTypes, OTH_SaveFileType, SS_Index
+from PMPLib.ImgFileHandling import BlackFormat, ImageFormat, LoadFileTypes, SaveFileType, SS_Index
 from PMPLib.ImgFileHandling import GrabSSFromFilenames
 from PMPLib.ImgFileHandling import ReadImages
 from PMPLib.ImgFileHandling import SaveImageCollection
@@ -54,7 +54,6 @@ from PMPLib.ImgFileHandling import SaveImageCollection
 from PMPLib.ImgManipulation import MeanImages
 from PMPLib.ImgManipulation import SubtractFromImgCollection
 from PMPLib.ImgManipulation import ConvertBitsPerPixel
-from PMPLib.ImgManipulation import ConvertImgCollectionDataType
 from PMPLib.ImgManipulation import BuildThreshold
 from PMPLib.ImgManipulation import CircleDraw
 
@@ -248,7 +247,7 @@ for root, dirs, files in os.walk(parentDir):
     ##### Do Picture stuff #####
     # Collect shutterspeeds
     LogLine(t0, "Grabbing shutterspeeds: ", wFill=0, end="\n")
-    Shutterspeeds, DetectedFiletype = GrabSSFromFilenames(picsPath, ImageFormat, OTH_LoadFileTypes, SS_Index)
+    Shutterspeeds, DetectedFiletype = GrabSSFromFilenames(picsPath, ImageFormat, LoadFileTypes, SS_Index)
     Shutterspeeds.reverse()
     # Shutterspeeds.pop(0)
     for SS in Shutterspeeds:
@@ -269,7 +268,7 @@ for root, dirs, files in os.walk(parentDir):
 
       # Read float64 pictures and subtract
       LogLine(t0, "Read and crop images...")
-      imgs, imgPaths = ReadImages(fPaths=picsPath, Format=str.format(ImageFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
+      imgs, imgPaths = ReadImages(FolderPath=picsPath, Format=str.format(ImageFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
       ssData[SS]["Images"]["Cropped"] = imgs
       LogLineOK()
 
@@ -290,7 +289,7 @@ for root, dirs, files in os.walk(parentDir):
 
       if SS == Shutterspeeds[0]:
         LogLine(t0, "Saving uint16-images...")
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "uint16", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
+        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "uint16", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
         LogLineOK()
 
 
@@ -321,7 +320,7 @@ for root, dirs, files in os.walk(parentDir):
       ssData[SS]["Circles"] = dict()
       ssData[SS]["Circles"]["Raw"] = circles
       if SS == Shutterspeeds[0]:
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["CircleDetection"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "CircleDetection", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
+        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["CircleDetection"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "CircleDetection", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup threshold (uint8) images...")
@@ -339,7 +338,7 @@ for root, dirs, files in os.walk(parentDir):
       ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
       del drawImgs
       if SS == Shutterspeeds[0]:
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", OTH_SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
+        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup circle-draw images...")
@@ -416,8 +415,8 @@ for root, dirs, files in os.walk(parentDir):
                                                             pxSidelen=opt.bDetect_pxSideLen,
                                                             AddPxSidelen=opt.bDetect_AddPxSideLen,
                                                             TakeSpotBrightFromAllImgs=opt.bDetect_SpotBrightFromAllImgs,
-                                                            MinBright=Image_MinBright2CountArea,
-                                                            OverexposedValue=Image_OverexposedBrightness,
+                                                            MinBright=opt.Image_MinBright2CountArea,
+                                                            OverexposedValue=opt.Image_OverexposedBrightness,
                                                             )
 
     LogLineOK()

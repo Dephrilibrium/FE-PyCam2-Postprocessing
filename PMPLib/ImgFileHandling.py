@@ -22,9 +22,9 @@ SS_Index  = 2                                                  # Index of the Sh
 BlackFormat = "{}_rPiHQCam2-BlackSubtraction_ss={}_{}.{}"      # PiCam2
 ImageFormat = "{}_rPiHQCam2-{}_ss={}_{}.{}"                    # PiCam2
 
-OTH_LoadPickleTypes = ["gray", "raw"]
-OTH_LoadFileTypes = OTH_LoadPickleTypes + ["jpg", "png"]
-OTH_SaveFileType  = "png"
+LoadPickleTypes = ["gray", "raw"]
+LoadFileTypes = LoadPickleTypes + ["jpg", "png"]
+SaveFileType  = "png"
 
 
 
