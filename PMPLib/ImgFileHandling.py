@@ -119,23 +119,6 @@ def ReadImages(FolderPath, Format:str, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GR
   return _imgList, _imgPaths
 
 
-
-
-  '''
-
-  Inputs:
-  ----------
-  imgCollection: List of images you want to save
-  fileFormat: Format of how the files should be named. e.g.:
-              fileFormat = str.format("Dev101_rPiHQCam-{}_ss={}_{}.jpg", "{:04d}", SS, "Thres")
-  saveDir: Directory where to store the files. e.g.:
-           saveDir = os.path.join(cSaveDir, str.format("ThreshImgs SS={}", SS))
-
-  Returns:
-  ----------
-  paths: List of the file-savepaths
-  '''
-
 def SaveImageCollection(ImgCollection, FileFormat,  SaveDir):
   """Saves a given image-collection under the given fileFormat in the save-dir with increasing picture-number.
 

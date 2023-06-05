@@ -17,6 +17,14 @@ import cv2 as cv
 
 
 def __BrightnessOfImgCollection__(ImgCollection):
+  """Iterates through the incomming ImgCollection, sums up each pixel-value as total brightness and returns them as a NDArray-vector.
+
+  Args:
+      ImgCollection (iterable, image): Image-collection for which the brightnesses should be determined.
+
+  Returns:
+      NDArray: NDArray-vector containing the images total brightness
+  """
   return np.array([np.sum(img) for img in ImgCollection])
 
 
@@ -30,6 +38,14 @@ def __BrightnessOfImgCollection__(ImgCollection):
 
 
 def __BuildBrightSubSet__(ImgSet):
+  """Determines the brightenssvector for the incomming ImgSet for Blank (images containing overexposure) and Clean (overexposure removed).
+
+  Args:
+      ImgSet (dict, iterable, image): Dictionary with iterable images-vectors with "Blank" and "Clean" keys
+
+  Returns:
+      dict: Dictionary with "Blank" and "Clean" keys, containing the brightness-vectors.
+  """
   subSet = dict()
 
   subSet["Blank"] = __BrightnessOfImgCollection__(ImgSet["Blank"])
@@ -46,6 +62,14 @@ def __BuildBrightSubSet__(ImgSet):
 
 
 def GetBrightnessSets(imgSets):
+  """Builds the brightness-vectors for an entire set of images
+
+  Args:
+      imgSets (dict, iterable, image): Dictionary of iterable image-vectors.
+
+  Returns:
+      dict, iterable, int: Dictionary containing the images brightnesses.
+  """
   brightSets = dict()
 
   _bKeys = list(imgSets.keys())
@@ -93,7 +117,15 @@ def GetBrightnessSets(imgSets):
 
 
 def __GetPxCntOfImgCollection__(ImgCollection, minVal:int):
-  # return [cv.countNonZero(img) for img in ImgCollection]
+  """Extracts the amount of contributing pixels (pixel-value > minVal).
+
+  Args:
+      ImgCollection (iterable, image): Iterable object containing images.
+      minVal (int): Minimum pixelvalue to be counted as contributing pixel.
+
+  Returns:
+      NDArray: Vector containing the count of the contributing pixels.
+  """
   return [len(np.where(img >= minVal)[0]) for img in ImgCollection]
 
 
@@ -104,6 +136,15 @@ def __GetPxCntOfImgCollection__(ImgCollection, minVal:int):
 
 
 def __BuildPxCntSubSet__(ImgSet, minVal:int):
+  """Builds a subset of the incoming ImgSet for "Blank" and "Clean" Key.
+
+  Args:
+      ImgSet (dict, iterable, image): Dictionary containing iterable image-vectors. Keys needed "Blank" and "Clean"
+      minVal (int): Minimum pixelvalue to be counted as contributing pixel
+
+  Returns:
+      dict, NDArray: Dictionary with the contributing pixel-count for keys "Blank" and "Clean".
+  """
   subSet = dict()
 
   subSet["Blank"] = np.array(__GetPxCntOfImgCollection__(ImgSet["Blank"], minVal=minVal))
@@ -125,6 +166,15 @@ def __BuildPxCntSubSet__(ImgSet, minVal:int):
 
 
 def GetPxCntSets(imgSets, minBright:int):
+  """Extracts the count of contributing pixels for a full image-set.
+
+  Args:
+      ImgSet (dict, iterable, image): Dictionary containing iterable image-vectors. Keys needed "Blank" and "Clean"
+      minBright (int): Minimum pixelvalue to be counted as contributing pixel.
+
+  Returns:
+      dict, dict, NDArray: Count of contributing pixels for all SS ("Blank" & "Clean" keys).
+  """
   pxAreas = dict()
 
   _bKeys = list(imgSets.keys())

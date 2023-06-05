@@ -11,7 +11,17 @@ import numpy as np
 
 
 
-def __UpscaleAnySpot__(brightSet, theoryFactors, divFactors, combiFactors):
+def __UpscaleAnySpot__(brightSet, theoryFactors): #, divFactors, combiFactors):
+  """Subroutine to upscale any detected spotbrightness, ignoring if it contains overexposed pixels.
+
+  Args:
+      brightSet (_type_): Set of all extracted brightness-vectors.
+      divFactors (_type_): Set of division
+      combiFactors (_type_): _description_
+
+  Returns:
+      dict: Dictionary containing all upscaled spot brightnesses.
+  """
   upscaledSpotAny = dict()
 
   upscaledSpotAny = dict()
@@ -59,8 +69,18 @@ def __UpscaleAnySpot__(brightSet, theoryFactors, divFactors, combiFactors):
 
 
 
-def __CalculateUpscaleAnyPxImg__(hiSSImg, loSSImg, factor, mask):
+def __CalculateUpscaleAnyPxImg__(hiSSImg, loSSImg, factor:float, mask):
+  """Subroutine to upscale any pixel-values, ignoring if it contains overexposed pixels. The mask is a 2d-boolean mask, containing overexposed pixels (mask to clear overexposed loSSImg-pixels, in which the unoverexposed hiSSImg pixels are inserted).
 
+  Args:
+      hiSSImg (image): Image with longer shutterspeed.
+      loSSImg (image): Image with shorter shutterspeed.
+      factor (float): Upscalefactor for the shorter shutterspeed.
+      mask (2d-matrix, boolean): Boolean mask. False-Values are set to 0!
+
+  Returns:
+      int, int, image: sum of loSSImg upscaled brightness, sum and image of hiSSImg containing upscaled loSSImg pixels
+  """
   scaledPxlImg = np.multiply(loSSImg, factor, dtype=np.float32) # Try to save RAM by using half size Float   #, where=mask)
   # scaledPxlImg[scaledPxlImg < 1] = 0.0
   scaledLo = np.sum(scaledPxlImg)
@@ -78,7 +98,17 @@ def __CalculateUpscaleAnyPxImg__(hiSSImg, loSSImg, factor, mask):
 
 
 
-def __BuildUpscaleAnyPxSubSet__(hiSSImgSet, loSSImgSet, theoryFactors, divFactors, combiFactors):
+def __BuildUpscaleAnyPxSubSet__(hiSSImgSet, loSSImgSet, theoryFactors): #, divFactors, combiFactors):
+  """Builds a full subset of pixel-upscale brightness and images.
+
+  Args:
+      hiSSImgSet (image): Image with longer shutterspeed.
+      loSSImgSet (image): Image with shorter shutterspeed.
+      theoryFactors (iterable, int): Iterable object (same lenght as image-vectors) containing the upscaling factors.
+
+  Returns:
+      iterable int, iterable image: List of brightness-values, List of upscaled images
+  """
   upscaledAnyPxBright = dict()
   # upscaledAnyPxBright = dict() # No Full-Upscale of loSS-Image saved -> But it's implemented. See "scldLo" variable below!
   upscaledAnyPxBright["xTheory"]                    = list()
@@ -164,6 +194,15 @@ def __BuildUpscaleAnyPxSubSet__(hiSSImgSet, loSSImgSet, theoryFactors, divFactor
 
 
 def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
+  """Upscales any brightnesses (spot and pixelwise).
+
+  Args:
+      imgSets (_type_): A full set of images (SS, Full/Blank, et...)
+      combinedFactorSets (_type_): Corresponding upscale-factors for the image-set.
+
+  Returns:
+      _type_: A full set of upscaled spot-brightness and upscaled pixel-images.
+  """
   upscaledBright = dict()
   upscaledPxImgs = dict()
   # upscaled["Full"] = __BrightUpscale_AnySubSet__()
@@ -187,11 +226,11 @@ def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
 
       # Spotwise upscaling for full image
       # upscaledBright[_bKey][_dKey]["Full"]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"], combinedFactorSets[_bKey][_dKey]["Full"])
-      upscaledBright[_bKey][_dKey]["Full"]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"], None, None)
+      upscaledBright[_bKey][_dKey]["Full"]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
 
       # Pxwise upscaling for full image
       # pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"], combinedFactorSets[_bKey][_dKey]["Full"])
-      pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"], None, None)
+      pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
       upscaledBright[_bKey][_dKey]["Full"]["PxlBright"] = pxBright
       upscaledPxImgs[_bKey][_dKey]["Full"] = pxImgs
 
@@ -206,12 +245,12 @@ def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
 
         # Spotwise upscaling for separate spots
         # upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey], combinedFactorSets[_bKey][_dKey]["Spot"][_xyKey])
-        upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"], None, None)
+        upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
 
         # Pxwise upscaling for separate spots
         try:
           # pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey], combinedFactorSets[_bKey][_dKey]["Spot"][_xyKey])
-          pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"], None, None)
+          pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
           upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["PxlBright"] = pxBright
           upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = pxImgs
         except Exception as e:

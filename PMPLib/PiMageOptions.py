@@ -1,14 +1,16 @@
 import os
 
 class PiMageOptions():
+  """Creates the object containing all PiMagePro (DataExtraction script) configurations. The class is used to provide a simple "store"-method on save.
+  """
 
-  # def __init__():
-  #   This class has no constructor and collects 
-  #    the variables which are added from outside
-  #    to save them in a given folder.
-  #   return
+  def Save(self, saveDir:str, fName:str="PiMageOptions.opt"):
+    """Saves the implemented option to the given save-directory using the given filename.
 
-  def Save(self, saveDir, fName="PiMageOptions.opt"):
+    Args:
+        saveDir (str): Target folderpath
+        fName (str, optional): Target filename (incl. extension). Defaults to "PiMageOptions.opt".
+    """
     _output = ""
 
     _output += str.format("# PiMagePro settings\n")

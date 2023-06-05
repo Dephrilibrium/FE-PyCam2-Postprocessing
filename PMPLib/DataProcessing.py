@@ -13,12 +13,8 @@ def DataExtractionAndUpscaling(ssData,
                                pxSidelen = 12,
                                AddPxSidelen=False,
                                TakeSpotBrightFromAllImgs=True,
-                               #PxDivTrustband=[24, 250],          # PxDivTrustband (list, optional): Not used anymore, but was used to determine a trustband for pixelwise division factors. Defaults to [24. 250].
-                               #PxDivMinBright=150,                # PxDivMinBright (int, optional): Not used anymore, but was used to determin a minimal pixelwise brightness (ensures enough signal 2 noise ratio). Defaults to 150.
-                               #AttachImages=False,                # AttachImages (bool, optional): Not used anymore, since the linearity was proven and no image-manupulation had to be done anymore.
                                MinBright=256,
                                OverexposedValue = 255,
-                               ShowImg=False                       # ShowImg (bool, optional): Not used anymore. If true, the images are plotted when debugging the script. Defaults to False.
                                ):
     """Takes the collected ssData, and uses the images from ImgKey to determine necessary img-sets and extract brightess data, area (count of the active pixels), factors, any upscaled brightness (ignoring overexposure) as well as the upscaled brightness only, where overexposure occured
 

@@ -12,11 +12,21 @@ from PMPLib.ImgAreas import GetXYArea_XYX2Y2
 
 
 
+def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:bool = False, OverexposedBright:int = 0xFFF0, CleanMask = None, TakeSpotBrightFromAllImgs:bool = True):
+  """Creates a subset of images, where lower copies of images with SS are attached to the main SS (simpler data-structure for other algorithms)
 
+  Args:
+      ImgCollection (iterable, image): Iterable object of images.
+      XYCollection (iterable, XYData): Iterable object containing the XY-collected circles.
+      pxSidelen (int): Sidelength of an square around a XY-centerpoint.
+      AddPxSidelen (bool, optional): If enabled, the circles radius is added to pxSidelen. Defaults to False.
+      OverexposedBright (int, optional): Defines the pixelvalue that counts a pixel as overexposed.. Defaults to 0xFFF0.
+      CleanMask (2d-matrix, optional): A boolean 2d-matrix to mask overexposed pixels. Defaults to None.
+      TakeSpotBrightFromAllImgs (bool, optional): If enabled the brightness is extracted from ALL images (ensures same-length vectors for all XY-spots). Defaults to True.
 
-
-
-def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen, AddPxSidelen, OverexposedBright, CleanMask, TakeSpotBrightFromAllImgs):
+  Returns:
+      dict: A full subset of image sets containing "Blank" and "Clean" images
+  """
   subSet = dict()
   subSet["Full"] = dict()
   subSet["Full"]["Blank"] = list()
@@ -25,9 +35,6 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen, AddPxSidelen, Ove
   subSet["Full"]["CleanMask"] = list()
 
   subSet["Spot"] = dict()
-  # subSet["Spot"]["Blank"] = dict()
-  # subSet["Spot"]["Clean"] = dict()
-  # subSet["Spot"]["OverexposedMask"] = list()
 
 
   for _iImg in range(len(ImgCollection)):
@@ -45,7 +52,6 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen, AddPxSidelen, Ove
     subSet["Full"]["Clean"].append(cleanImg)
 
   _xyKeys = list(XYCollection.keys())
-  # _imgShape = ImgCollection[0].shape;
   _imgShape = (pxSidelen, pxSidelen) # Size of an spot!
   for _iXY in range(len(_xyKeys)):
     _xyKey = _xyKeys[_iXY]
@@ -75,7 +81,7 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen, AddPxSidelen, Ove
           _iIndex = XYCollection[_xyKey]["ImageIndex"].index(_iImg)
           _circle = XYCollection[_xyKey]["ImgCircles"][_iIndex]
 
-          x1, y1, x2, y2 = GetCircleArea_XYX2Y2(Circle=_circle, pxTolerance=pxSidelen, AddPxTolerance=AddPxSidelen)
+          x1, y1, x2, y2 = GetCircleArea_XYX2Y2(Circle=_circle, pxSidelen=pxSidelen, AddPxTolerance=AddPxSidelen)
           subSet["Spot"][_xyKey]["Blank"].append(subSet["Full"]["Blank"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
           subSet["Spot"][_xyKey]["Clean"].append(subSet["Full"]["Clean"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
           subSet["Spot"][_xyKey]["OverexposedMask"].append(subSet["Full"]["OverexposedMask"][_iImg][y1:y2, x1:x2])  # Add references to full-dataset
@@ -102,8 +108,20 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen, AddPxSidelen, Ove
 
 
 
-def BuildFactorImgSets(ssData, ImgKey, pxSidelen, AddPxSidelen, OverexposedValue, TakeSpotBrightFromAllImgs):
+def BuildFactorImgSets(ssData, ImgKey:str, pxSidelen:int, AddPxSidelen:bool=False, OverexposedValue:int=0xFFF0, TakeSpotBrightFromAllImgs:bool=True):
+  """Builds image sets for all SS and XY-Keys.
 
+  Args:
+      ssData (_type_): Main data structure.
+      ImgKey (str): Key-String of the considered ssData images.
+      pxSidelen (int): Sidelength of a square surrounding the XY-centercoordinate in which the spot-images are clipped.
+      AddPxSidelen (bool, optional): If enabled, the circle-radius is added to pxSidelen. Defaults to False.
+      OverexposedValue (int, optional): Value at which a pixel counts as overexposed. Defaults to 0xFFF0.
+      TakeSpotBrightFromAllImgs (bool, optional): If enabled, the brightness is determined for each image (ensures same-length vectors). Defaults to True.
+
+  Returns:
+      dict: A set of full and clipped XY-spot images.
+  """
   _ssKeys = list(ssData.keys())
 
   bImgs = dict()

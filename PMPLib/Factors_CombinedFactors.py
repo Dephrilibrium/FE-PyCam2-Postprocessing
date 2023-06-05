@@ -10,7 +10,14 @@ import cv2 as cv
 
 
 def __CalcCombinedFactorSubSet__(divFactorSet):
+  """Obsolet function: Subfunction to build up the combinated factors
 
+  Args:
+      divFactorSet (_type_): _description_
+
+  Returns:
+      _type_: _description_
+  """
   subSet = dict()
 
   subSet["SpotDiv"] = dict()
@@ -54,6 +61,14 @@ def __CalcCombinedFactorSubSet__(divFactorSet):
 
 
 def CalcCombinedFactorSets(divFactorSets):
+  """Obsolet function: which builded different combinations of upscale factors during the beginnings of the measurement-method (try-outs to develop some feeling for the matter)
+
+  Args:
+      divFactorSets (_type_): _description_
+
+  Returns:
+      _type_: _description_
+  """
   cmbFactors = dict()
 
   # _bKeys = list(divFactorSets.keys())

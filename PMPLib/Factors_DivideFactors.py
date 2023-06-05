@@ -19,6 +19,8 @@ import cv2 as cv
 
 
 def __CalcSpotDivFactorSubSet__(bVec, dVec):
+  """Obsolet function: Was used to determine a specific division-factor between spots of brighter and darker SS images
+  """
   subSet = dict()
   subSet["Blank"] = np.divide(bVec["Blank"], dVec["Blank"])
   subSet["Clean"] = np.divide(bVec["Clean"], dVec["Clean"])
@@ -38,7 +40,20 @@ def __CalcSpotDivFactorSubSet__(bVec, dVec):
 
 
 def __CalcPxDivFactor__(bImg, dImg, trustband, loMinBright):
+  """Obsolet function: Was used to determine a specific division-factor between pixels of brighter and darker SS images
 
+  Args:
+    bImg (_type_): _description_
+    dImg (_type_): _description_
+    trustband (_type_): _description_
+    loMinBright (_type_): _description_
+
+  Raises:
+    Exception: _description_
+
+  Returns:
+    _type_: _description_
+  """
   if bImg.dtype.name == "uint8":
     _bMaxBright = 0xFF
   elif bImg.dtype.name == "uint16":
@@ -84,6 +99,17 @@ def __CalcPxDivFactor__(bImg, dImg, trustband, loMinBright):
 
 
 def __CalcPxDivFactorSubSet__(bImgs, dImgs, trustband, loMinBright):
+  """Obsolet function: Was used to determine a subset of division-factors between spots on higher SS and lower SS for spots and pixels
+
+  Args:
+      bImgs (_type_): _description_
+      dImgs (_type_): _description_
+      trustband (_type_): _description_
+      loMinBright (_type_): _description_
+
+  Returns:
+      _type_: _description_
+  """
   subSet = dict()
   subSet["Blank"] = list()
   subSet["Clean"] = list()
@@ -118,6 +144,18 @@ def __BrightnessFactors_BuildPxAreaCntDivFactorSubSet__(bAreaCntSet, dAreaCntSet
 
 
 def GetDivFactorSets(imgSets): #, brightSets, pxAreaCntSets, PxDivTrustband, PxDivMinBright):
+  """Obsolet function: Iterates through img-sets and build the division-factors for all spots/pixels on all images and SS
+
+  Args:
+      imgSets (_type_): _description_
+      brightSets (_type_): _description_
+      pxAreaCntSets (_type_): _description_
+      PxDivTrustband (_type_): _description_
+      PxDivMinBright (_type_): _description_
+
+  Returns:
+      _type_: _description_
+  """
   factors = dict()
 
   _bKeys = list(imgSets.keys())

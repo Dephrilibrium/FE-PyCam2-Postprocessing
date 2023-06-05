@@ -10,6 +10,11 @@ import numpy as np
 
 
 def __GenerateEmptySubSetStructure__():
+  """Creates an empty substructure.
+
+  Returns:
+      dict: Empty substructure.
+  """
   struct = dict()
   struct["xTheory"]                   = list()
   # struct["xSpotDivBlank"]             = list()
@@ -28,6 +33,15 @@ def __GenerateEmptySubSetStructure__():
 
 
 def __AppendBright2All__(bright, bValue):
+  """Appends the given bValue to the given bright.
+
+  Args:
+      bright (dict, iterable, int): Iterable object to which bValue gets added.
+      bValue (int): Brightnessvalue to add to bright.
+
+  Returns:
+      dict, iterable, int: Returns the new dict with bValue appended.
+  """
   bright["SpotBright"]["xTheory"]                  .append(bValue)
   # bright["SpotBright"]["xSpotDivBlank"]            .append(bValue)
   # bright["SpotBright"]["xSpotDivClean"]            .append(bValue)
@@ -57,6 +71,15 @@ def __AppendBright2All__(bright, bValue):
 
 
 def __AppendPxImg2All__(pxImg, img):
+  """Appends the given img to the given pxImg.
+
+  Args:
+      pxImg (dict, iterable, image): Iterable object to which img is appended.
+      img (image): Image which should be appended to pxImg.
+
+  Returns:
+      dict, iterable, image: Returns the new dict with img appended.
+  """
   pxImg["xTheory"]                  .append(img)
   # pxImg["xSpotDivBlank"]            .append(img)
   # pxImg["xSpotDivClean"]            .append(img)
@@ -78,8 +101,19 @@ def __AppendPxImg2All__(pxImg, img):
 
 
 
-def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPxImg, imgIndex):
+def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPxImg, imgIndex:int):
+  """Appends some data-vectors to the given bright2Append and pxImgs2Append.
 
+  Args:
+      bright2Append (dict, iter, _type_): Collection to which a set of data should be appended.
+      pxImgs2Append (dict, iter, _type_): Collection to which a set of data should be appended.
+      scaledAnyBright (dict, dict, iterable, int): Full set of the any-upscaled brightnesses to append.
+      scaledAnyPxImg (dict, dict, iterable, int): Full set of the any-upscaled pixel-brightnesses to append.
+      imgIndex (int): Image-index of the data which should be appended.
+
+  Returns:
+      dict, iterable, int: Returns a dicitionary containing the appended data.
+  """
   bright2Append["SpotBright"]["xTheory"]                  .append(scaledAnyBright["SpotBright"]["Blank"]["xTheory"]                  [imgIndex])
   # bright2Append["SpotBright"]["xSpotDivBlank"]            .append(scaledAnyBright["SpotBright"]["Blank"]["xSpotDivBlank"]            [imgIndex])
   # bright2Append["SpotBright"]["xSpotDivClean"]            .append(scaledAnyBright["SpotBright"]["Blank"]["xSpotDivClean"]            [imgIndex])
@@ -132,6 +166,17 @@ def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPx
 
 
 def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
+  """Creates brightness-vectors where only overexposed spots/pixels are upscaled.
+
+  Args:
+      imgSets (dict, dict, iterable, images): A full set of images (SS, Blank/Clean, etc...)
+      brightSets (dict, dict, iterable, int): A full set of brightnesses.
+      scaledAnyBright (dict, dict, iterable, int): A full set of any-upscaled spot-brightnesses.
+      scaledAnyPxImgs (dict, dict, iterable, int): A full set of any-upscaled pixel-brightnesses.
+
+  Returns:
+      dict, dict: A full brightness-collection. A full pixelimage-collection.
+  """
 
   # Prepare for full-data
   bright = dict()
