@@ -68,6 +68,68 @@ def GrabSSFromFilenames(ImgDir:str, Format:str, FileTypes, iSSPlaceholder:int):
 
 
 
+def ReadImageFilepaths(FolderPath:str, Format:str, GlobFlags=natsort.ns.IGNORECASE, IgnorePathVector=None):
+  """Reads a list of filenames from FolderPath using Format as filter.
+
+  Args:
+      FolderPath (str): Scan-Folder path
+      Format (str): Filter-Format.
+      GlobFlags (flags): Flags for glob.
+      IgnorePathVector (iterable, str, optional): A list of strings which should be ignored during read (e.g. skip black images). Defaults to None.
+  
+  Returns:
+      _imgFilenames: List of os-sorted filenames.
+  """
+  filter = os.path.join(FolderPath, Format)
+  _fPaths = glob.glob(filter)
+  _fPaths = natsort.natsorted(_fPaths, alg=GlobFlags) # Be sure that all pictures sorted correctly!
+
+  if IgnorePathVector != None and type(IgnorePathVector) == list:
+    for _ignorePath in IgnorePathVector:
+      if _fPaths.__contains__(_ignorePath):
+        _fPaths.remove(_ignorePath)
+        
+  return _fPaths
+
+
+
+def ReadImagesFromPaths(Filepaths, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE, CropWindow=None, ShowImg=False):
+  """Reads one image and returns it as 2d matrix.
+
+  Args:
+      Filepaths (iterable, str): Single filepath or List of all paths to image-files.
+      cvFlags (_type_, optional): Flags for open-cv (if the target is not a pickle-type!). Defaults to cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE.
+      CropWindow (_type_, optional): Can be used to pre-crop an image. Defaults to None.
+      ShowImg (bool, optional): Shows each read image. Defaults to False.
+
+  Returns:
+      NDArray, images; NDArray, str: Image-collecton and Filepath-Collection
+  """
+  if type(Filepaths) == str:
+    Filepaths = [Filepaths]
+
+  _imgs = []
+  for _fPath in Filepaths:
+    if _fPath.endswith((".gray", ".raw")):
+      fImg = open(_fPath, "rb")
+      _cImg = pickle.load(fImg)
+      fImg.close()
+    else:
+      _cImg = cv.imread(_fPath, cvFlags)
+      _cImg[_cImg < 2] = 0
+    if CropWindow != None:
+      _cImg = CropImage(_cImg, CropWindow)
+
+    _imgs.append(_cImg)
+    
+    if ShowImg == True:
+      cv.imshow("Raw-image...", _cImg.astype(np.uint8))
+
+  _imgs = np.array(_imgs)
+  return _imgs
+
+
+
 def ReadImages(FolderPath, Format:str, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE, CropWindow=None, IgnorePathVector=None, ShowImg=False):
   """Simple function which opens and crops all the given image-paths and returns images and paths.
 
@@ -83,31 +145,33 @@ def ReadImages(FolderPath, Format:str, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GR
       _imgList: A list of the read images.
       _imgPaths: A list of the corresponding paths of read images.
   """
-  filter = os.path.join(FolderPath, Format)
-  _fPaths = glob.glob(filter)
-  _fPaths = natsort.natsorted(_fPaths, alg=natsort.ns.IGNORECASE) # Be sure that all pictures sorted correctly!
+  _fPaths = ReadImageFilepaths(FolderPath=FolderPath, Format=Format, GlobFlags=natsort.ns.IGNORECASE)
+  # filter = os.path.join(FolderPath, Format)                                                                        # Moved into "ReadImageFilepaths"
+  # _fPaths = glob.glob(filter)                                                                                      # Moved into "ReadImageFilepaths"
+  # _fPaths = natsort.natsorted(_fPaths, alg=natsort.ns.IGNORECASE) # Be sure that all pictures sorted correctly!    # Moved into "ReadImageFilepaths"
 
+  # if IgnorePathVector != None and type(IgnorePathVector) == list:                                                  # Moved into "ReadImageFilepaths"
+  #   for _ignorePath in IgnorePathVector:                                                                           # Moved into "ReadImageFilepaths"
+  #     if _fPaths.__contains__(_ignorePath):                                                                        # Moved into "ReadImageFilepaths"
+  #       _fPaths.remove(_ignorePath)                                                                                # Moved into "ReadImageFilepaths"
+  
   _imgPaths = list()
   _imgList = list()
 
-  if IgnorePathVector != None and type(IgnorePathVector) == list:
-    for _ignorePath in IgnorePathVector:
-      if _fPaths.__contains__(_ignorePath):
-        _fPaths.remove(_ignorePath)
-
   for _imgPath in _fPaths:
-    if _imgPath.endswith((".gray", ".raw")):
-      fImg = open(_imgPath, "rb")
-      cImg = pickle.load(fImg)
-      fImg.close()
-    else:
-      cImg = cv.imread(_imgPath, cvFlags)
-      cImg[cImg < 2] = 0
-    if CropWindow != None:
-      cImg = CropImage(cImg, CropWindow)
-
-    if ShowImg == True:
-      cv.imshow("Raw-image...", cImg.astype(np.uint8))
+    cImg = ReadImagesFromPaths(_imgPath)[0]
+    # if _imgPath.endswith((".gray", ".raw")):                # Moved into "ReadImage"
+    #   fImg = open(_imgPath, "rb")                           # Moved into "ReadImage"
+    #   cImg = pickle.load(fImg)                              # Moved into "ReadImage"
+    #   fImg.close()                                          # Moved into "ReadImage"
+    # else:                                                   # Moved into "ReadImage"
+    #   cImg = cv.imread(_imgPath, cvFlags)                   # Moved into "ReadImage"
+    #   cImg[cImg < 2] = 0                                    # Moved into "ReadImage"
+    # if CropWindow != None:                                  # Moved into "ReadImage"
+    #   cImg = CropImage(cImg, CropWindow)                    # Moved into "ReadImage"
+                                                              # Moved into "ReadImage"
+    # if ShowImg == True:                                     # Moved into "ReadImage"
+    #   cv.imshow("Raw-image...", cImg.astype(np.uint8))      # Moved into "ReadImage"
 
     _imgPaths.append(_imgPath)
     _imgList.append(cImg)

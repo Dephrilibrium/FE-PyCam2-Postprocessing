@@ -1,5 +1,5 @@
 ##################################################################################
-# 
+# Data Extractor for 16bit grayscale PNGs made with PyCam2-Server.               #
 #                                                                                #
 # How to use (variable explanation):                                             #
 # xCmd:             Path to the 7-zip executable.                                #

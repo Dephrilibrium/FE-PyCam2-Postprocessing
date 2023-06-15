@@ -1,6 +1,5 @@
 ### Ignored folders ###
 __pycache__/
-.vscode/
 _alt/
 _originale/
 _TestImages/
@@ -10,9 +9,14 @@ PMPLib/Correction/
 #######################
 
 ### Ignored files (wildcard) ###
+# For .vscode/* check allowed specific files below
+.vscode/*
 ################################
 
 ### Ignored files (specific) ###
-RenameFiles_OTH-Ketek.py
 ArtificialOverexposing.py
+################################
+
+### Allowed files (specific) ###
+!.vscode/extensions.json
 ################################

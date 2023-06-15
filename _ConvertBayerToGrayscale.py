@@ -61,7 +61,7 @@ from time import time
 from PIL import Image
 import cv2 as cv
 
-from PMPLib.ImgFileHandling import ReadImages, BlackFormat, ImageFormat
+from PMPLib.ImgFileHandling import GrabSSFromFilenames, ReadImageFilepaths, ReadImagesFromPaths, ReadImages, BlackFormat, ImageFormat
 from PMPLib.ImgManipulation import MeanImages, SubtractFromImgCollection, DemosaicBayer, ConvertBitsPerPixel, StretchBrightness
 from misc import DurationOfLambda
 
@@ -233,27 +233,43 @@ wds = [
 # r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\08_03 Kombis\230417_154117 550V T1,4=2.5, T2,3=f",
 # r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\08_03 Kombis\230417_163540 550V T1,4=2.5, T2,3=f",
 
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check\230417_171941 850V T1-4=2.5",
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check\230417_174418 700V T1-4=1",
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check\230418_085317 850V T1-4=2.5",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check\230417_171941 850V T1-4=2.5",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check\230417_174418 700V T1-4=1",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check\230418_085317 850V T1-4=2.5",
 
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_094854 450V T1=2.5, T2,3,4=gnd",
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_101154 450V T1=5, T2,3,4=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_094854 450V T1=2.5, T2,3,4=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_101154 450V T1=5, T2,3,4=gnd",
 
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_104503 850V T2=2.5, T1,3,4=gnd",
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_112114 950V T2=5, T1,3,4=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_104503 850V T2=2.5, T1,3,4=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_112114 950V T2=5, T1,3,4=gnd",
 
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_115301 750V T3=2.5, T1,2,4=gnd",
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_121938 750V T3=5, T1,2,4=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_115301 750V T3=2.5, T1,2,4=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_121938 750V T3=5, T1,2,4=gnd",
 
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_124726 650V T4=2.5, T1,2,3=gnd",
-r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_131423 650V T4=5, T1,2,3=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_124726 650V T4=2.5, T1,2,3=gnd",
+# r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded\230418_131423 650V T4=5, T1,2,3=gnd",
+
+
+# 21x21
+r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_084230 450V (unregulated)",
+# r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_090038 550V (regulated)",
 ]
 
-bayerType = "raw"           # raw bayer
-demosaicType = "png"        # gs for gray-scale
-nPicsPerSS = 3              # Images taken per SS
-nMeasPnts = 1               # Amount of measurements were taken per line (Rpts of sweep per line)
+bayerType = "raw"               # raw bayer
+demosaicType = "png"            # gs for gray-scale
+nPicsPerSS = 3                  # Images taken per SS
+nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
+
+ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
+                                #  loaded simultaneously into RAM.
+                                #  This option splits up all measurement-image paths into blocks which 
+                                #  converts exactly one mean image for the steps:
+                                #  1.) Loading nPicsPerSS images from hard-disk into RAM
+                                #  2.) Demosaicking each
+                                #  3.) Subtracting the blacklevel
+                                #  4.) Converting from 12bit to 16bit range
+                                #  4.) Dumping 16bit PNG and
+                                #  6.) Removing the old raw-images from hard-disk
 
 # https://www.strollswithmydog.com/pi-hq-cam-sensor-performance/
 # Black-Level typically 256 .. 257.3 depending on gain; For Gain=1 typically 256.3DN
@@ -277,71 +293,104 @@ for _fold in wds: # Iterate working directories
             print(f"Couldn't find any {bayerType}-Files. Continuing to next folder")
             continue
 
+
+        # Darkfield images
         print(f"Reading Darkfield-Images...")
-        blckImgs, blckPaths = ReadImages(fPaths=root, Format=str.format(BlackFormat, "*", "*", "*", "raw")     , CropWindow=None, IgnorePathVector=None, ShowImg=False)
+        blckImgs, blckPaths = ReadImages(FolderPath=root, Format=str.format(BlackFormat, "*", "*", "*", "raw")     , CropWindow=None, IgnorePathVector=None, ShowImg=False)
 
-        print(f"Reading Measurement-Images...")
-        measImgs, measPaths = ReadImages(fPaths=root, Format=str.format(ImageFormat, "*", "*", "*", "*", "raw"), CropWindow=None, IgnorePathVector=blckPaths, ShowImg=None)
+        # We need the entire blackPaths before they are modfied by the mean,
+        #   which is why we need to grab the filenames here already, but use
+        #   them at for _nImgIteration... etc... below
+        _imgFilepaths = ReadImageFilepaths(FolderPath=root, Format=str.format(ImageFormat, "*", "*", "*", "*", "raw"), IgnorePathVector=blckPaths)
 
-        print(f"Demosaic Darkfield-Bayer 2 Grayscale...")
-        blckImgs = DemosaicBayer(blckImgs)
-        print(f"Demosaic Measurement-Bayer 2 Grayscale...")
-        measImgs = DemosaicBayer(measImgs)
-        
-        # Meaning nPicsPerSS
-        if nPicsPerSS > 1:
-            print(f"Meaning Darkfield-Images (nPicsPerSS)...")
-            blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
-            blckClipPaths = blckPaths[::nPicsPerSS]
+        # Determine the amount of conversation iterations
+        #  nConversions = nSS * nMeasPnts * nImgsPerSS
+        #  with: 
+        #   -> nMeasPnts = How much measurement points were taken per target-value (e.g. a specific extraction voltage)
+        #   -> nSS = Amount of Shutterspeeds at which images were captured
+        #   -> nImgsPerSS = Amount of images captured per Shutterspeed
+        if ConvertImageByImage == True:
+            _nConversions = len(_imgFilepaths) // (nPicsPerSS * nMeasPnts)
+        else:
+            _nConversions = 1
 
-            print(f"Meaning Measurement-Images (nPicsPerSS)...")
-            measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
-            measClipPaths = measPaths[::nPicsPerSS]
+        # Measurement image reading and meaning!
+        for _nConvIteration in range(_nConversions):
+            _iFilestart = _nConvIteration * (nPicsPerSS * nMeasPnts)
+            _iFilestop  = _iFilestart + (nPicsPerSS * nMeasPnts)
+            measPaths = _imgFilepaths[_iFilestart:_iFilestop]
 
-        # Meaning nMeasPnts
-        if nMeasPnts > 1:
-            print(f"Meaning Darkfield-Images (nMeasPnts)...")
-            blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
-            blckPaths = blckPaths[::nMeasPnts]
+            print(f"Reading Measurement-Images...")
+            measImgs = ReadImagesFromPaths(Filepaths=measPaths, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE, CropWindow=None, ShowImg=False)
+            # measImgs, measPaths = ReadImages(FolderPath=root, Format=str.format(ImageFormat, "*", "*", "*", "*", "raw"), CropWindow=None, IgnorePathVector=blckPaths, ShowImg=None)
 
-            print(f"Meaning Measurement-Images (nMeasPnts)...")
-            measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
-            measPaths = measPaths[::nMeasPnts]
+            if _nConvIteration == 0: # Blackimage only on first cycle
+                print(f"Demosaic Darkfield-Bayer 2 Grayscale...")
+                blckImgs = DemosaicBayer(blckImgs)
+            print(f"Demosaic Measurement-Bayer 2 Grayscale...")
+            measImgs = DemosaicBayer(measImgs)
 
-        # Subtract blacklevel
-        if sensBlackLevel >= 0:
-            print(f"Subtracting black-level from 12Bit Images...")
-            if sensBlackLevel == 0:
-                blackMean = int(np.mean(blckImgs) + 1)
-                blackStd = int(np.std(blckImgs) * 6 + 1) # 6 sigma
-                sensBlackLevel = blackMean + blackStd
-                print(f"Using mean of dark-image: ", end="")
-            else:
-                print(f"Using fix value: ", end="")
-            print(f"if(pixelbright < {sensBlackLevel:.2f}) = 0")
-            
-                
-            blckImgs = SubtractFromImgCollection(blckImgs, sensBlackLevel)
-            measImgs = SubtractFromImgCollection(measImgs, sensBlackLevel)
-            measImgs = StretchBrightness(measImgs, blackLevel=sensBlackLevel, whiteLevel=0xFFF) # 12bit max
+            # Meaning nPicsPerSS
+            if nPicsPerSS > 1:
+                if _nConvIteration == 0: # BlackImages only on first cycle
+                    print(f"Meaning Darkfield-Images (nPicsPerSS)...")
+                    blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
+                    blckClipPaths = blckPaths[::nPicsPerSS]
 
-        # 12 bit -> 16 bit shift (values pixelwise << 4)
-        print(f"12Bit Measurement-Images -> 16Bit Images...")
-        measImgs = ConvertBitsPerPixel(ImgCollection=measImgs, originBPP=12, targetBPP=16)    
+                print(f"Meaning Measurement-Images (nPicsPerSS)...")
+                measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
+                measClipPaths = measPaths[::nPicsPerSS]
+
+            # Meaning nMeasPnts
+            if nMeasPnts > 1:
+                if _nConvIteration == 0: # BlackImages only on first cycle
+                    print(f"Meaning Darkfield-Images (nMeasPnts)...")
+                    blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
+                    blckPaths = blckPaths[::nMeasPnts]
+
+                print(f"Meaning Measurement-Images (nMeasPnts)...")
+                measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
+                measPaths = measPaths[::nMeasPnts]
+
+            # Subtract blacklevel
+            if sensBlackLevel >= 0:
+                if _nConvIteration == 0:
+                    print(f"Determining 12bit blacklevel from blackimages...")
+                    if sensBlackLevel == 0:
+                        blackMean = int(np.mean(blckImgs) + 1)
+                        blackStd = int(np.std(blckImgs) * 6 + 1) # 6 sigma
+                        sensBlackLevel = blackMean + blackStd
+                        print(f"Using mean of dark-image: ", end="")
+                    else:
+                        print(f"Using fix value: ", end="")
+                    print(f"Determined Blacklevel-value: {sensBlackLevel:.2f}")
 
 
-        # Saving 16bit PNGs
-        print("Dumping Measurement-Images as 16bit-PNGs for PiMagePro...")
-        start = time()
-        # pklPaths = DumpCollectionAsGray(measImgs, measClipPaths)
-        png16Paths = DumpCollectionAs16BitPNG(measImgs, measClipPaths)
-        print(f"PNG-Dump of Measurement images took: {(time()-start):.3f}s")
+                print(f"Subtracting black-level from 12Bit Images...")
+                print(f"Condition: if(pixelbright < {sensBlackLevel:.2f}) = 0")             # Moved up so that the blacklevel is only determined once
+                if _nConvIteration == (_nConversions-1):                                    # Run it on black images only at the last cycle (just for checking if all pixels become nearly 0)
+                    blckImgs = SubtractFromImgCollection(blckImgs, sensBlackLevel)
+                measImgs = SubtractFromImgCollection(measImgs, sensBlackLevel)
+                measImgs = StretchBrightness(measImgs, blackLevel=sensBlackLevel, whiteLevel=0xFFF) # 12bit max
+
+            # 12 bit -> 16 bit shift (values pixelwise << 4)
+            print(f"12Bit Measurement-Images -> 16Bit Images...")
+            measImgs = ConvertBitsPerPixel(ImgCollection=measImgs, originBPP=12, targetBPP=16)
 
 
-        # Remove the original bayer data files
-        print("Deleting obsolet .raw-files...")
-        DeleteFiles(blckPaths)
-        DeleteFiles(measPaths)
+            # Saving 16bit PNGs
+            print("Dumping Measurement-Images as 16bit-PNGs for PiMagePro...")
+            start = time()
+            # pklPaths = DumpCollectionAsGray(measImgs, measClipPaths)
+            png16Paths = DumpCollectionAs16BitPNG(measImgs, measClipPaths)
+            print(f"PNG-Dump of Measurement images took: {(time()-start):.3f}s")
 
-    
+
+            # Remove the original bayer data files
+            print("Deleting obsolet .raw-files...")
+            if _nConvIteration == (_nConversions-1):
+                DeleteFiles(blckPaths)
+            DeleteFiles(measPaths)
+
+
 print("Finished")

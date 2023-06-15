@@ -77,11 +77,11 @@ targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 verbose = True
 
 wds = [
-r"\\rfhmik164\Samba\_FEMDAQ V2 for Measurement\Jachym",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\230612 HQCam SOI21x21_0001\Messungen",
 ]
 
 
-SkipBadSubdirs = True
+SkipBadSubdirs = False
 
 _XXBadDirs = list()
 for wd in wds:

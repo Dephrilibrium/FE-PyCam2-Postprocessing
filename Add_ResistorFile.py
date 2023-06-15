@@ -26,11 +26,11 @@ opt.SkipBadSubdirs = False                                   # If a parent folde
 
 
 
-parentDir = r"P:\MIKRO\Mikrosensorik\Mitarbeiter\Hausladen\Veröffentlichung, Vorträge, etc\230403 IEEE PyCam2\Measurements"
+parentDir = r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\_Old Cam (damaged, 1Meg)"
 picDir = "Pics"
 
 
-ResistorValue = 10e6
+ResistorValue = 1e6
 
 
 t0 = time.time()
