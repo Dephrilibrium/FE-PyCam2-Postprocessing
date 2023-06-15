@@ -1,0 +1,62 @@
+# PiMagePro settings
+
+[PiMage sequence]
+PiMage_SkipBadSubdirs    =True
+PiMage_ForceOverride     =True
+
+[Visualization]
+ShowImages_Read          =False
+ShowImages_Mean          =False
+ShowImages_Subtract      =False
+ShowImages_SpotDetection =False
+ShowImages_Draw          =False
+ShowImages_BrightnessExtraction=False
+
+[Image processing]
+Image_CropWin            =None
+Image_bThresh            =35
+Image_ThreshType         =8
+Image_OtsuDiv            =8
+Image_UseForMeanNPoints  =.swp
+Image_MeanNPoints        =1
+Image_MeanNPicsPerSS     =1
+Image_OverexposedBrightness=65520
+
+[Spot-detection]
+SpotDetect_Dilate        =10
+SpotDetect_Erode         =10
+CircleDetect_pxMinRadius =5
+CircleDetect_pxMaxRadius =50
+CircleDetect_AddPxRadius =False
+XYKeys_FollowSpots       =True
+
+[Circle-draw]
+CircleDraw_pxRadius      =50
+CircleDraw_AddPxRadius   =False
+
+[Brightness-detection]
+bDetect_SpotBrightFromAllImgs=True
+bDetect_pxSideLen        =100
+bDetect_AddPxSideLen     =False
+bDetect_Trustband        =[46080, 64000]
+bDetect_MinTrust         =12800
+
+[XYKeys]
+XYKeys_pxCollectRadius   =50
+XYKeys_AddPxCollectRadius=True
+XYKeys_pxCorrectionRadius=50
+
+[XYKey Sorting]
+XYKeySort_Rowdistance    =50
+
+[Saving]
+SaveSSImagePkl           =False
+Save_ImgSets4Brightness  =False
+Save_BrightSets4Brightness=True
+Save_PxAreaCnts4Brightness=True
+Save_DivFactors4Brightness=True
+Save_CombinedFactors4Brightness=True
+Save_ScaledAnyPxImgs     =False
+Save_ScaledAnyBrightnesses=True
+Save_ScaledWhereOverexposedPxImgs=False
+Save_ScaledWhereOverexposedBrightnesses=True
