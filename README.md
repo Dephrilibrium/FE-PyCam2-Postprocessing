@@ -31,7 +31,12 @@ To run a script, check out [Get started Tutorial for Python][HowToPython]. There
 ### _CompressTars_2_7z.py
 As we saving our measurements firstly on a server, we compress the archives first, to use less file-size and less amount of files.
 
-The ```wds``` variable can assigned by arbitrary parent folders which are scanned iteratively to the lowest nested folder-level. It searches for archive-types the PyCam2-Server creates (```*.tar```) and compresses them as ```*.7z``` file, normally reducing the size by more than a factor of 10.
+The ```wds``` variable can assigned by arbitrary parent folders which are scanned iteratively to the lowest nested folder-level. It searches for archive-types the PyCam2-Server creates (```*.tar```) and compresses them as ```*.7z``` file, normally reducing the size by more than a factor of 10:
+| Uncompressed (46.7GB) | Compressed (4GB) |
+|-----------------------|-------------------|
+| ![Uncompressed](https://github.com/Dephrilibrium/FE-PyCam2-Postprocessing/assets/89015665/73af95c0-21e7-4c30-8a5a-99fab72a73ab) | ![Compressed](https://github.com/Dephrilibrium/FE-PyCam2-Postprocessing/assets/89015665/da989c77-40aa-4108-b439-678996f1743e) |
+
+
 
 
 ### _PiCamUnpacker.py
