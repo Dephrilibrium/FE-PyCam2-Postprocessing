@@ -154,7 +154,7 @@ workDirs = [
 
 
 # 21x21
-r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps",
+r"D:\05 PiCam\Jachym-Compress\Jachym",
 ]
 
 fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # List of filetype which is counted at the end for statistics

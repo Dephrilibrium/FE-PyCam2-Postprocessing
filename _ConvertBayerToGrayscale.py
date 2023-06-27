@@ -251,7 +251,7 @@ wds = [
 
 
 # 21x21
-r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_084230 450V (unregulated)",
+r"D:\05 PiCam\Jachym-Compress\Jachym",
 # r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_090038 550V (regulated)",
 ]
 
@@ -276,7 +276,7 @@ ConvertImageByImage = False     # Big size images can cause a "out of RAM" excep
 # zeroPxlsBelow < 0: No zeroing
 # zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
 # zeroPxlsBelow > 0: Set "pxls < Value = 0"
-# sensBlackLevel = 256 + 12
+# sensBlackLevel = 256 + 12   # Mean + Std
 sensBlackLevel = 0
 
 
@@ -316,9 +316,12 @@ for _fold in wds: # Iterate working directories
 
         # Measurement image reading and meaning!
         for _nConvIteration in range(_nConversions):
-            _iFilestart = _nConvIteration * (nPicsPerSS * nMeasPnts)
-            _iFilestop  = _iFilestart + (nPicsPerSS * nMeasPnts)
-            measPaths = _imgFilepaths[_iFilestart:_iFilestop]
+            if _nConversions > 1:
+                _iFilestart = _nConvIteration * (nPicsPerSS * nMeasPnts)
+                _iFilestop  = _iFilestart + (nPicsPerSS * nMeasPnts)
+                measPaths = _imgFilepaths[_iFilestart:_iFilestop]
+            else:
+                measPaths = _imgFilepaths
 
             print(f"Reading Measurement-Images...")
             measImgs = ReadImagesFromPaths(Filepaths=measPaths, cvFlags=cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE, CropWindow=None, ShowImg=False)
