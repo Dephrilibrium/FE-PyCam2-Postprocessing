@@ -252,14 +252,15 @@ wds = [
 
 # 21x21
 # r"D:\05 PiCam\Jachym-Compress\Jachym",
-r"D:\05 PiCam\230612 HQCam SOI21x21_0003",
+r"D:\05 PiCam\230718 150nm Cu-Cam Noise-Test",
 # r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_090038 550V (regulated)",
 ]
 
 dumpBlackSub = True             # True: BlackSubtraction Image is dumped as PNG too
+deleteRawAfter = True           # True: Unpacked RAW-files from .tars are removed after conversion!
 bayerType = "raw"               # raw bayer
 demosaicType = "png"            # gs for gray-scale
-nPicsPerSS = 3                  # Images taken per SS
+nPicsPerSS = 1                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
 ConvertImageByImage = True     # Big size images can cause a "out of RAM" exception, when all images
@@ -279,7 +280,7 @@ ConvertImageByImage = True     # Big size images can cause a "out of RAM" except
 # zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
 # zeroPxlsBelow > 0: Set "pxls < Value = 0"
 # sensBlackLevel = 256 + 12   # Mean + Std
-sensBlackLevel = 0
+sensBlackLevel = -1
 
 
 
@@ -336,15 +337,17 @@ for _fold in wds: # Iterate working directories
             measImgs = DemosaicBayer(measImgs)
 
             # Meaning nPicsPerSS
+            blckClipPaths = blckPaths.copy() # If nPicsPerSS == 1 && nMeasPnts == 1 --> measClipPath = measPaths
+            measClipPaths = measPaths.copy() # If nPicsPerSS == 1 && nMeasPnts == 1 --> measClipPath = measPaths
             if nPicsPerSS > 1:
                 if _nConvIteration == 0: # BlackImages only on first cycle
                     print(f"Meaning Darkfield-Images (nPicsPerSS)...")
                     blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
-                    blckClipPaths = blckPaths[::nPicsPerSS]
+                    blckClipPaths = blckClipPaths[::nPicsPerSS]
 
                 print(f"Meaning Measurement-Images (nPicsPerSS)...")
                 measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nPicsPerSS, ShowImg=False)        # Meaning nPicsPerSS
-                measClipPaths = measPaths[::nPicsPerSS]
+                measClipPaths = measClipPaths[::nPicsPerSS]
 
             # Meaning nMeasPnts
             if nMeasPnts > 1:
@@ -410,10 +413,11 @@ for _fold in wds: # Iterate working directories
 
 
             # Remove the original bayer data files
-            print("Deleting obsolet .raw-files...")
-            # if _nConvIteration == (_nConversions-1):
-            #     DeleteFiles(blckPaths)
-            # DeleteFiles(measPaths)
+            if deleteRawAfter == True:
+                print("Deleting obsolet .raw-files...")
+                if _nConvIteration == (_nConversions-1):
+                    DeleteFiles(blckPaths)
+                DeleteFiles(measPaths)
 
 
 print("Finished")
