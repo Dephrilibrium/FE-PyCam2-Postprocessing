@@ -37,7 +37,7 @@ nMeasPnts = 1               # Amount of measurements were taken per line (Rpts o
 # zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
 # zeroPxlsBelow > 0: Set "pxls < Value = 0"
 # sensBlackLevel = 256 + 12
-sensBlackLevel = 0
+sensBlackLevel = -1
 
 
 
@@ -251,16 +251,18 @@ wds = [
 
 
 # 21x21
-r"D:\05 PiCam\Jachym-Compress\Jachym",
+# r"D:\05 PiCam\Jachym-Compress\Jachym",
+r"D:\05 PiCam\230612 HQCam SOI21x21_0003",
 # r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_090038 550V (regulated)",
 ]
 
+dumpBlackSub = True             # True: BlackSubtraction Image is dumped as PNG too
 bayerType = "raw"               # raw bayer
 demosaicType = "png"            # gs for gray-scale
 nPicsPerSS = 3                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
-ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
+ConvertImageByImage = True     # Big size images can cause a "out of RAM" exception, when all images
                                 #  loaded simultaneously into RAM.
                                 #  This option splits up all measurement-image paths into blocks which 
                                 #  converts exactly one mean image for the steps:
@@ -349,21 +351,39 @@ for _fold in wds: # Iterate working directories
                 if _nConvIteration == 0: # BlackImages only on first cycle
                     print(f"Meaning Darkfield-Images (nMeasPnts)...")
                     blckImgs = MeanImages(ImgCollection=blckImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
-                    blckPaths = blckPaths[::nMeasPnts]
+                    blckClipPaths = blckClipPaths[::nMeasPnts]
+
+            # Dump also BlackImages if requested!
+            if dumpBlackSub == True:
+                if _nConvIteration == 0:
+                    print(f"12Bit BlackSubtraction-Images -> 16Bit Images...")
+                    blkImgs4Save = ConvertBitsPerPixel(ImgCollection=blckImgs.copy(), originBPP=12, targetBPP=16)
+                    print(f"Dumping BlackSubtraction-Images...")
+                    DumpCollectionAs16BitPNG(blkImgs4Save, blckClipPaths)
+                    del blkImgs4Save # Free RAM after use
+
 
                 print(f"Meaning Measurement-Images (nMeasPnts)...")
                 measImgs = MeanImages(ImgCollection=measImgs, ImgsPerMean=nMeasPnts, ShowImg=False)     # Meaning nMeasPnts
-                measPaths = measPaths[::nMeasPnts]
+                measClipPaths = measClipPaths[::nMeasPnts]
 
             # Subtract blacklevel
             if sensBlackLevel >= 0:
                 if _nConvIteration == 0:
                     print(f"Determining 12bit blacklevel from blackimages...")
                     if sensBlackLevel == 0:
-                        blackMean = int(np.mean(blckImgs) + 1)
-                        blackStd = int(np.std(blckImgs) * 6 + 1) # 6 sigma
-                        sensBlackLevel = blackMean + blackStd
-                        print(f"Using mean of dark-image: ", end="")
+                        blackMean = int(np.mean(blckImgs))
+                        if blackMean == 0:
+                            blackMean = 1
+                        blackStd = int(np.std(blckImgs) * 6) # 6 Sigma
+                        if blackStd == 0:
+                            blackStd = 1
+                        if blackStd < blackMean:
+                            print(f"6 sigma < mean; Using mean + 6 sigma of dark-image: ", end="")
+                            sensBlackLevel = blackMean + blackStd
+                        else:
+                            print(f"6 sigma > mean; Using mean of dark-image: ", end="")
+                            sensBlackLevel = blackMean
                     else:
                         print(f"Using fix value: ", end="")
                     print(f"Determined Blacklevel-value: {sensBlackLevel:.2f}")
@@ -376,10 +396,10 @@ for _fold in wds: # Iterate working directories
                 measImgs = SubtractFromImgCollection(measImgs, sensBlackLevel)
                 measImgs = StretchBrightness(measImgs, blackLevel=sensBlackLevel, whiteLevel=0xFFF) # 12bit max
 
+
             # 12 bit -> 16 bit shift (values pixelwise << 4)
             print(f"12Bit Measurement-Images -> 16Bit Images...")
             measImgs = ConvertBitsPerPixel(ImgCollection=measImgs, originBPP=12, targetBPP=16)
-
 
             # Saving 16bit PNGs
             print("Dumping Measurement-Images as 16bit-PNGs for PiMagePro...")
@@ -391,9 +411,9 @@ for _fold in wds: # Iterate working directories
 
             # Remove the original bayer data files
             print("Deleting obsolet .raw-files...")
-            if _nConvIteration == (_nConversions-1):
-                DeleteFiles(blckPaths)
-            DeleteFiles(measPaths)
+            # if _nConvIteration == (_nConversions-1):
+            #     DeleteFiles(blckPaths)
+            # DeleteFiles(measPaths)
 
 
 print("Finished")

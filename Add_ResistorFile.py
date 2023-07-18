@@ -26,11 +26,12 @@ opt.SkipBadSubdirs = False                                   # If a parent folde
 
 
 
-parentDir = r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\_Old Cam (damaged, 1Meg)"
+parentDir = r"Z:\_FEMDAQ V2 for Measurement\Hausi\230612 HQCam SOI21x21_0003\Messungen"
 picDir = "Pics"
 
 
-ResistorValue = 1e6
+OverrideValue = False
+ResistorValue = 10e6
 
 
 t0 = time.time()
@@ -57,6 +58,9 @@ for root, dirs, files in os.walk(parentDir): # Iterate recursevily through paren
     else:
         print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Possible directory found: " + bcolors.ENDC + root)
         _fPathResistor = os.path.join(root, "value.resistor")
+        if OverrideValue == False:
+            if os.path.exists(_fPathResistor):  # When file exists already
+                continue                        #  Jump over
         _output = "%.0e" % ResistorValue
         f = open(_fPathResistor, "w")
         f.write(_output)
