@@ -154,7 +154,7 @@ workDirs = [
 
 
 # 21x21
-r"D:\05 PiCam\Jachym-Compress\Jachym",
+r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam",
 ]
 
 fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # List of filetype which is counted at the end for statistics

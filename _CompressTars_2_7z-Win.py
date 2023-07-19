@@ -77,7 +77,7 @@ targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 verbose = True
 
 wds = [
-r"D:\05 PiCam\Jachym-Compress",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam",
 ]
 
 

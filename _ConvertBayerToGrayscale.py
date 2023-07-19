@@ -56,6 +56,7 @@ import glob
 import natsort
 import parse
 
+from colorama import Fore, Style
 from time import time
 
 from PIL import Image
@@ -252,18 +253,18 @@ wds = [
 
 # 21x21
 # r"D:\05 PiCam\Jachym-Compress\Jachym",
-r"D:\05 PiCam\230718 150nm Cu-Cam Noise-Test",
+r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam",
 # r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_090038 550V (regulated)",
 ]
 
-dumpBlackSub = True             # True: BlackSubtraction Image is dumped as PNG too
+dumpBlackImgs = False           # True: BlackSubtraction Image is dumped as PNG too
 deleteRawAfter = True           # True: Unpacked RAW-files from .tars are removed after conversion!
 bayerType = "raw"               # raw bayer
 demosaicType = "png"            # gs for gray-scale
 nPicsPerSS = 1                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
-ConvertImageByImage = True     # Big size images can cause a "out of RAM" exception, when all images
+ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
                                 #  loaded simultaneously into RAM.
                                 #  This option splits up all measurement-image paths into blocks which 
                                 #  converts exactly one mean image for the steps:
@@ -280,7 +281,7 @@ ConvertImageByImage = True     # Big size images can cause a "out of RAM" except
 # zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
 # zeroPxlsBelow > 0: Set "pxls < Value = 0"
 # sensBlackLevel = 256 + 12   # Mean + Std
-sensBlackLevel = -1
+sensBlackLevel = 0
 
 
 
@@ -357,7 +358,7 @@ for _fold in wds: # Iterate working directories
                     blckClipPaths = blckClipPaths[::nMeasPnts]
 
             # Dump also BlackImages if requested!
-            if dumpBlackSub == True:
+            if dumpBlackImgs == True:
                 if _nConvIteration == 0:
                     print(f"12Bit BlackSubtraction-Images -> 16Bit Images...")
                     blkImgs4Save = ConvertBitsPerPixel(ImgCollection=blckImgs.copy(), originBPP=12, targetBPP=16)
@@ -391,6 +392,15 @@ for _fold in wds: # Iterate working directories
                         print(f"Using fix value: ", end="")
                     print(f"Determined Blacklevel-value: {sensBlackLevel:.2f}")
 
+                    if sensBlackLevel > 0x0FFF: # 12bit maximum value!
+                        print(f"{Fore.RED}!!! ERROR !!!")
+                        print(f"{Fore.RED}Blacklevel-value > 12bit-maximum-value --> {sensBlackLevel} > {4095}")
+                        print(f"{Fore.RED}The process will continue, but you will receive only complete black images!{Fore.RESET}")
+                    if sensBlackLevel > 310:    # Normal is 250-300
+                        print(f"{Fore.YELLOW}!!! WARNING !!!")
+                        print(f"{Fore.YELLOW}Blacklevel-value is abnormal high --> {sensBlackLevel} > {310}")
+                        print(f"{Fore.YELLOW}The process will continue, but check your data manually!{Fore.RESET}")
+
 
                 print(f"Subtracting black-level from 12Bit Images...")
                 print(f"Condition: if(pixelbright < {sensBlackLevel:.2f}) = 0")             # Moved up so that the blacklevel is only determined once
@@ -418,6 +428,5 @@ for _fold in wds: # Iterate working directories
                 if _nConvIteration == (_nConversions-1):
                     DeleteFiles(blckPaths)
                 DeleteFiles(measPaths)
-
 
 print("Finished")
