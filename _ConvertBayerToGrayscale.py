@@ -25,26 +25,6 @@
 # 2023 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
-
-bayerType = "raw"           # raw bayer
-demosaicType = "png"        # gs for gray-scale
-nPicsPerSS = 3              # Images taken per SS
-nMeasPnts = 1               # Amount of measurements were taken per line (Rpts of sweep per line)
-
-# https://www.strollswithmydog.com/pi-hq-cam-sensor-performance/
-# Black-Level typically 256 .. 257.3 depending on gain; For Gain=1 typically 256.3DN
-# zeroPxlsBelow < 0: No zeroing
-# zeroPxlsBelow = 0: Use Darkimage-Mean + Darkimage-Std
-# zeroPxlsBelow > 0: Set "pxls < Value = 0"
-# sensBlackLevel = 256 + 12
-sensBlackLevel = -1
-
-
-
-
-
-
-
 import os
 from os.path import join, basename, dirname, isdir, exists, isfile
 import numpy as np
@@ -257,11 +237,13 @@ r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam",
 # r"D:\05 PiCam\230612 HQCam SOI21x21_0001\Messungen\02_02 Some Sweeps\230614_090038 550V (regulated)",
 ]
 
+
+
 dumpBlackImgs = False           # True: BlackSubtraction Image is dumped as PNG too
-deleteRawAfter = True           # True: Unpacked RAW-files from .tars are removed after conversion!
+deleteRawAfter = False          # True: Unpacked RAW-files from .tars are removed after conversion!
 bayerType = "raw"               # raw bayer
 demosaicType = "png"            # gs for gray-scale
-nPicsPerSS = 1                  # Images taken per SS
+nPicsPerSS = 3                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
 ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
@@ -379,11 +361,11 @@ for _fold in wds: # Iterate working directories
                         blackMean = int(np.mean(blckImgs))
                         if blackMean == 0:
                             blackMean = 1
-                        blackStd = int(np.std(blckImgs) * 6) # 6 Sigma
+                        blackStd = int(np.std(blckImgs) * 3) # +- 3 Sigma = 6 Sigma
                         if blackStd == 0:
                             blackStd = 1
                         if blackStd < blackMean:
-                            print(f"6 sigma < mean; Using mean + 6 sigma of dark-image: ", end="")
+                            print(f"6 sigma < mean; Using mean + 3 sigma of dark-image: ", end="")
                             sensBlackLevel = blackMean + blackStd
                         else:
                             print(f"6 sigma > mean; Using mean of dark-image: ", end="")
