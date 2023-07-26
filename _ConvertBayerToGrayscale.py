@@ -70,11 +70,14 @@ def DumpCollectionAs16BitPNG(ImgCollection, PathCollection):
         # Save 16bit PNG
         _saved = cv.imwrite(savePaths[-1], img)
         if _saved:
-            print(f"Wrote {basename(savePaths[-1])}")                                                # Log for how far it's already gone
+            print(f"Wrote {basename(savePaths[-1])}", end="\r")                                                # Log for how far it's already gone
         else:
             print(f"{Fore.RED}Couldn't write {basename(savePaths[-1])}{Fore.RESET}")                                                # Log for how far it's already gone
             print(f"{Fore.RED}Check your path for illegal characters (opencv don't like \"µ\" for instance){Fore.RESET}")                                                # Log for how far it's already gone
             saveState = False
+    
+    if _saved: # When last image was a success, add a new line
+        print("")
     return savePaths, saveState
 
 

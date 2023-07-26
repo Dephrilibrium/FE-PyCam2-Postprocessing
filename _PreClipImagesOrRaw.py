@@ -70,6 +70,12 @@ h = int(2798)           # Image Height
 
 
 
+### Determine the cut-indicies first
+cx1 = x
+cy1 = y
+cx2 = x + w
+cy2 = y + h
+
 
 t0 = time.time()
 LogLine(t0, "Starting", bcolors.BOLD + "----- PreClipImages -----" + bcolors.ENDC, yFill=15, wFill=0, end="\n")
@@ -135,7 +141,7 @@ for parentDir in parentDirs: # Iterate through parentDirs
       LogLine(None, yellowMsg=pFile, whiteMessage="Processing Image    ", yFill=50, wFill=0, end="\r")
       if fileIsType == ".jpg" or fileIsType == ".png":
         img = cv.imread(lPath, cv.IMREAD_ANYDEPTH | cv.IMREAD_GRAYSCALE)  # Load image
-        img = img[y:y+h, x:x+w]                                           # Clip image
+        img = img[cy1:cy2, cx1:cx2]                                           # Clip image
         # Override the image!
         cv.imwrite(sPath, img)
       else: # It's a .raw --> Clip in bayer-space
@@ -144,7 +150,7 @@ for parentDir in parentDirs: # Iterate through parentDirs
         img = pickle.load(fImg)
         fImg.close()
 
-        img = img[y:y+h, x:x+w] # Actual clip
+        img = img[cy1:cy2, cx1:cx2] # Actual clip
 
         # Store back
         fImg = open(lPath, "wb")
