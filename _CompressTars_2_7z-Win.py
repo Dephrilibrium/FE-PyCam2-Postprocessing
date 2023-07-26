@@ -77,7 +77,9 @@ targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 verbose = True
 
 wds = [
-r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam",
+    # r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\04_01 10k, find ImgSize",
+    # r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS",
+    r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\06_01 10k, weird noise tests",
 ]
 
 

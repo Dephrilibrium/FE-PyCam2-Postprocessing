@@ -25,44 +25,50 @@ opt = PiMageOptions()
 opt.SkipBadSubdirs = False                                   # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
 
 
-
-parentDir = r"Z:\_FEMDAQ V2 for Measurement\Hausi\230612 HQCam SOI21x21_0003\Messungen"
+wds = [
+    # r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\04_01 10k, find ImgSize",
+    # r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS",
+    r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\06_01 10k, weird noise tests",
+]
 picDir = "Pics"
 
 
 OverrideValue = False
-ResistorValue = 10e6
+ResistorValue = 10e3
 
 
 t0 = time.time()
 _XXBadDirs = list()
-for root, dirs, files in os.walk(parentDir): # Iterate recursevily through parentDir
-    # Firstly check if path contains one of the already marked bad measurement-folders
-    if any(root.__contains__(_bDir) for _bDir in _XXBadDirs):
-        print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Bad parent - skipped: " + bcolors.ENDC + root)
-        continue
-    # Folder marked as bad measurement -> Skip
-    if root.endswith("_XX"):
-        if opt.SkipBadSubdirs == True:
-            _XXBadDirs.append(root)
-        print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Marked as bad - skipped: " + bcolors.ENDC + root)
-        continue
 
-    print("\n" + bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Entering: " + bcolors.ENDC + root)
+for parentDir in wds:
+    for root, dirs, files in os.walk(parentDir): # Iterate recursevily through parentDir
+        # Firstly check if path contains one of the already marked bad measurement-folders
+        if any(root.__contains__(_bDir) for _bDir in _XXBadDirs):
+            print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Bad parent - skipped: " + bcolors.ENDC + root)
+            continue
+        # Folder marked as bad measurement -> Skip
+        if root.endswith("_XX"):
+            if opt.SkipBadSubdirs == True:
+                _XXBadDirs.append(root)
+            print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Marked as bad - skipped: " + bcolors.ENDC + root)
+            continue
 
-    #Check if current directory contains measurement-files
-    #    Directory found when it contains a Pics directory and *.dat files
-    # if not dirs.__contains__(picDir) or not any(f.endswith(".dat") for f in files): # Old one, but sometime i want to have value.resistor also in folders were the pictures are not extracted yet!
-    if not any(f.endswith(".dat") for f in files):
-        print("".rjust(18) + bcolors.WARNING + " Nothing interesting here" + bcolors.ENDC + root)
-    else:
-        print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Possible directory found: " + bcolors.ENDC + root)
-        _fPathResistor = os.path.join(root, "value.resistor")
-        if OverrideValue == False:
-            if os.path.exists(_fPathResistor):  # When file exists already
-                continue                        #  Jump over
-        _output = "%.0e" % ResistorValue
-        f = open(_fPathResistor, "w")
-        f.write(_output)
-        f.close()
-        LogLine(None, "Saved: ", _output + " to " + os.path.basename(_fPathResistor), wFill=0, end="\n" )
+        print("\n" + bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Entering: " + bcolors.ENDC + root)
+
+        #Check if current directory contains measurement-files
+        #    Directory found when it contains a Pics directory and *.dat files
+        # if not dirs.__contains__(picDir) or not any(f.endswith(".dat") for f in files): # Old one, but sometime i want to have value.resistor also in folders were the pictures are not extracted yet!
+        if not any(f.endswith(".dat") for f in files):
+            print("".rjust(18) + bcolors.WARNING + " Nothing interesting here" + bcolors.ENDC + root)
+        else:
+            print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Possible directory found: " + bcolors.ENDC + root)
+            _fPathResistor = os.path.join(root, "value.resistor")
+            if OverrideValue == False:
+                if os.path.exists(_fPathResistor):  # When file exists already
+                    LogLine(t0=t0, yellowMsg=f'"value.resistor"', whiteMessage=f" already exsist (Override=Off)", wFill=0, end="\n" )
+                    continue                        #  Jump over
+            _output = "%.0e" % ResistorValue
+            f = open(_fPathResistor, "w")
+            f.write(_output)
+            f.close()
+            LogLine(None, "Saved: ", _output + " to " + os.path.basename(_fPathResistor), wFill=0, end="\n" )
