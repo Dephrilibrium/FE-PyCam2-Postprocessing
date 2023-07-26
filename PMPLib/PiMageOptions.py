@@ -21,6 +21,9 @@ class PiMageOptions():
     _output += str.format("PiMage_SkipBadSubdirs".ljust(_fill)                  + "={}\n", self.PiMage_SkipBadSubdirs)              # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
     _output += str.format("PiMage_ForceOverride".ljust(_fill)                   + "={}\n", self.PiMage_ForceOverride)               # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
 
+    # SS Autodetection
+    _output += str.format("PiMage_ForceOverride".ljust(_fill)                   + "={}\n", self.DetectSS_AllowedPercentDeviation)   # Is the detected SS within the range of an already known SS its counted as the same SS
+
     # Visualization
     _output += str.format("\n[Visualization]\n")
     _output += str.format("ShowImages_Read".ljust(_fill)                        + "={}\n", self.ShowImages_Read)                    # True = show each image (during debugging); False = Silent process

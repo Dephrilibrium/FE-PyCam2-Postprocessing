@@ -69,7 +69,7 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 
 # Paths
-parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS\230724_105940 500V IMax2V, SS=100ms (ref)"
+parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS\230724_110838 500V IMax2V, SS=0"
 
 picDir = "Pics"
 
@@ -97,6 +97,10 @@ opt.ShowImages_Read = False                                             # True =
 opt.ShowImages_Mean = False                                             # True = show each image (during debugging); False = Silent process
 opt.ShowImages_SpotDetection = False                                    # True = show each image (during debugging); False = Silent process
 opt.ShowImages_Draw = False                                             # True = show each image (during debugging); False = Silent process
+
+
+# SS Autodetection
+opt.DetectSS_AllowedPercentDeviation = 2.5                              # Is the detected SS within the range of an already known SS its counted as the same SS
 
 
 # Image processing
@@ -237,7 +241,7 @@ for root, dirs, files in os.walk(parentDir):
     ##### Do Picture stuff #####
     # Collect shutterspeeds
     LogLine(t0, "Grabbing shutterspeeds: ", wFill=0, end="\n")
-    Shutterspeeds, DetectedFiletype = GrabSSFromFilenames(picsPath, ImageFormat, LoadFileTypes, SS_Index)
+    Shutterspeeds, DetectedFiletype = GrabSSFromFilenames(ImgDir=picsPath, Format=ImageFormat, FileTypes=LoadFileTypes, iSSPlaceholder=SS_Index, AllowedDeviationPercent=opt.DetectSS_AllowedPercentDeviation)
     Shutterspeeds.reverse()
     # Shutterspeeds.pop(0)
     for SS in Shutterspeeds:

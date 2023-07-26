@@ -32,7 +32,7 @@ SaveFileType  = "png"
 
 
 
-def GrabSSFromFilenames(ImgDir:str, Format:str, FileTypes, iSSPlaceholder:int):
+def GrabSSFromFilenames(ImgDir:str, Format:str, FileTypes, iSSPlaceholder:int, AllowedDeviationPercent:float = 2.5):
   """Reading all files of the given folder, parsing the numbers and trying to collect all shutterspeeds in ascending order.
 
   Args:
@@ -47,7 +47,10 @@ def GrabSSFromFilenames(ImgDir:str, Format:str, FileTypes, iSSPlaceholder:int):
   """
   fList = os.listdir(ImgDir)
 
-  SS = list()
+  percAsFactor = AllowedDeviationPercent / 100
+
+  SS      = np.array([]).astype(np.uint32)
+  SSCount = np.array([]).astype(np.uint32)
   for file in fList:
     if not any(file.endswith("." + fType) for fType in FileTypes): # Be sure only scanning filetype of interest! Sometimes a 0kb tar.gz can be within the pictures
       if not file.endswith(".log"):
@@ -57,9 +60,25 @@ def GrabSSFromFilenames(ImgDir:str, Format:str, FileTypes, iSSPlaceholder:int):
       if numbers == None:
         continue
       
-      if SS.__contains__(numbers[iSSPlaceholder]):
+      _ssVal   = int(numbers[iSSPlaceholder])
+      _ssUpper = int(_ssVal * (1+percAsFactor))
+      _ssLower = int(_ssVal * (1-percAsFactor))
+      _ssInList = np.where((SS <= _ssUpper) & (SS >= _ssLower))[0]
+      if (_ssInList.size > 0):
+        _ssIndex = _ssInList[0]
+
+        _ssCurrCnt = SSCount[_ssIndex]
+        _ssValOfList = SS[_ssIndex]
+
+        _ssValOfList = _ssValOfList * _ssCurrCnt + _ssVal
+        _ssCurrCnt += 1
+        _ssValOfList = _ssValOfList // _ssCurrCnt
+
+        SS     [_ssIndex] = int(_ssValOfList)
+        SSCount[_ssIndex] = _ssCurrCnt
         continue
-      SS.append(numbers[iSSPlaceholder])
+      SS      = np.append(SS     , int(_ssVal)).astype(np.uint32)
+      SSCount = np.append(SSCount,           1).astype(np.uint32)
 
   SS = natsort.os_sorted(SS)
   SS = [int(ss) for ss in SS]
