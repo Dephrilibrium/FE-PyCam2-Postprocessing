@@ -125,8 +125,8 @@ def BuildFactorImgSets(ssData, ImgKey:str, pxSidelen:int, AddPxSidelen:bool=Fals
   _ssKeys = list(ssData.keys())
 
   bImgs = dict()
-
-  for _iBase in range(len(_ssKeys) -1):
+  _nKeys = len(_ssKeys)
+  for _iBase in range(_nKeys):
     _bKey = _ssKeys[_iBase]
 
     # Prepare dict for full base-images
@@ -137,6 +137,9 @@ def BuildFactorImgSets(ssData, ImgKey:str, pxSidelen:int, AddPxSidelen:bool=Fals
     #######################      ^--- Appends Base Images ---^     #######################
     ######################################################################################
     #######################      v--- Appends Div-Images  ---v     #######################
+    if _iBase == _nKeys -1: # Check if _iDiv of following loop could go out of range!
+      continue              # If true -> Skip
+
     for _iDiv in range(_iBase + 1, len(_ssKeys)):
       _dKey = _ssKeys[_iDiv]
 

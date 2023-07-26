@@ -178,6 +178,10 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
       dict, dict: A full brightness-collection. A full pixelimage-collection.
   """
 
+  _bKeys = list(brightSets.keys())
+  _bKey = _bKeys[0] # To grab _xyKeys
+
+
   # Prepare for full-data
   bright = dict()
   bright["Full"] = dict()
@@ -188,9 +192,6 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
 
   pxImgs = dict()
   pxImgs["Full"] = __GenerateEmptySubSetStructure__()
-
-  _bKeys = list(brightSets.keys())
-  _bKey = _bKeys[0] # To grab _xyKeys
 
   # Prepare for spot-data
   bright["Spot"] = dict()
@@ -215,7 +216,8 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
     if imgSets[_bKey]["Full"]["OverexposedMask"][_iImg].max(): # Base-SS-Image has overexposed pixels
 
       _dKeys = list(imgSets[_bKey]["Div"].keys())
-      for _iDiv in range(len(_dKeys)):
+      _ndKeys = len(_dKeys)
+      for _iDiv in range(_ndKeys):
         _dKey = _dKeys[_iDiv]
         if imgSets[_bKey]["Div"][_dKey]["Full"]["OverexposedMask"][_iImg].max() and _dKey != _dKeys[-1]: # Div-SS-Image also overexposed and it is not already the last shutterspeed
           continue                                                               #  -> Search in next div-SS
@@ -257,7 +259,8 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
       # if imgSets[_bKey]["Spot"][_xyKey]["OverexposedMask"][_iImg].max(): # Base-SS-Image has overexposed pixels
       if oeMax: # Base-SS-Image has overexposed pixels
         _dKeys = list(imgSets[_bKey]["Div"].keys())
-        for _iDiv in range(len(_dKeys)):
+        _ndKeys = len(_dKeys)
+        for _iDiv in range(_ndKeys):
           _dKey = _dKeys[_iDiv]
           try: # to access the xy-key
             imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey]

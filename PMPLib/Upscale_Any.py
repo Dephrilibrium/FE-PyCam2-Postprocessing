@@ -208,14 +208,16 @@ def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
   # upscaled["Full"] = __BrightUpscale_AnySubSet__()
 
   _bKeys = list(brightSets.keys())
-  for _iBase in range(len(_bKeys)):
+  _nbKeys = len(_bKeys)
+  for _iBase in range(_nbKeys):
     _bKey = _bKeys[_iBase]
 
     upscaledBright[_bKey] = dict()
     upscaledPxImgs[_bKey] = dict()
 
     _dKeys = list(brightSets[_bKey]["Div"].keys())
-    for _iDiv in range(len(_dKeys)):
+    _ndKeys = len(_dKeys)
+    for _iDiv in range(_ndKeys):
       _dKey = _dKeys[_iDiv]
 
       upscaledBright[_bKey][_dKey] = dict()

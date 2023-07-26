@@ -69,17 +69,7 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 
 # Paths
-# parentDir = r"D:\05 PiCam\230215 HQCam 150nm Cu SOI2x2_0006 (libcamera)\Messungen\01 Aktivierung IMax1V\230222_095249 Tip Ch3 (aktiviert)"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen"
-
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\02_02 Einzel BurnIn (1kV@IMax250nA)"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\03_02 Unreg Kombis (IMax5V)"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\04_02 Weitere Kombis"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\05_02 Tips einzeln, Rest floatend"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\08_02 Reaktivierungsversuche"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\08_03 Kombis"
-# parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_02 Performance-Check"
-parentDir = r"D:\05 PiCam\230404 HQCam SOI2x2_0014\Messungen\09_03 Messungen tips einzeln, Rest grounded"
+parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS\230724_105940 500V IMax2V, SS=100ms (ref)"
 
 picDir = "Pics"
 
@@ -111,7 +101,7 @@ opt.ShowImages_Draw = False                                             # True =
 
 # Image processing
 opt.Image_CropWin = None                                                # None/False: Images not cropped; [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
-opt.Image_bThresh = 35                                                  # 8bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
+opt.Image_bThresh = 35*255                                              # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
 opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THRESH_OTSU:                     Tries otsu
                                                                         # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
                                                                         # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
@@ -124,10 +114,10 @@ opt.Image_MinBright2CountArea = 1* 0xFF                                 # Define
 
 
 # Spot-detection
-opt.SpotDetect_Dilate = 10                                              # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
+opt.SpotDetect_Dilate = 5                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
-opt.CircleDetect_pxMinRadius = 5                                        # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
-opt.CircleDetect_pxMaxRadius = 50                                       # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
+opt.CircleDetect_pxMinRadius = 2                                        # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
+opt.CircleDetect_pxMaxRadius = 30                                       # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
 
 
 # Spot-Draw on Images

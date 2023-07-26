@@ -73,7 +73,8 @@ def GetBrightnessSets(imgSets):
   brightSets = dict()
 
   _bKeys = list(imgSets.keys())
-  for _iBase in range(len(_bKeys)):
+  _nbKeys = len(_bKeys)
+  for _iBase in range(_nbKeys):
     _bKey = _bKeys[_iBase]
 
     brightSets[_bKey] = dict()
@@ -81,19 +82,25 @@ def GetBrightnessSets(imgSets):
     brightSets[_bKey]["Spot"] = dict()  # Empty dict for "correct" order
     brightSets[_bKey]["Div"] = dict()
 
+    _xyKeys = list(imgSets[_bKey]["Spot"].keys())
+    for _iXY in range(len(_xyKeys)):
+      _xyKey = _xyKeys[_iXY]
+      brightSets[_bKey]["Spot"][_xyKey] = __BuildBrightSubSet__(imgSets[_bKey]["Spot"][_xyKey])
+
 
     _dKeys = list(imgSets[_bKey]["Div"].keys())
-    for _iDiv in range(len(_dKeys)):
+    _ndKeys = len(_dKeys)
+    for _iDiv in range(_ndKeys):
       _dKey = _dKeys[_iDiv]
 
       brightSets[_bKey]["Div"][_dKey] = dict()
       brightSets[_bKey]["Div"][_dKey]["Full"] = __BuildBrightSubSet__(imgSets[_bKey]["Div"][_dKey]["Full"])
       brightSets[_bKey]["Div"][_dKey]["Spot"] = dict()
 
-      _xyKeys = list(imgSets[_bKey]["Spot"].keys())
+      # _xyKeys = list(imgSets[_bKey]["Spot"].keys()) # Already got a bit above!
       for _iXY in range(len(_xyKeys)):
-        _xyKey = _xyKeys[_iXY]
-        brightSets[_bKey]["Spot"][_xyKey] = __BuildBrightSubSet__(imgSets[_bKey]["Spot"][_xyKey])
+        # _xyKey = _xyKeys[_iXY]
+        # brightSets[_bKey]["Spot"][_xyKey] = __BuildBrightSubSet__(imgSets[_bKey]["Spot"][_xyKey])
 
         try:
           brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey] = __BuildBrightSubSet__(imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey])
@@ -178,7 +185,8 @@ def GetPxCntSets(imgSets, minBright:int):
   pxAreas = dict()
 
   _bKeys = list(imgSets.keys())
-  for _iBase in range(len(_bKeys)):
+  _nbKeys = len(_bKeys)
+  for _iBase in range(_nbKeys):
     _bKey = _bKeys[_iBase]
 
     pxAreas[_bKey] = dict()
@@ -186,20 +194,28 @@ def GetPxCntSets(imgSets, minBright:int):
     pxAreas[_bKey]["Spot"] = dict()  # Empty dict for "correct" order
     pxAreas[_bKey]["Div"] = dict()
 
+    _xyKeys = list(imgSets[_bKey]["Spot"].keys())
+    for _iXY in range(len(_xyKeys)):
+      _xyKey = _xyKeys[_iXY]
+      pxAreas[_bKey]["Spot"][_xyKey] = __BuildPxCntSubSet__(imgSets[_bKey]["Spot"][_xyKey], minVal=minBright)
+
+
 
     _dKeys = list(imgSets[_bKey]["Div"].keys())
-    for _iDiv in range(len(_dKeys)):
+    _ndKeys = len(_dKeys)
+    for _iDiv in range(_ndKeys):
       _dKey = _dKeys[_iDiv]
 
       pxAreas[_bKey]["Div"][_dKey] = dict()
       pxAreas[_bKey]["Div"][_dKey]["Full"] = __BuildPxCntSubSet__(imgSets[_bKey]["Div"][_dKey]["Full"], minVal=minBright)
       pxAreas[_bKey]["Div"][_dKey]["Spot"] = dict()
 
-      _xyKeys = list(imgSets[_bKey]["Spot"].keys())
+      # _xyKeys = list(imgSets[_bKey]["Spot"].keys()) # Got already a bit above
       for _iXY in range(len(_xyKeys)):
         _xyKey = _xyKeys[_iXY]
 
-        pxAreas[_bKey]["Spot"][_xyKey] = __BuildPxCntSubSet__(imgSets[_bKey]["Spot"][_xyKey], minVal=minBright)
+        # pxAreas[_bKey]["Spot"][_xyKey] = __BuildPxCntSubSet__(imgSets[_bKey]["Spot"][_xyKey], minVal=minBright)
+
         try:
           pxAreas[_bKey]["Div"][_dKey]["Spot"][_xyKey] = __BuildPxCntSubSet__(imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], minVal=minBright)
         except Exception as e:

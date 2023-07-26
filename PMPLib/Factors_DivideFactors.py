@@ -159,13 +159,15 @@ def GetDivFactorSets(imgSets): #, brightSets, pxAreaCntSets, PxDivTrustband, PxD
   factors = dict()
 
   _bKeys = list(imgSets.keys())
-  for _iBase in range(len(_bKeys)):
+  _nbKeys = len(_bKeys)
+  for _iBase in range(_nbKeys):
     _bKey = _bKeys[_iBase]
 
     factors[_bKey] = dict()
 
     _dKeys = list(imgSets[_bKey]["Div"].keys())
-    for _iDiv in range(len(_dKeys)):
+    _ndKeys = len(_dKeys)
+    for _iDiv in range(_ndKeys):
       _dKey = _dKeys[_iDiv]
 
       factors[_bKey][_dKey] = dict()
