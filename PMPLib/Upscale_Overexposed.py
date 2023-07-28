@@ -6,9 +6,6 @@ import numpy as np
 
 
 
-
-
-
 def __GenerateEmptySubSetStructure__():
   """Creates an empty substructure.
 
@@ -260,6 +257,7 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
       if oeMax: # Base-SS-Image has overexposed pixels
         _dKeys = list(imgSets[_bKey]["Div"].keys())
         _ndKeys = len(_dKeys)
+
         for _iDiv in range(_ndKeys):
           _dKey = _dKeys[_iDiv]
           try: # to access the xy-key
@@ -276,6 +274,19 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
             bright["Spot"][_xyKey]["Overexposed"].append(False)
             bright["Spot"][_xyKey]["BrightnessFromSS"].append(_dKey)
             break
+
+
+
+        if _ndKeys <= 0: # No Divs available, so use the base key values !!! ATTENTION !!! Same 5 lines of code as directly below under "else:"
+          blankBright = brightSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg]
+          __AppendBright2All__(bright=bright["Spot"][_xyKey], bValue=blankBright)
+          __AppendPxImg2All__(pxImg=pxImgs["Spot"][_xyKey], img=imgSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg])
+
+          bright["Spot"][_xyKey]["Overexposed"].append(True) # if oeMax = False it would not go to this piece of code
+          bright["Spot"][_xyKey]["BrightnessFromSS"].append(_bKey)
+
+
+
 
       else: # Base-SS-Image has no overexposed pixels
         blankBright = brightSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg]

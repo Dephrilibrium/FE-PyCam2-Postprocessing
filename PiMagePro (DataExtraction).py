@@ -69,7 +69,7 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 
 # Paths
-parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS\230724_110838 500V IMax2V, SS=0"
+parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)"
 
 picDir = "Pics"
 
@@ -114,14 +114,14 @@ opt.Image_AutoThresDiv = 8                                              # When T
 opt.Image_UseForMeanNPoints = ".swp"                                    # <int>: Means together n measurement-points; ".swp": Tryies to find a sweep-file where it can extract the number of n measurement points
 opt.Image_MeanNPicsPerSS = 1                                            # Means n pics (in row) together
 opt.Image_OverexposedBrightness = 0xFFF0                                # Defines at which 16bit value a pixel counts as overexposed
-opt.Image_MinBright2CountArea = 1* 0xFF                                 # Defines at which 16bit value a pixel counts as brightness-contributing pixel
+opt.Image_MinBright2CountArea = 3* 0xFF                                 # Defines at which 16bit value a pixel counts as brightness-contributing pixel
 
 
 # Spot-detection
 opt.SpotDetect_Dilate = 5                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
-opt.CircleDetect_pxMinRadius = 2                                        # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
-opt.CircleDetect_pxMaxRadius = 30                                       # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
+opt.CircleDetect_pxMinRadius = 4                                        # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
+opt.CircleDetect_pxMaxRadius = 50                                       # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
 
 
 # Spot-Draw on Images

@@ -94,6 +94,12 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:
           subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Spot"][_xyKey]["OverexposedMask"][-1])
           subSet["Spot"][_xyKey]["Area"].append([0, 0, 0, 0])
 
+
+    subSet["Spot"][_xyKey]["Blank"]           = np.array(subSet["Spot"][_xyKey]["Blank"])
+    subSet["Spot"][_xyKey]["Clean"]           = np.array(subSet["Spot"][_xyKey]["Clean"])
+    subSet["Spot"][_xyKey]["OverexposedMask"] = np.array(subSet["Spot"][_xyKey]["OverexposedMask"])
+    subSet["Spot"][_xyKey]["CleanMask"]       = np.array(subSet["Spot"][_xyKey]["CleanMask"])
+    subSet["Spot"][_xyKey]["Area"]            = np.array(subSet["Spot"][_xyKey]["Area"])
   return subSet
 
 
