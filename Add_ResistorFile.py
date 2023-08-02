@@ -26,17 +26,7 @@ opt.SkipBadSubdirs = False                                   # If a parent folde
 
 
 wds = [
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\03_00 DarkShots 10k",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\03_01 10k",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\04_00 DarkShots (10k, find ImgSize)",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\04_01 10k, find ImgSize",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_00 DarkShots 10k, AutoSS (not working correctly)",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\06_00 DarkShots 10k, weird noise tests",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\06_01 10k, weird noise tests",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\07_00 DarkShots, 10k, Test AutoSS, AGC not working correct",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\07_01 10k, Test AutoSS, AGC not working correct",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_00 DarkShots, 10k, SSList",
+r"P:\MIKRO\Mikrosensorik\Mitarbeiter\Hausladen\Veröffentlichung, Vorträge, etc\230403 IEEE PyCam2\Measurements 21x21",
 ]
 picDir = "Pics"
 

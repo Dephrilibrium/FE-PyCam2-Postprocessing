@@ -33,16 +33,17 @@ import os.path
 import subprocess
 import sys
 import time
-from misc import bcolors, Logger, ClearLine, DiffTime, Time2Human
+import glob
+from misc import bcolors, Logger, ClearLine, DiffTime, Time2Human, LogLine, LogLineOK
 
 
 # Preamble & Helpers
 
 
-def PrintProcessStats(t0, t1, t2):
-    print("Processed files:" + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
-    print("Process time:   " + bcolors.OKBLUE + Time2Human(DiffTime(t1, t2)).rjust(24) + bcolors.ENDC)
-    print("Cumulative time:" + bcolors.OKBLUE + Time2Human(DiffTime(t0, t2)).rjust(24) + bcolors.ENDC)
+def PrintProcessStats():
+    print("Extracted *.7z:".ljust(20) + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
+    print("Extraced *.tar:".ljust(20) + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
+    print("Deleted *.tar:" .ljust(20) + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
 
 
 def PrintVerbosePaths(fPath, xPath, fPathAbs, xPathAbs):
@@ -74,14 +75,7 @@ xPath = "Pics"  # Subdirectory where extract to. !!! Do not add a leading / or \
 xLog = "_PiCamUnpacker.log"  # Filename to log output
 
 workDirs = [
-# 21x21
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_171103 700V IMax1V",
-# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_173431 500V IMax1V - 15m",
-# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_175303 700V IMax1V",
-# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_181207 700V IMax1V - 15m",
-# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_183133 700V IMax1V",
-# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m",
-# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_193006 700V IMax1V",
+r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList",
 ]
 
 fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # List of filetype which is counted at the end for statistics
@@ -92,6 +86,7 @@ verbose             = False      # Verbose output
 skipCmd             = False      # Set to true to skip the cmd-exection (for test purposes)
 log2File            = False      # Define if you want to have a log-file
 SkipBadSubdirs      = True       # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
+DeleteCaptureLogs   = True       # Automatically searches for the extraced SSCapture.logs and deletes them too
 
 
 ###### DO NOT TOUCH AREA ######
@@ -123,7 +118,10 @@ for workDir in workDirs:                # Iterate the working directories
     # Extract tar.gz or 7z files
     print("\r\n")
     print("Extracting *.tar.gz/*.7z:")
-    fCnt = 0
+    _nExtracted7z = 0
+    _nExtractedTars = 0
+    _nDeletedTars = 0
+    _nDeletedCapLogs = 0
     _XXBadDirs = list()
     for dirpath, dirnames, filenames in os.walk("."):
 
@@ -146,70 +144,142 @@ for workDir in workDirs:                # Iterate the working directories
             if debug == True:
                 PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
 
-            print(bcolors.WARNING + "Unpacking:" + bcolors.ENDC + ' "' + _fPath + '" -> "' + _xPath,end="",)
+            print(bcolors.WARNING + "Extracting:" + bcolors.ENDC + ' "' + _fPath + '" -> "' + _xPath,end="",)
             cmd = str.format(szCmd, _fPath, _xPath)
             RunCmd(cmd)
             if verbose == True:
                 print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC) # Keep line
             else:
                 print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
+            _nExtracted7z +=  + 1
+            print("\r\n")
 
-            fCnt = fCnt + 1
-    t1 = time.time()
-    ClearLine() # Be sure, current line is empty
-    PrintProcessStats(t0, t0, t1)
 
-    # Extract .tar
-    print("\r\n")
-    print("Extracting *.tar:")
-    fCnt = 0
-    for dirpath, dirnames, filenames in os.walk("."):
-        for filename in [f for f in filenames if f.endswith(".tar")]:
-            _fPath = os.path.join(dirpath, filename)
-            _fPathAbs = os.path.abspath(_fPath)
-            _xPath = os.path.join(dirpath)
-            _xPathAbs = os.path.abspath(_xPath)
-            if debug == True:
-                PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
+            print("Extract nested *.tars:")
+            filenames = os.listdir(os.path.join(dirpath, xPath))
+            filenames = [f for f in filenames if f.endswith(".tar")] # Grab the *.tars
+            for filename in filenames:
+                _fPath = os.path.join(dirpath, xPath, filename)
+                _fPathAbs = os.path.abspath(_fPath)
+                _xPath = os.path.join(dirpath, xPath)
+                _xPathAbs = os.path.abspath(_xPath)
+                if debug == True:
+                    PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
 
-            print( bcolors.WARNING + "Unpacking:" + bcolors.ENDC + ' "' + _fPath + '" -> "' + _xPath, end="",)
-            cmd = str.format(szCmd, _fPath, _xPath)
-            RunCmd(cmd)
-            if verbose == True:
-                print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC) # Keep line
-            else:
-                print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
-            fCnt = fCnt + 1
-    t2 = time.time()
-    ClearLine()
-    PrintProcessStats(t0, t1, t2)
+                print( bcolors.WARNING + "Extracting:" + bcolors.ENDC + ' "' + _fPath + '" -> "' + _xPath, end="",)
+                cmd = str.format(szCmd, _fPath, _xPath)
+                RunCmd(cmd)
+                if verbose == True:
+                    print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC, end="") # Keep line
+                else:
+                    print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC + "\033[K", end="") # Override line
+                _nExtractedTars += 1
+
+
+                os.remove(_fPath)
+                if verbose == True:
+                    print(" and " + bcolors.OKGREEN + "deleted" + bcolors.ENDC) # Keep line
+                else:
+                    print(" and " + bcolors.OKGREEN + "deleted" + bcolors.ENDC + "\033[K", end="\r") # Override line
+                _nDeletedTars += _nDeletedTars
+            print("\r\n")
+
+
+
+
+            if DeleteCaptureLogs == True:
+                print("Search and delete *SSCapture.log:")
+                filenames = os.listdir(os.path.join(dirpath, xPath))
+                filenames = [f for f in filenames if f.endswith("SSCapture.log")] # Grab the *.tars
+                for filename in filenames:
+                    _fPath = os.path.join(dirpath, xPath, filename)
+                    print( bcolors.WARNING + "Deleting:" + bcolors.ENDC + ' "' + _fPath +'"', end="",)
+                    os.remove(_fPath)
+                    if verbose == True:
+                        print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC) # Keep line
+                    else:
+                        print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
+                    _nDeletedTars += 1
+            print("\r\n\r\n")
+
+            # print("Delete nested *.tars:")
+            # # filenames = os.listdir(os.path.join(dirpath, xPath))           # Unchanged from the block above
+            # # for filename in [f for f in filenames if f.endswith(".tar")]:  # Unchanged from the block above
+            # for filename in filenames:
+            #     _fPath = os.path.join(dirpath, xPath, filename)
+            #     _fPathAbs = os.path.abspath(_fPath)
+            #     _xPath = "-"  # Not existing
+            #     _xPathAbs = "-"  # Not existing
+            #     if debug == True:
+            #         PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
+
+            #     print(bcolors.FAIL + "Cleaning up:" + bcolors.ENDC + ' "' + _fPath, end="")
+            #     # cmd = str.format(rmCmd, _fPath)
+            #     # RunCmd(cmd) # Replaced with os.remove(fPath)
+            #     os.remove(_fPath)
+            #     if verbose == True:
+            #         print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC) # Keep line
+            #     else:
+            #         print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
+
+            #     _nDeletedTars = _nDeletedTars + 1
+            # print("\r\n\r\n")
+
+    # t1 = time.time()
+    # ClearLine() # Be sure, current line is empty
+    # PrintProcessStats(t0, t0, t1)
+
+    # # Extract .tar
+    # print("\r\n")
+    # print("Extracting *.tar:")
+    # fCnt = 0
+    # for dirpath, dirnames, filenames in os.walk("."):
+    #     for filename in [f for f in filenames if f.endswith(".tar")]:
+    #         _fPath = os.path.join(dirpath, filename)
+    #         _fPathAbs = os.path.abspath(_fPath)
+    #         _xPath = os.path.join(dirpath)
+    #         _xPathAbs = os.path.abspath(_xPath)
+    #         if debug == True:
+    #             PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
+
+    #         print( bcolors.WARNING + "Unpacking:" + bcolors.ENDC + ' "' + _fPath + '" -> "' + _xPath, end="",)
+    #         cmd = str.format(szCmd, _fPath, _xPath)
+    #         RunCmd(cmd)
+    #         if verbose == True:
+    #             print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC) # Keep line
+    #         else:
+    #             print(bcolors.OKGREEN + "Extracted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
+    #         fCnt = fCnt + 1
+    # t2 = time.time()
+    # ClearLine()
+    # PrintProcessStats(t0, t1, t2)
 
     # Clean up .tar
-    print("\r\n")
-    print("Cleaning up *.tar:")
-    fCnt = 0
-    for dirpath, dirnames, filenames in os.walk("."):
-        for filename in [f for f in filenames if f.endswith(".tar")]:
-            _fPath = os.path.join(dirpath, filename)
-            _fPathAbs = os.path.abspath(_fPath)
-            _xPath = "-"  # Not existing
-            _xPathAbs = "-"  # Not existing
-            if debug == True:
-                PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
+    # print("\r\n")
+    # print("Cleaning up *.tar:")
+    # fCnt = 0
+    # for dirpath, dirnames, filenames in os.walk("."):
+    #     for filename in [f for f in filenames if f.endswith(".tar")]:
+    #         _fPath = os.path.join(dirpath, filename)
+    #         _fPathAbs = os.path.abspath(_fPath)
+    #         _xPath = "-"  # Not existing
+    #         _xPathAbs = "-"  # Not existing
+    #         if debug == True:
+    #             PrintVerbosePaths(_fPath, _xPath, _fPathAbs, _xPathAbs)
 
-            print(bcolors.FAIL + "Cleaning up:" + bcolors.ENDC + ' "' + _fPath, end="")
-            # cmd = str.format(rmCmd, _fPath)
-            # RunCmd(cmd) # Replaced with os.remove(fPath)
-            os.remove(_fPath)
-            if verbose == True:
-                print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC) # Keep line
-            else:
-                print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
+    #         print(bcolors.FAIL + "Cleaning up:" + bcolors.ENDC + ' "' + _fPath, end="")
+    #         # cmd = str.format(rmCmd, _fPath)
+    #         # RunCmd(cmd) # Replaced with os.remove(fPath)
+    #         os.remove(_fPath)
+    #         if verbose == True:
+    #             print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC) # Keep line
+    #         else:
+    #             print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
 
-            fCnt = fCnt + 1
-    t3 = time.time()
-    ClearLine()
-    PrintProcessStats(t0, t2, t3)
+    #         fCnt = fCnt + 1
+    # t3 = time.time()
+    # ClearLine()
+    # PrintProcessStats(t0, t2, t3)
 
 
     # Count pictures
@@ -228,7 +298,7 @@ for workDir in workDirs:                # Iterate the working directories
                 print("Found" + bcolors.OKGREEN + str(_fCnt).rjust(10) + bcolors.ENDC + '   files in "' + dirpath + '"')
     t4 = time.time()
     print("Found" + bcolors.OKBLUE + str(fCnt).rjust(10) + bcolors.ENDC + "   files overall")
-    PrintProcessStats(t0, t3, t4)
+    PrintProcessStats()
 
 
 print("EOS")
