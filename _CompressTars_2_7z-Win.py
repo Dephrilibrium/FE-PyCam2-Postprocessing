@@ -20,10 +20,6 @@
 # 2023 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
-
-
-
-
 # Imports
 import os
 from os.path import join, basename, dirname
@@ -33,13 +29,12 @@ import natsort
     
 
 
+
 ##########################################################
 # Script to extract the PiCam tar.gz to a Pics folder    #
 # Tested on Win10 with standard-installation-path        #
 ##########################################################
 
-
-###### USER AREA ######
 ### Command-Line generator (GIT): https://github.com/axelstudios/7z
 ### Command-Line generator:       https://axelstudios.github.io/7z/#!/
 
@@ -65,6 +60,12 @@ import natsort
 ## Resulting Cmd-Line
 # 7z a -mx9 -md128m -mfb128 -mmt24 -sdel <archive_name> [<file_names>...]
 
+
+
+
+
+
+###### USER AREA ######
 xCmd = 'C:\\Program Files\\7-Zip\\7z.exe'  # Path to 7zip
 xArg = 'a -mx9 -sdel'       # 7-zip will delete the compressed tar-archives after successful compression
 # xArg = 'a -mx9'             # 7-zip will keep the tars (test-flags for debug-reasons)
@@ -83,6 +84,19 @@ wds = [
 
 SkipBadSubdirs = False
 
+
+
+
+
+
+
+
+
+
+
+
+
+###### DO NOT TOUCH AREA ######
 _XXBadDirs = list()
 for wd in wds:
     os.chdir(wd)

@@ -71,6 +71,13 @@ from PMPLib.DataProcessing import MergeSensorsignalVectors
 from PMPLib.PiMageOptions import PiMageOptions
 
 
+
+
+
+
+
+
+###### USER AREA ######
 # Paths
 parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList"
 
@@ -187,7 +194,7 @@ opt.Copy_FEMDAQData                                 = True                      
 
 
 
-
+###### DO NOT TOUCH AREA ######
 # Iterate through entire measurement-folder
 t0 = time.time()
 LogLine(t0, "Starting", bcolors.BOLD + "----- PiMagePro -----" + bcolors.ENDC, yFill=15, wFill=0, end="\n")

@@ -64,11 +64,38 @@ def RunCmd(cmd):
         subprocess.call(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)  # Only catch errors
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ##########################################################
 # Script to extract the PiCam tar.gz to a Pics folder    #
 # Tested on Win10 with standard-installation-path        #
 ##########################################################
-
 
 ###### USER AREA ######
 xCmd = '"C:\\Program Files\\7-Zip\\7z.exe"'  # Path to 7zip

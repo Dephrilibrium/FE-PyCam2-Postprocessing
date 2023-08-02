@@ -39,8 +39,6 @@ import natsort
 # Tested on Win10 with standard-installation-path        #
 ##########################################################
 
-
-###### USER AREA ######
 ### Command-Line generator (GIT): https://github.com/axelstudios/7z
 ### Command-Line generator:       https://axelstudios.github.io/7z/#!/
 
@@ -66,6 +64,10 @@ import natsort
 ## Resulting Cmd-Line
 # 7z a -mx9 -md128m -mfb128 -mmt24 -sdel <archive_name> [<file_names>...]
 
+
+
+
+###### USER AREA ######
 xCmd = '/usr/bin/7z'  # Path to 7zip
 xArg = 'a -mx9 -sdel'       # 7-zip will delete the compressed tar-archives after successful compression
 # xArg = 'a -mx9'             # 7-zip will keep the tars (test-flags for debug-reasons)
@@ -85,6 +87,14 @@ r"/mnt/Samba/SambaData/_FEMDAQ V2 for Measurement/Hausi/230612 HQCam SOI21x21_00
 
 SkipBadSubdirs = False
 
+
+
+
+
+
+
+
+###### DO NOT TOUCH AREA ######
 _XXBadDirs = list()
 for wd in wds:
     os.chdir(wd)

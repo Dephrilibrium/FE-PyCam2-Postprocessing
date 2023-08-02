@@ -21,6 +21,8 @@ from PMPLib.PiMageOptions import PiMageOptions
 from misc import bcolors, Time2Human, DiffToNow, LogLine, LogLineOK
 
 
+
+###### USER AREA ######
 opt = PiMageOptions()
 opt.SkipBadSubdirs = False                                   # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
 
@@ -35,6 +37,12 @@ OverrideValue = False
 ResistorValue = 10e3
 
 
+
+
+
+
+
+###### DO NOT TOUCH AREA ######
 t0 = time.time()
 _XXBadDirs = list()
 
