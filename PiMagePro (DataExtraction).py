@@ -62,14 +62,17 @@ from PMPLib.CircleDetectAndXYSort import CollectCirclesAsXYKeys
 from PMPLib.CircleDetectAndXYSort import CorrectXYSortKeys
 from PMPLib.CircleDetectAndXYSort import SortXYFromLUtoRL
 
-from PMPLib.DataProcessing import DataExtractionAndUpscaling
+# from PMPLib.DataProcessing import DataExtractionAndUpscaling
+from PMPLib.DataProcessing import SubareaImagesAndSensorsignalInfo
+from PMPLib.DataProcessing import PixelcountAndOverexposureInfo
+from PMPLib.DataProcessing import MergeSensorsignalVectors
 
 
 from PMPLib.PiMageOptions import PiMageOptions
 
 
 # Paths
-parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)"
+parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList"
 
 picDir = "Pics"
 
@@ -129,10 +132,12 @@ opt.CircleDraw_pxRadius = opt.CircleDetect_pxMaxRadius                  # Draws 
 opt.CircleDraw_AddPxRadius = False                                      # When enabled, the circles detected spot-radius is added to pxRadius
 
 
-# Brightness-Detection
-opt.bDetect_SpotBrightFromAllImgs = True                                # When enabled, the brightness is extracted from ALL images based on the xy-key position! (NOTE: This ensures, that all vectors have the same)
-opt.bDetect_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness is extracted
-opt.bDetect_AddPxSideLen = False                                        # When enabled, the circles radius is added to bDetect_pxSideLen
+# Brightness-Extraction
+# opt.bDetect_SpotBrightFromAllImgs = True                                # When enabled, the brightness is extracted from ALL images based on the xy-key position! (NOTE: This ensures, that all vectors have the same)
+# opt.bDetect_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness is extracted
+# opt.bDetect_AddPxSideLen = False                                        # When enabled, the circles radius is added to bDetect_pxSideLen
+opt.BrightExtract_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius          # Sidelength of a square around the circle center from which the circle-brightness is extracted
+opt.BrightExtract_AddPxSideLen = False                                  # When enabled, the circles radius is added to bDetect_pxSideLen
 
 
 # XY-Keys
@@ -146,17 +151,34 @@ opt.XYKeys_pxCorrectionRadius = opt.XYKeys_pxCollectRadius              # For ea
 opt.XYKeySort_Rowdistance = opt.CircleDetect_pxMaxRadius                # Each leftmost spot of a row does a horizontal raycast to the right. XYKeySort_Rowdistance (in [px]) defines the vertical distance to that ray, in which a spot needs to be located to count as part of the row.
 
 
-# Saving
-opt.SaveSSImagePkl                          = False                     # Save internal raw ssData structure
-opt.Save_ImgSets4Brightness                 = False                     # Save "Imageset"                                             for Brightnesses and it's correction as pickle
-opt.Save_BrightSets4Brightness              = True                      # Save "Brightnesses"                                         from Imageset as pickle
-opt.Save_PxAreaCnts4Brightness              = True                      # Save "PixelArea-Counts & -Factors"                          from Imageset as pickle
-opt.Save_DivFactors4Brightness              = True                      # Save "Division-Correction-Factors"                          from BrightSets as pickle
-opt.Save_ScaledAnyPxImgs                    = False                     # Save "Any upscaled pixelcorrected images"                   as pickle (huge!)
-opt.Save_ScaledAnyBrightnesses              = True                      # Save "Any upscaled spotbrightness"                          as pickle
-opt.Save_ScaledWhereOverexposedPxImgs       = False                     # Save "Any upscaled spotbrightness images"                   as pickle
-opt.Save_ScaledWhereOverexposedBrightnesses = True                      # Save "Upscaled spotbrightness where overexposure occured"   as pickle
-opt.Save_FEMDAQCopies                       = True                      # Creates copies of the relevant FEMDAQ-data (if FEMDAQ was used as measurement-tool!)
+# Dump, Save & Datacopy
+opt.PngDump_16bitGrayScale                          = True              # Dump imagecollection of the raw 16-bit images as PNGs                                                   (highest SS only)
+opt.PngDump_8bitThreshhold                          = False             # Dump imagecollection of the raw threshhold images as PNGs                                               (highest SS only)
+opt.PngDump_8bitCircleDetect                        = True              # Dump imagecollection of the dilated and eroded threshhold images, used for the circle-detection as PNGs (highest SS only)
+opt.PngDump_8bitCircleDraw                          = True              # Dump imagecollection of the 8-bit images with cirlces drawn around each detected spot as PNGs           (highest SS only)
+
+opt.PklDump_imgContainer                            = False             # Dump the entire image-container as pickle-binary (all images incl. subarea-images -> HUGE filesize)
+opt.PklDump_cirContainer                            = False             # Dump the circle-container as pickle-binary (all circle data)
+opt.PklDump_pcoContainer                            = True              # Dump the PixelCount- and Overexposureinfo-container as pickle-binary
+opt.PklDump_sesContainer                            = True              # Dump the SEnsorSignal-container as pickle-binary
+opt.PklDump_mssContainer                            = True              # Dump the MergedSensorSignal-container as pickle-binary (combination of the sensor signals on the different SS-images)
+
+opt.Copy_FEMDAQData                                 = True                      # Creates copies of the relevant FEMDAQ-data (if FEMDAQ was used as measurement-tool!)
+
+
+
+
+
+# # # opt.SaveSSImagePkl                          = False                     # Save internal raw ssData structure
+# # # opt.Save_ImgSets4Brightness                 = False                     # Save "Imageset"                                             for Brightnesses and it's correction as pickle
+# # # opt.Save_BrightSets4Brightness              = True                      # Save "Brightnesses"                                         from Imageset as pickle
+# # # opt.Save_PxAreaCnts4Brightness              = True                      # Save "PixelArea-Counts & -Factors"                          from Imageset as pickle
+# # # opt.Save_DivFactors4Brightness              = True                      # Save "Division-Correction-Factors"                          from BrightSets as pickle
+# # # opt.Save_ScaledAnyPxImgs                    = False                     # Save "Any upscaled pixelcorrected images"                   as pickle (huge!)
+# # # opt.Save_ScaledAnyBrightnesses              = True                      # Save "Any upscaled spotbrightness"                          as pickle
+# # # opt.Save_ScaledWhereOverexposedPxImgs       = False                     # Save "Any upscaled spotbrightness images"                   as pickle
+# # # opt.Save_ScaledWhereOverexposedBrightnesses = True                      # Save "Upscaled spotbrightness where overexposure occured"   as pickle
+# # # opt.Save_FEMDAQCopies                       = True                      # Creates copies of the relevant FEMDAQ-data (if FEMDAQ was used as measurement-tool!)
 
 
 
@@ -251,53 +273,53 @@ for root, dirs, files in os.walk(parentDir):
     print("")
     LogLine(t0, "Collect and prepare images from folder: ", picsPath, end="\n")
     ssData = dict()
+    imgContainer = dict()
+    cirContainer = dict()
     # ShtrSpds = [100000]
     for SS in Shutterspeeds:
       LogLine(t0, "Current shutterspeed: ", str(SS), end="\n")
 
       # Prepare dict for image entries
-      ssData[SS] = dict()
+      # ssData[SS] = dict()
+      imgContainer[SS] = dict()
+      cirContainer[SS] = dict()
       # ssData[SS]["Black"] = dict()
-      ssData[SS]["Images"] = dict()
+      # ssData[SS]["Images"] = dict()
 
       # Read float64 pictures and subtract
       LogLine(t0, "Read and crop images...")
       imgs, imgPaths = ReadImages(FolderPath=picsPath, Format=str.format(ImageFormat, "*", "*", SS, "*", DetectedFiletype), CropWindow=opt.Image_CropWin, IgnorePathVector=None, ShowImg=opt.ShowImages_Read)
-      ssData[SS]["Images"]["Cropped"] = imgs
+      # ssData[SS]["Images"]["Cropped"] = imgs
+      imgContainer[SS]["AsRead"] = imgs
       LogLineOK()
 
 
 
       LogLine(t0, "Meaning images...")
-      ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Cropped"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean) # Mean nPicsPerSS together
-      ssData[SS]["Images"]["uint16"] = ssData[SS]["Images"]["Mean"][1:]                                                                                           # Remove the "init-datapoint" directly after measurement start
+      # ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Cropped"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean) # Mean nPicsPerSS together
+      # ssData[SS]["Images"]["uint16"] = ssData[SS]["Images"]["Mean"][1:]                                                                                           # Remove the "init-datapoint" directly after measurement start
+      imgContainer[SS]["Mean"] = MeanImages(ImgCollection=imgContainer[SS]["AsRead"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean) # Mean nPicsPerSS together
+      imgContainer[SS]["uint16"] = imgContainer[SS]["Mean"][1:]                                                                                           # Remove the "init-datapoint" directly after measurement start
       if opt.Image_MeanNPoints > 1:
-        ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Mean"], ImgsPerMean=opt.Image_MeanNPoints, ShowImg=opt.ShowImages_Mean)     # Meaning measurement points together
+        # ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Mean"], ImgsPerMean=opt.Image_MeanNPoints, ShowImg=opt.ShowImages_Mean)     # Meaning measurement points together
+        imgContainer[SS]["Mean"] = MeanImages(ImgCollection=imgContainer[SS]["Mean"], ImgsPerMean=opt.Image_MeanNPoints, ShowImg=opt.ShowImages_Mean)     # Meaning measurement points together
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup cropped (f64) images...")
-      ssData[SS]["Images"].pop("Cropped")
-      ssData[SS]["Images"].pop("Mean")
+      # ssData[SS]["Images"].pop("Cropped")
+      # ssData[SS]["Images"].pop("Mean")
+      imgContainer[SS].pop("AsRead")
+      imgContainer[SS].pop("Mean")
       LogLineOK()
-
-
-      if SS == Shutterspeeds[0]:
+      if (SS == Shutterspeeds[0]) and (opt.PngDump_16bitGrayScale == True):
         LogLine(t0, "Saving uint16-images...")
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "uint16", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
+        # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "uint16", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
+        SaveImageCollection(ImgCollection=imgContainer[SS]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "16BitRaw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("16BitRaw SS={}", SS)))
         LogLineOK()
 
 
 
-
-
-
-      LogLine(t0, "Creating threshold-images...")
-      ssData[SS]["Images"]["Threshold"] = BuildThreshold(ImgCollection=ssData[SS]["Images"]["uint16"], Threshold=opt.Image_bThresh, ThreshType=opt.Image_ThreshType, OtsuDiv=opt.Image_AutoThresDiv, OverexposedValue=opt.Image_OverexposedBrightness)
-      LogLineOK()
-      print("")
-
-
-    LogLine(t0, "Finished image processing", wFill=0, end="\n")
+    LogLine(t0, "Finished image reading", wFill=0, end="\n")
     print("")
 
     LogLine(t0, "Starting circle detection...", end="\n")
@@ -305,44 +327,75 @@ for root, dirs, files in os.walk(parentDir):
       LogLine(t0, "Current Shutterspeed: ", str(SS), wFill=0, end="\n")
 
 
+      LogLine(t0, "Creating 8-bit threshold-images...")
+      # ssData[SS]["Images"]["Threshold"] = BuildThreshold(ImgCollection=ssData[SS]["Images"]["uint16"], Threshold=opt.Image_bThresh, ThreshType=opt.Image_ThreshType, OtsuDiv=opt.Image_AutoThresDiv, OverexposedValue=opt.Image_OverexposedBrightness)
+      threshImgs = BuildThreshold(ImgCollection=imgContainer[SS]["uint16"], Threshold=opt.Image_bThresh, ThreshType=opt.Image_ThreshType, OtsuDiv=opt.Image_AutoThresDiv, OverexposedValue=opt.Image_OverexposedBrightness)
+      imgContainer[SS]["8BitThresh"] = ConvertBitsPerPixel(ImgCollection=threshImgs, originBPP=16, targetBPP=8)
+      del threshImgs
+      LogLineOK()
+      print("")
 
-      LogLine(t0, "Detecting circles on images...")
-      _8bitDetectImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["Threshold"], originBPP=16, targetBPP=8)
-      [detectImgs, circles]= DetectSpots(ImgCollection=_8bitDetectImgs, pxDetectRadiusMin=opt.CircleDetect_pxMinRadius, pxDetectRadiusMax=opt.CircleDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
-      del _8bitDetectImgs
-      ssData[SS]["Images"]["CircleDetection"] = detectImgs
-      ssData[SS]["Circles"] = dict()
-      ssData[SS]["Circles"]["Raw"] = circles
-      if SS == Shutterspeeds[0]:
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["CircleDetection"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "CircleDetection", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
+      if (SS == Shutterspeeds[0]) and (opt.PngDump_8bitThreshhold == True):
+        LogLine(t0, "Saving (raw) 8bit threshhold-images...")
+        # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "uint16", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("uint16 SS={}", SS)))
+        SaveImageCollection(ImgCollection=imgContainer[SS]["uint16"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitRawThresh", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitRawThresh SS={}", SS)))
+        LogLineOK()
+
+
+
+      LogLine(t0, "Detecting circles on 8-bit (dilated & eroded) threshhold-images...")
+      # _8bitDetectImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["Threshold"], originBPP=16, targetBPP=8)
+      # [detectImgs, circles]= DetectSpots(ImgCollection=_8bitDetectImgs, pxDetectRadiusMin=opt.CircleDetect_pxMinRadius, pxDetectRadiusMax=opt.CircleDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
+      [detectImgs, circles]= DetectSpots(ImgCollection=imgContainer[SS]["8BitThresh"], pxDetectRadiusMin=opt.CircleDetect_pxMinRadius, pxDetectRadiusMax=opt.CircleDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
       LogLineOK()
+      LogLine(t0, "Cleanup (raw) threshold (uint8) images...")
+      # ssData[SS]["Images"].pop("Threshold")
+      imgContainer[SS].pop("8BitThresh")
+      LogLineOK()
+      # ssData[SS]["Images"]["CircleDetection"] = detectImgs
+      # ssData[SS]["Circles"] = dict()
+      # ssData[SS]["Circles"]["Raw"] = circles
+      imgContainer[SS]["8BitCirDetect"] = detectImgs
+      cirContainer[SS] = dict()
+      cirContainer[SS]["Raw"] = circles
+
+      if (SS == Shutterspeeds[0]) and (opt.PngDump_8bitCircleDetect == True):
+        LogLine(t0, "Saving 8-bit (dilated & eroded) threshhold-images...")
+        # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["CircleDetection"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "CircleDetection", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
+        # SaveImageCollection(ImgCollection=imgContainer[SS]["CircleDetection"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "CircleDetection", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("CircleDetection SS={}", SS)))
+        SaveImageCollection(ImgCollection=imgContainer[SS]["8BitCirDetect"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitCirDetect", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitCirDetect SS={}", SS)))
+        LogLineOK()
       # Cleanup old ressources
-      LogLine(t0, "Cleanup threshold (uint8) images...")
-      ssData[SS]["Images"].pop("Threshold")
-      LogLineOK()
-      LogLine(t0, "Cleanup CircleDetection (uint8) images...")
-      ssData[SS]["Images"].pop("CircleDetection")
+      LogLine(t0, "Cleanup 8-bit (dilated & eroded) threshhold-images...")
+      # ssData[SS]["Images"].pop("CircleDetection")
+      imgContainer[SS].pop("8BitCirDetect")
       LogLineOK()
 
 
 
 
       LogLine(t0, "Drawing detected circles on images...")
-      drawImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
-      ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+      # drawImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
+      # ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+      drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
+      imgContainer[SS]["8BitCirDraw"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
       del drawImgs
-      if SS == Shutterspeeds[0]:
-        SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
+
+      if (SS == Shutterspeeds[0]) and (opt.PngDump_8bitCircleDraw == True):
+        # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
+        SaveImageCollection(ImgCollection=imgContainer[SS]["8BitCirDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitCirDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitCirDraw SS={}", SS)))
       LogLineOK()
       # Cleanup old ressources
       LogLine(t0, "Cleanup circle-draw images...")
-      ssData[SS]["Images"].pop("DrawedCircles")
+      # ssData[SS]["Images"].pop("8BitCirDraw")
+      imgContainer[SS].pop("8BitCirDraw")
       LogLineOK()
 
 
       # Sort them into XY-pairs
       LogLine(t0, "Sort circles into XYKey-pairs...")
-      ssData[SS]["Circles"]["XYKeys"] = CollectCirclesAsXYKeys(CircleCollection=circles, pxRadius=opt.XYKeys_pxCollectRadius, AddPxRadius=opt.XYKeys_AddPxCollectRadius, FollowSpots=opt.XYKeys_FollowSpots)
+      # ssData[SS]["Circles"]["XYKeys"] = CollectCirclesAsXYKeys(CircleCollection=circles, pxRadius=opt.XYKeys_pxCollectRadius, AddPxRadius=opt.XYKeys_AddPxCollectRadius, FollowSpots=opt.XYKeys_FollowSpots)
+      cirContainer[SS]["XYKeys"] = CollectCirclesAsXYKeys(CircleCollection=circles, pxRadius=opt.XYKeys_pxCollectRadius, AddPxRadius=opt.XYKeys_AddPxCollectRadius, FollowSpots=opt.XYKeys_FollowSpots)
       LogLineOK()
       print("")
 
@@ -352,14 +405,17 @@ for root, dirs, files in os.walk(parentDir):
 
 
     print("")
-    LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(ssData.keys()))))
-    CorrectXYSortKeys(ssData=ssData, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
+    # LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(ssData.keys()))))
+    LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(imgContainer.keys()))))
+    # CorrectXYSortKeys(ssData=ssData, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
+    CorrectXYSortKeys(cirContainer=cirContainer, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
     LogLineOK()
 
 
 
     LogLine(t0, "Sorting spot-keys from topleft to bottomright")
-    SortXYFromLUtoRL(ssData=ssData, pxRowband=opt.XYKeySort_Rowdistance)
+    # SortXYFromLUtoRL(cirContainer=ssData, pxRowband=opt.XYKeySort_Rowdistance)
+    SortXYFromLUtoRL(cirContainer=cirContainer, pxRowband=opt.XYKeySort_Rowdistance)
     LogLineOK()
 
 
@@ -367,160 +423,257 @@ for root, dirs, files in os.walk(parentDir):
 
 
 
-    # Saving current progress as data
-    print("")
-    LogLine(t0, "Saving ssDataImages and ssDataCircle:", end="\n")
-    savImgCollection = dict()
-    savSpotCollection = dict()
-    for SS in Shutterspeeds:
-      savImgCollection[SS] = ssData[SS]["Images"]
-      savSpotCollection[SS] = ssData[SS]["Circles"]
+    # # Saving current progress as data
+    # # # print("")
+    # # # LogLine(t0, "Saving ssDataImages and ssDataCircle:", end="\n")
+    # # # savImgCollection = dict()
+    # # # savSpotCollection = dict()
+    # # # for SS in Shutterspeeds:
+    # # #   savImgCollection[SS] = ssData[SS]["Images"]
+    # # #   savSpotCollection[SS] = ssData[SS]["Circles"]
 
-    # Raw spot data and images
-    _fName = "PMP_ssDetectionData.pkl"
-    _fPath = os.path.join(cSaveDir, _fName)
-    _fHandle = open(_fPath, "wb")
-    pickle.dump(savSpotCollection, _fHandle)
-    _fHandle.close()
-    LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # Raw spot data and images
+    # # if opt.PklDump_CirContainer:
+    # #   _fName = "PMP_CirContainer.pkl"
+    # #   _fPath = os.path.join(cSaveDir, _fName)
+    # #   _fHandle = open(_fPath, "wb")
+    # #   pickle.dump(savSpotCollection, _fHandle)
+    # #   _fHandle.close()
+    # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
 
-    if opt.SaveSSImagePkl == True:
-      _fName = "PMP_ssDetectionImages.pkl"
-      _fPath = os.path.join(cSaveDir, _fName)
-      _fHandle = open(_fPath, "wb")
-      pickle.dump(savImgCollection, _fHandle)
-      _fHandle.close()
-      LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # if opt.SaveSSImagePkl == True:
+    # # #   _fName = "PMP_ssDetectionImages.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(savImgCollection, _fHandle)
+    # # #   _fHandle.close()
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # if opt.PklDump_ImgContainer == True:
+    # #   _fName = "PMP_ImgContainer.pkl"
+    # #   _fPath = os.path.join(cSaveDir, _fName)
+    # #   _fHandle = open(_fPath, "wb")
+    # #   pickle.dump(savImgCollection, _fHandle)
+    # #   _fHandle.close()
+    # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
 
 
-    # Extract img brightness of detection
-    LogLine(t0, "Extracting brightness data...")
-
-    ssData,                        \
-    imgSets,                       \
-    brightSets,                    \
-    areaCntSets,                   \
-    divFactors,                    \
-    scaledAnyBright,               \
-    scaledAnyPxImgs,               \
-    scaledWhereOverexposedBright,  \
-    scaledWhereOverexposedImgs = DataExtractionAndUpscaling(ssData=ssData,
-                                                            ImgKey="uint16",
-                                                            pxSidelen=opt.bDetect_pxSideLen,
-                                                            AddPxSidelen=opt.bDetect_AddPxSideLen,
-                                                            TakeSpotBrightFromAllImgs=opt.bDetect_SpotBrightFromAllImgs,
-                                                            MinBright=opt.Image_MinBright2CountArea,
-                                                            OverexposedValue=opt.Image_OverexposedBrightness,
-                                                            )
-
+    # Extract image informations
+    LogLine(t0, "Extracting raw brightness data...")
+    # sesContainer = SEnsor Signal Container
+    sesContainer = SubareaImagesAndSensorsignalInfo(cirContainer=cirContainer, pxSidelen=opt.BrightExtract_pxSideLen, addSidelen=opt.BrightExtract_AddPxSideLen, imgContainer=imgContainer, imgKey="uint16")
     LogLineOK()
 
+    LogLine(t0, "Extracting pixelcounts and overexposureinfo...")
+    # PixelCount and Exposureinfo Container
+    pcoContainer = PixelcountAndOverexposureInfo(cirContainer=cirContainer, imgContainer=imgContainer, imgKey="uint16", valueOfAreacount=opt.Image_MinBright2CountArea, valueOfOverexposement=opt.Image_OverexposedBrightness)
+    LogLineOK()
 
-    # Validated and corrected brightness data and -images
-    if opt.Save_ImgSets4Brightness == True:
-      _fName = "PMP_ImgSets4Brightness.pkl"
+    LogLine(t0, yellowMsg=f"Merging all sensor signal vectors on based on SS=", whiteMessage=f"{Shutterspeeds[0]}")
+    # PixelCount and Exposureinfo Container
+    mssContainer = MergeSensorsignalVectors(sesContainer=sesContainer, pcoContainer=pcoContainer)
+    LogLineOK()
+
+    # # # ssData,                        \
+    # # # imgSets,                       \
+    # # # brightSets,                    \
+    # # # areaCntSets,                   \
+    # # # divFactors,                    \
+    # # # scaledAnyBright,               \
+    # # # scaledAnyPxImgs,               \
+    # # # scaledWhereOverexposedBright,  \
+    # # # scaledWhereOverexposedImgs = DataExtractionAndUpscaling(ssData=ssData,
+    # # #                                                         ImgKey="uint16",
+    # # #                                                         pxSidelen=opt.bDetect_pxSideLen,
+    # # #                                                         AddPxSidelen=opt.bDetect_AddPxSideLen,
+    # # #                                                         TakeSpotBrightFromAllImgs=opt.bDetect_SpotBrightFromAllImgs,
+    # # #                                                         MinBright=opt.Image_MinBright2CountArea,
+    # # #                                                         OverexposedValue=opt.Image_OverexposedBrightness,
+    # # #                                                         )
+
+    # # # LogLineOK()
+
+
+
+    # Dump Image-Container as pickle
+    if opt.PklDump_imgContainer == True:
+      _fName = "PMP_imgContainer.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
-      pickle.dump(imgSets, _fHandle)
+      pickle.dump(imgContainer, _fHandle)
       _fHandle.close()
-      del imgSets         # Remove to clear RAM
       LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del imgSets # When not saving them , just delete them to free the RAM
+    del imgContainer         # Remove to clear RAM
 
-    if opt.Save_BrightSets4Brightness == True:
-      _fName = "PMP_BrightSets4Brightness.pkl"
+
+    # Dump Circle-Container as pickle
+    if opt.PklDump_cirContainer == True:
+      _fName = "PMP_cirContainer.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
-      pickle.dump(brightSets, _fHandle)
+      pickle.dump(cirContainer, _fHandle)
       _fHandle.close()
-      del brightSets      # Remove to clear RAM
       LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del brightSets # When not saving them , just delete them to free the RAM
+    del cirContainer         # Remove to clear RAM
 
 
-    if opt.Save_PxAreaCnts4Brightness == True:
-      _fName = "PMP_PxAreaCnts4Brightness.pkl"
+    # Dump PixelCount- and Overexposureinfo-Container as pickle
+    if opt.PklDump_pcoContainer == True:
+      _fName = "PMP_pcoContainer.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
-      pickle.dump(areaCntSets, _fHandle)
+      pickle.dump(pcoContainer, _fHandle)
       _fHandle.close()
-      del areaCntSets      # Remove to clear RAM
       LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del areaCntSets # When not saving them , just delete them to free the RAM
+    del pcoContainer         # Remove to clear RAM
 
-    if opt.Save_DivFactors4Brightness == True:
-      _fName = "PMP_DivFactors4Brightness.pkl"
+
+    # Dump SEnsorSignal-Container as pickle
+    if opt.PklDump_sesContainer == True:
+      _fName = "PMP_sesContainer.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
-      pickle.dump(divFactors, _fHandle)
+      pickle.dump(sesContainer, _fHandle)
       _fHandle.close()
-      del divFactors      # Remove to clear RAM
       LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del divFactors # When not saving them , just delete them to free the RAM
+    del sesContainer         # Remove to clear RAM
 
 
-    if opt.Save_ScaledAnyPxImgs == True:
-      _fName = "PMP_ScaledAnyPxImgs4Brightness.pkl"
+    # Dump MergedSensorSignal-Container as pickle
+    if opt.PklDump_mssContainer == True:
+      _fName = "PMP_mssContainer.pkl"
       _fPath = os.path.join(cSaveDir, _fName)
       _fHandle = open(_fPath, "wb")
-      pickle.dump(scaledAnyPxImgs, _fHandle)
+      pickle.dump(mssContainer, _fHandle)
       _fHandle.close()
-      del scaledAnyPxImgs      # Remove to clear RAM
       LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del scaledAnyPxImgs # When not saving them , just delete them to free the RAM
-
-    if opt.Save_ScaledAnyBrightnesses == True:
-      _fName = "PMP_ScaledAnyBrightnesses.pkl"
-      _fPath = os.path.join(cSaveDir, _fName)
-      _fHandle = open(_fPath, "wb")
-      pickle.dump(scaledAnyBright, _fHandle)
-      _fHandle.close()
-      del scaledAnyBright      # Remove to clear RAM
-      LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del scaledAnyBright # When not saving them , just delete them to free the RAM
-
-    if opt.Save_ScaledWhereOverexposedPxImgs == True:
-      _fName = "PMP_ScaledWhereOverexposedPxImgs.pkl"
-      _fPath = os.path.join(cSaveDir, _fName)
-      _fHandle = open(_fPath, "wb")
-      pickle.dump(scaledWhereOverexposedImgs, _fHandle)
-      _fHandle.close()
-      del scaledWhereOverexposedImgs      # Remove to clear RAM
-      LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del scaledWhereOverexposedImgs # When not saving them , just delete them to free the RAM
+    del mssContainer         # Remove to clear RAM
 
 
-    if opt.Save_ScaledWhereOverexposedBrightnesses == True:
-      _fName = "PMP_ScaledWhereOverexposedBrightnesses.pkl"
-      _fPath = os.path.join(cSaveDir, _fName)
-      _fHandle = open(_fPath, "wb")
-      pickle.dump(scaledWhereOverexposedBright, _fHandle)
-      _fHandle.close()
-      del scaledWhereOverexposedBright      # Remove to clear RAM
-      LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
-    else:
-      del scaledWhereOverexposedBright # When not saving them , just delete them to free the RAM
-
-
-    if opt.Save_FEMDAQCopies == True:
+    # Copy the electrical FEMDAQ-data for data-evalutation
+    if opt.Copy_FEMDAQData == True:
       print("")
-      LogLine(t0, "Copying FEMDAQ data...")
+      LogLine(t0, "Copy FEMDAQ data to result-folder...")
       for file in files:
         if any(file.endswith(ext) for ext in [".png", ".dat", ".swp", ".resistor"]):
           shutil.copy2(os.path.join(root, file), cSaveDir)
       LogLineOK()
 
-      print("")
-      LogLine(t0, "Saving used options...")
-      opt.Save(cSaveDir)                                           # Used options
-      LogLineOK()
+
+    # Save the option-file
+    print("")
+    _fName = "PMP_Options.opt"
+    _fPath = os.path.join(cSaveDir, _fName)
+    LogLine(None, f"Saving options as \"{_fPath}\"")
+    opt.Save(saveDir=cSaveDir, fName=_fName)
+    LogLineOK()
+
+
+
+    # # # # Validated and corrected brightness data and -images
+    # # # if opt.Save_ImgSets4Brightness == True:
+    # # #   _fName = "PMP_ImgSets4Brightness.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(imgSets, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del imgSets         # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del imgSets # When not saving them , just delete them to free the RAM
+
+    # # # if opt.Save_BrightSets4Brightness == True:
+    # # #   _fName = "PMP_BrightSets4Brightness.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(brightSets, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del brightSets      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del brightSets # When not saving them , just delete them to free the RAM
+
+
+    # # # if opt.Save_PxAreaCnts4Brightness == True:
+    # # #   _fName = "PMP_PxAreaCnts4Brightness.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(areaCntSets, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del areaCntSets      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del areaCntSets # When not saving them , just delete them to free the RAM
+
+    # # # if opt.Save_DivFactors4Brightness == True:
+    # # #   _fName = "PMP_DivFactors4Brightness.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(divFactors, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del divFactors      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del divFactors # When not saving them , just delete them to free the RAM
+
+
+    # # # if opt.Save_ScaledAnyPxImgs == True:
+    # # #   _fName = "PMP_ScaledAnyPxImgs4Brightness.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(scaledAnyPxImgs, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del scaledAnyPxImgs      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del scaledAnyPxImgs # When not saving them , just delete them to free the RAM
+
+    # # # if opt.Save_ScaledAnyBrightnesses == True:
+    # # #   _fName = "PMP_ScaledAnyBrightnesses.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(scaledAnyBright, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del scaledAnyBright      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del scaledAnyBright # When not saving them , just delete them to free the RAM
+
+    # # # if opt.Save_ScaledWhereOverexposedPxImgs == True:
+    # # #   _fName = "PMP_ScaledWhereOverexposedPxImgs.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(scaledWhereOverexposedImgs, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del scaledWhereOverexposedImgs      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del scaledWhereOverexposedImgs # When not saving them , just delete them to free the RAM
+
+
+    # # # if opt.Save_ScaledWhereOverexposedBrightnesses == True:
+    # # #   _fName = "PMP_ScaledWhereOverexposedBrightnesses.pkl"
+    # # #   _fPath = os.path.join(cSaveDir, _fName)
+    # # #   _fHandle = open(_fPath, "wb")
+    # # #   pickle.dump(scaledWhereOverexposedBright, _fHandle)
+    # # #   _fHandle.close()
+    # # #   del scaledWhereOverexposedBright      # Remove to clear RAM
+    # # #   LogLine(None, whiteMessage=str.format(" - Saved: {}", _fName), end="\n")
+    # # # else:
+    # # #   del scaledWhereOverexposedBright # When not saving them , just delete them to free the RAM
+
+
+    # # # if opt.Save_FEMDAQCopies == True:
+    # # #   print("")
+    # # #   LogLine(t0, "Copying FEMDAQ data...")
+    # # #   for file in files:
+    # # #     if any(file.endswith(ext) for ext in [".png", ".dat", ".swp", ".resistor"]):
+    # # #       shutil.copy2(os.path.join(root, file), cSaveDir)
+    # # #   LogLineOK()
+
+    # # #   print("")
+    # # #   LogLine(t0, "Saving used options...")
+    # # #   opt.Save(cSaveDir)                                           # Used options
+    # # #   LogLineOK()
 
 
     print("\n\n") # Add some space for next iteration

@@ -202,18 +202,18 @@ def CollectCirclesAsXYKeys(CircleCollection, pxRadius:int = 12, AddPxRadius:bool
 
 
 
-def CorrectXYSortKeys(ssData, pxCorrectionRadius:int = 12):
+def CorrectXYSortKeys(cirContainer, pxCorrectionRadius:int):
   """Iterates through all XY-Keypairs for each SS and builds a set of XY-Keypairs under the SS when they were found.
   The result is reattched as a dictionary (data is referenced, not copied!).
 
   Args:
       ssData (_type_): Main data structure.
-      pxCorrectionRadius (int, optional): _description_. Defaults to 12.
+      pxCorrectionRadius (int, optional): _description_.
   """
   # Collect spot-sorts of all shutterspeeds in local list (faster access)
   _srtdColl = list()
-  for _ss in ssData.keys():
-     _srtdColl.append(ssData[_ss]["Circles"]["XYKeys"]) # Due to structure gets updated anyway, no deep copy is neccessary
+  for _ss in cirContainer.keys():
+     _srtdColl.append(cirContainer[_ss]["XYKeys"]) # Due to structure gets updated anyway, no deep copy is neccessary
 
   _collCnt = _srtdColl.__len__()
   _refColl = _srtdColl[0]
@@ -252,9 +252,9 @@ def CorrectXYSortKeys(ssData, pxCorrectionRadius:int = 12):
   # !!! ATTENTION !!!
   # Shutterspeed[0] (first one) is the key-reference!
   # In the other shutterspeeds[>0] unmatching keys will be deleted! (may good, may bad, it depends)
-  ssKeys = list(ssData.keys())
+  ssKeys = list(cirContainer.keys())
   for _i in range(1, _collCnt): # Index 0 is the refCol from srtdColl and empty in _corColl
-    ssData[ssKeys[_i]]["Circles"]["XYKeys"] = _corColls[_i]
+    cirContainer[ssKeys[_i]]["XYKeys"] = _corColls[_i]
 
   return
 
@@ -271,7 +271,7 @@ def CorrectXYSortKeys(ssData, pxCorrectionRadius:int = 12):
 
 
 
-def SortXYFromLUtoRL(ssData, pxRowband:int):
+def SortXYFromLUtoRL(cirContainer, pxRowband:int):
   """Sorts the created XY-Keypairs from left upper to right lower, from left to right, and top to bottom.
   For that:
    1.) Finds mostleft and topmost residual spot
@@ -295,8 +295,9 @@ def SortXYFromLUtoRL(ssData, pxRowband:int):
 
   # Implementation found on: https://stackoverflow.com/questions/29630052/ordering-coordinates-from-top-left-to-bottom-right
   #  Algorithm based on: https://www.researchgate.net/publication/282446068_Automatic_chessboard_corner_detection_method
-  ssKeyList = list(ssData.keys())
-  _keys = list(ssData[ssKeyList[0]]["Circles"]["XYKeys"].keys())
+  ssKeyList = list(cirContainer.keys())
+  # _keys = list(cirContainer[ssKeyList[0]]["Circles"]["XYKeys"].keys())
+  _keys = list(cirContainer[ssKeyList[0]]["XYKeys"].keys())
 
   # Find top left and top right
   d = pxRowband / 2
@@ -327,7 +328,7 @@ def SortXYFromLUtoRL(ssData, pxRowband:int):
     _searchKeys = remaining_points
 
   for ss in ssKeyList:
-    xySpots = ssData[ss]["Circles"]["XYKeys"]
+    xySpots = cirContainer[ss]["XYKeys"]
     for _iKey in range(_sortedKeys.__len__()):
       try:                                       # Smaller shutterspeed may not detected all points from higher shutterspeeds! So try to:
         _spot = xySpots.pop(_sortedKeys[_iKey])  # - Pop out from collection and

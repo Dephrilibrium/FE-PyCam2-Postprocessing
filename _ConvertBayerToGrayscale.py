@@ -187,7 +187,13 @@ def DeleteFiles(FilepathCollection):
 
 wds = [
 # 21x21
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)",
+r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_171103 700V IMax1V",
+# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_173431 500V IMax1V - 15m",
+# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_175303 700V IMax1V",
+# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_181207 700V IMax1V - 15m",
+# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_183133 700V IMax1V",
+# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m",
+# r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_193006 700V IMax1V",
 ]
 
 
@@ -196,10 +202,10 @@ dumpBlackImgs = False           # True: BlackSubtraction Image is dumped as PNG 
 deleteRawAfter = True           # True: Unpacked RAW-files from .tars are removed after conversion!
 bayerType = "raw"               # raw bayer
 demosaicType = "png"            # gs for gray-scale
-nPicsPerSS = 1                  # Images taken per SS
+nPicsPerSS = 3                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
-ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
+ConvertImageByImage = True      # Big size images can cause a "out of RAM" exception, when all images
                                 #  loaded simultaneously into RAM.
                                 #  This option splits up all measurement-image paths into blocks which 
                                 #  converts exactly one mean image for the steps:

@@ -30,9 +30,9 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:
   subSet = dict()
   subSet["Full"] = dict()
   subSet["Full"]["Blank"] = list()
-  subSet["Full"]["Clean"] = list()
+  # subSet["Full"]["Clean"] = list()
   subSet["Full"]["OverexposedMask"] = list()
-  subSet["Full"]["CleanMask"] = list()
+  # subSet["Full"]["CleanMask"] = list()
 
   subSet["Spot"] = dict()
 
@@ -43,13 +43,13 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:
     overexposedMask = cleanImg >= OverexposedBright
     subSet["Full"]["OverexposedMask"].append(overexposedMask)
 
-    if CleanMask == None:
-      subSet["Full"]["CleanMask"].append(subSet["Full"]["OverexposedMask"][-1]) # Overexpose == Clean -> Img is base-SS
-    else:
-      subSet["Full"]["CleanMask"].append(CleanMask[_iImg])   # Use cleanMask vom given base to indicate which pixels are purged
+    # if CleanMask == None:
+    #   subSet["Full"]["CleanMask"].append(subSet["Full"]["OverexposedMask"][-1]) # Overexpose == Clean -> Img is base-SS
+    # else:
+    #   subSet["Full"]["CleanMask"].append(CleanMask[_iImg])   # Use cleanMask vom given base to indicate which pixels are purged
 
-    cleanImg[subSet["Full"]["CleanMask"][-1]] = 0     # subSet["Full"]["CleanMask"][-1] = OverexposedMasks
-    subSet["Full"]["Clean"].append(cleanImg)
+    # cleanImg[subSet["Full"]["CleanMask"][-1]] = 0     # subSet["Full"]["CleanMask"][-1] = OverexposedMasks
+    # subSet["Full"]["Clean"].append(cleanImg)
 
   _xyKeys = list(XYCollection.keys())
   _imgShape = (pxSidelen, pxSidelen) # Size of an spot!
@@ -57,9 +57,9 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:
     _xyKey = _xyKeys[_iXY]
     subSet["Spot"][_xyKey] = dict()
     subSet["Spot"][_xyKey]["Blank"] = list()
-    subSet["Spot"][_xyKey]["Clean"] = list()
+    # subSet["Spot"][_xyKey]["Clean"] = list()
     subSet["Spot"][_xyKey]["OverexposedMask"] = list()
-    subSet["Spot"][_xyKey]["CleanMask"] = list()
+    # subSet["Spot"][_xyKey]["CleanMask"] = list()
     subSet["Spot"][_xyKey]["Area"] = list()
 
     # Block 1: Take spot-brightness from each picture!
@@ -68,9 +68,9 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:
       x1, y1, x2, y2 = GetXYArea_XYX2Y2(XYTuple=_xyKey, pxHeight=pxSidelen, pxWidth=pxSidelen)
       for _iImg in range(len(ImgCollection)):
           subSet["Spot"][_xyKey]["Blank"].append(subSet["Full"]["Blank"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
-          subSet["Spot"][_xyKey]["Clean"].append(subSet["Full"]["Clean"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
+          # subSet["Spot"][_xyKey]["Clean"].append(subSet["Full"]["Clean"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
           subSet["Spot"][_xyKey]["OverexposedMask"].append(subSet["Full"]["OverexposedMask"][_iImg][y1:y2, x1:x2])  # Add references to full-dataset
-          subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Full"]["CleanMask"][_iImg][y1:y2, x1:x2])              # Add references to full-dataset
+          # subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Full"]["CleanMask"][_iImg][y1:y2, x1:x2])              # Add references to full-dataset
           subSet["Spot"][_xyKey]["Area"].append([x1, y1, x2, y2])
 
     # Block 2: Take spot-brightness only from images circles were detected!
@@ -83,22 +83,22 @@ def __BuildImgSubSet__(ImgCollection, XYCollection, pxSidelen:int, AddPxSidelen:
 
           x1, y1, x2, y2 = GetCircleArea_XYX2Y2(Circle=_circle, pxSidelen=pxSidelen, AddPxTolerance=AddPxSidelen)
           subSet["Spot"][_xyKey]["Blank"].append(subSet["Full"]["Blank"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
-          subSet["Spot"][_xyKey]["Clean"].append(subSet["Full"]["Clean"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
+          # subSet["Spot"][_xyKey]["Clean"].append(subSet["Full"]["Clean"][_iImg][y1:y2, x1:x2])                      # Add references to full-dataset
           subSet["Spot"][_xyKey]["OverexposedMask"].append(subSet["Full"]["OverexposedMask"][_iImg][y1:y2, x1:x2])  # Add references to full-dataset
-          subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Full"]["CleanMask"][_iImg][y1:y2, x1:x2])              # Add references to full-dataset
+          # subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Full"]["CleanMask"][_iImg][y1:y2, x1:x2])              # Add references to full-dataset
           subSet["Spot"][_xyKey]["Area"].append([x1, y1, x2, y2])
         except Exception as e:
           subSet["Spot"][_xyKey]["Blank"].append(np.zeros(_imgShape))
-          subSet["Spot"][_xyKey]["Clean"].append(np.zeros(_imgShape))
+          # subSet["Spot"][_xyKey]["Clean"].append(np.zeros(_imgShape))
           subSet["Spot"][_xyKey]["OverexposedMask"].append(np.zeros(_imgShape, dtype=bool))
-          subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Spot"][_xyKey]["OverexposedMask"][-1])
+          # subSet["Spot"][_xyKey]["CleanMask"].append(subSet["Spot"][_xyKey]["OverexposedMask"][-1])
           subSet["Spot"][_xyKey]["Area"].append([0, 0, 0, 0])
 
 
     subSet["Spot"][_xyKey]["Blank"]           = np.array(subSet["Spot"][_xyKey]["Blank"])
-    subSet["Spot"][_xyKey]["Clean"]           = np.array(subSet["Spot"][_xyKey]["Clean"])
+    # subSet["Spot"][_xyKey]["Clean"]           = np.array(subSet["Spot"][_xyKey]["Clean"])
     subSet["Spot"][_xyKey]["OverexposedMask"] = np.array(subSet["Spot"][_xyKey]["OverexposedMask"])
-    subSet["Spot"][_xyKey]["CleanMask"]       = np.array(subSet["Spot"][_xyKey]["CleanMask"])
+    # subSet["Spot"][_xyKey]["CleanMask"]       = np.array(subSet["Spot"][_xyKey]["CleanMask"])
     subSet["Spot"][_xyKey]["Area"]            = np.array(subSet["Spot"][_xyKey]["Area"])
   return subSet
 

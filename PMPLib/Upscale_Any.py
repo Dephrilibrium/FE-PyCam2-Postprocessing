@@ -26,7 +26,7 @@ def __UpscaleAnySpot__(brightSet, theoryFactors): #, divFactors, combiFactors):
 
   upscaledSpotAny = dict()
   upscaledSpotAny["Blank"] = dict()
-  upscaledSpotAny["Clean"] = dict()
+  # upscaledSpotAny["Clean"] = dict()
 
   upscaledSpotAny["Blank"]["xTheory"] = np.multiply(brightSet["Blank"], theoryFactors)
 
@@ -45,7 +45,7 @@ def __UpscaleAnySpot__(brightSet, theoryFactors): #, divFactors, combiFactors):
   # upscaledSpotAny["Blank"]["xMeanPx_Mean(Blank,Clean)"] = np.multiply(brightSet["Blank"], combiFactors["MeanPxDiv"]["Blank&Clean"]["Mean"])
 
 
-  upscaledSpotAny["Clean"]["xTheory"] = np.multiply(brightSet["Clean"], theoryFactors)
+  # upscaledSpotAny["Clean"]["xTheory"] = np.multiply(brightSet["Clean"], theoryFactors)
   # upscaledSpotAny["Clean"]["xTheory"] = np.multiply(brightSet["Clean"], theoryFactors)
 
   # upscaledSpotAny["Clean"]["xSpotDivBlank"] = np.multiply(brightSet["Clean"], divFactors["SpotDiv"]["Blank"])
@@ -223,8 +223,8 @@ def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
       upscaledBright[_bKey][_dKey] = dict()
       upscaledBright[_bKey][_dKey]["Full"] = dict()
 
-      upscaledPxImgs[_bKey][_dKey] = dict()
-      upscaledPxImgs[_bKey][_dKey]["Full"] = dict()
+      # upscaledPxImgs[_bKey][_dKey] = dict()
+      # upscaledPxImgs[_bKey][_dKey]["Full"] = dict()
 
       # Spotwise upscaling for full image
       # upscaledBright[_bKey][_dKey]["Full"]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"], combinedFactorSets[_bKey][_dKey]["Full"])
@@ -232,33 +232,33 @@ def UpscaleAny(imgSets, brightSets, divFactorSets): #, combinedFactorSets):
 
       # Pxwise upscaling for full image
       # pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Full"], combinedFactorSets[_bKey][_dKey]["Full"])
-      pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
-      upscaledBright[_bKey][_dKey]["Full"]["PxlBright"] = pxBright
-      upscaledPxImgs[_bKey][_dKey]["Full"] = pxImgs
+      # pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Full"], imgSets[_bKey]["Div"][_dKey]["Full"], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
+      # upscaledBright[_bKey][_dKey]["Full"]["PxlBright"] = pxBright
+      # upscaledPxImgs[_bKey][_dKey]["Full"] = pxImgs
 
       upscaledBright[_bKey][_dKey]["Spot"] = dict()
-      upscaledPxImgs[_bKey][_dKey]["Spot"] = dict()
+      # upscaledPxImgs[_bKey][_dKey]["Spot"] = dict()
       _xyKeys = list(brightSets[_bKey]["Div"][_dKey]["Spot"].keys())
       for _iXY in range(len(_xyKeys)):
         _xyKey = _xyKeys[_iXY]
 
         upscaledBright[_bKey][_dKey]["Spot"][_xyKey] = dict()
-        upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = dict()
+        # upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = dict()
 
         # Spotwise upscaling for separate spots
         # upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey], combinedFactorSets[_bKey][_dKey]["Spot"][_xyKey])
         upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["SpotBright"] = __UpscaleAnySpot__(brightSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
 
         # Pxwise upscaling for separate spots
-        try:
+        # try:
           # pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"], divFactorSets[_bKey][_dKey]["Spot"][_xyKey], combinedFactorSets[_bKey][_dKey]["Spot"][_xyKey])
-          pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
-          upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["PxlBright"] = pxBright
-          upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = pxImgs
-        except Exception as e:
-          imgCnt = len(imgSets[_bKey]["Spot"][_xyKey]["Blank"])
-          imgShape = imgSets[_bKey]["Spot"][_xyKey]["Blank"][0].shape
-          upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["PxlBright"] = [0] * imgCnt
-          upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = [np.zeros(imgShape)] * imgCnt
+          # pxBright, pxImgs = __BuildUpscaleAnyPxSubSet__(imgSets[_bKey]["Spot"][_xyKey], imgSets[_bKey]["Div"][_dKey]["Spot"][_xyKey], divFactorSets[_bKey][_dKey]["Theory"]) #, None, None)
+          # upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["PxlBright"] = pxBright
+          # upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = pxImgs
+        # except Exception as e:
+        #   imgCnt = len(imgSets[_bKey]["Spot"][_xyKey]["Blank"])
+        #   imgShape = imgSets[_bKey]["Spot"][_xyKey]["Blank"][0].shape
+        #   upscaledBright[_bKey][_dKey]["Spot"][_xyKey]["PxlBright"] = [0] * imgCnt
+        #   upscaledPxImgs[_bKey][_dKey]["Spot"][_xyKey] = [np.zeros(imgShape)] * imgCnt
 
-  return upscaledBright, upscaledPxImgs
+  return upscaledBright#, upscaledPxImgs

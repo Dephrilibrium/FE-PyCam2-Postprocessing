@@ -49,7 +49,7 @@ def __BuildBrightSubSet__(ImgSet):
   subSet = dict()
 
   subSet["Blank"] = __BrightnessOfImgCollection__(ImgSet["Blank"])
-  subSet["Clean"] = __BrightnessOfImgCollection__(ImgSet["Clean"])
+  # subSet["Clean"] = __BrightnessOfImgCollection__(ImgSet["Clean"])
 
   return subSet
 
@@ -155,8 +155,8 @@ def __BuildPxCntSubSet__(ImgSet, minVal:int):
   subSet = dict()
 
   subSet["Blank"] = np.array(__GetPxCntOfImgCollection__(ImgSet["Blank"], minVal=minVal))
-  subSet["Clean"] = np.array(__GetPxCntOfImgCollection__(ImgSet["Clean"], minVal=minVal))
-  subSet["Blank-Clean"] = np.subtract(subSet["Blank"], subSet["Clean"]) # How much pixels are purged in clean-img
+  # subSet["Clean"] = np.array(__GetPxCntOfImgCollection__(ImgSet["Clean"], minVal=minVal))
+  # subSet["Blank-Clean"] = np.subtract(subSet["Blank"], subSet["Clean"]) # How much pixels are purged in clean-img
 
   return subSet
 
@@ -223,6 +223,6 @@ def GetPxCntSets(imgSets, minBright:int):
 
           pxAreas[_bKey]["Div"][_dKey]["Spot"][_xyKey] = dict()
           pxAreas[_bKey]["Div"][_dKey]["Spot"][_xyKey]["Blank"] = np.zeros(imgCnt)
-          pxAreas[_bKey]["Div"][_dKey]["Spot"][_xyKey]["Clean"] = np.zeros(imgCnt)
+          # pxAreas[_bKey]["Div"][_dKey]["Spot"][_xyKey]["Clean"] = np.zeros(imgCnt)
 
   return pxAreas

@@ -49,7 +49,7 @@ def __AppendBright2All__(bright, bValue):
   # bright["SpotBright"]["xSpot_Mean(Blank,Clean)"]  .append(bValue)
   # bright["SpotBright"]["xMeanPx_Mean(Blank,Clean)"].append(bValue)
 
-  bright["PxlBright"]["xTheory"]                  .append(bValue)
+  # bright["PxlBright"]["xTheory"]                  .append(bValue)
   # bright["PxlBright"]["xSpotDivBlank"]            .append(bValue)
   # bright["PxlBright"]["xSpotDivClean"]            .append(bValue)
   # bright["PxlBright"]["xMeanPxDivBlank"]          .append(bValue)
@@ -121,7 +121,7 @@ def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPx
   # bright2Append["SpotBright"]["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyBright["SpotBright"]["Blank"]["xSpot_Mean(Blank,Clean)"]  [imgIndex])
   # bright2Append["SpotBright"]["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyBright["SpotBright"]["Blank"]["xMeanPx_Mean(Blank,Clean)"][imgIndex])
 
-  bright2Append["PxlBright"]["xTheory"]                  .append(scaledAnyBright["PxlBright"]["xTheory"]                  [imgIndex])
+  # bright2Append["PxlBright"]["xTheory"]                  .append(scaledAnyBright["PxlBright"]["xTheory"]                  [imgIndex])
   # bright2Append["PxlBright"]["xSpotDivBlank"]            .append(scaledAnyBright["PxlBright"]["xSpotDivBlank"]            [imgIndex])
   # bright2Append["PxlBright"]["xSpotDivClean"]            .append(scaledAnyBright["PxlBright"]["xSpotDivClean"]            [imgIndex])
   # bright2Append["PxlBright"]["xMeanPxDivBlank"]          .append(scaledAnyBright["PxlBright"]["xMeanPxDivBlank"]          [imgIndex])
@@ -131,7 +131,7 @@ def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPx
   # bright2Append["PxlBright"]["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyBright["PxlBright"]["xSpot_Mean(Blank,Clean)"]  [imgIndex])
   # bright2Append["PxlBright"]["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyBright["PxlBright"]["xMeanPx_Mean(Blank,Clean)"][imgIndex])
 
-  pxImgs2Append["xTheory"]                  .append(scaledAnyPxImg["xTheory"]                  [imgIndex])
+  # pxImgs2Append["xTheory"]                  .append(scaledAnyPxImg["xTheory"]                  [imgIndex])
   # pxImgs2Append["xSpotDivBlank"]            .append(scaledAnyPxImg["xSpotDivBlank"]            [imgIndex])
   # pxImgs2Append["xSpotDivClean"]            .append(scaledAnyPxImg["xSpotDivClean"]            [imgIndex])
   # pxImgs2Append["xMeanPxDivBlank"]          .append(scaledAnyPxImg["xMeanPxDivBlank"]          [imgIndex])
@@ -140,7 +140,7 @@ def __AppendDataset__(bright2Append, pxImgs2Append, scaledAnyBright, scaledAnyPx
   # pxImgs2Append["xTheory/CleanArea"]        .append(scaledAnyPxImg["xTheory/CleanArea"]        [imgIndex])
   # pxImgs2Append["xSpot_Mean(Blank,Clean)"]  .append(scaledAnyPxImg["xSpot_Mean(Blank,Clean)"]  [imgIndex])
   # pxImgs2Append["xMeanPx_Mean(Blank,Clean)"].append(scaledAnyPxImg["xMeanPx_Mean(Blank,Clean)"][imgIndex])
-  return bright2Append, pxImgs2Append
+  return bright2Append#, pxImgs2Append
 
 
 
@@ -183,16 +183,16 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
   bright = dict()
   bright["Full"] = dict()
   bright["Full"]["SpotBright"] = __GenerateEmptySubSetStructure__()
-  bright["Full"]["PxlBright"] = __GenerateEmptySubSetStructure__()
+  # bright["Full"]["PxlBright"] = __GenerateEmptySubSetStructure__()
   bright["Full"]["Overexposed"] = list()
   bright["Full"]["BrightnessFromSS"] = list()
 
-  pxImgs = dict()
-  pxImgs["Full"] = __GenerateEmptySubSetStructure__()
+  # pxImgs = dict()
+  # pxImgs["Full"] = __GenerateEmptySubSetStructure__()
 
   # Prepare for spot-data
   bright["Spot"] = dict()
-  pxImgs["Spot"] = dict()
+  # pxImgs["Spot"] = dict()
 
   _xyKeys = list(imgSets[_bKey]["Spot"].keys())
   for _iXY in range(len(_xyKeys)):
@@ -200,12 +200,12 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
 
     bright["Spot"][_xyKey] = dict()
     bright["Spot"][_xyKey]["SpotBright"] = __GenerateEmptySubSetStructure__()
-    bright["Spot"][_xyKey]["PxlBright"] = __GenerateEmptySubSetStructure__()
+    # bright["Spot"][_xyKey]["PxlBright"] = __GenerateEmptySubSetStructure__()
     bright["Spot"][_xyKey]["Overexposed"] = list()
     bright["Spot"][_xyKey]["BrightnessFromSS"] = list()
 
     # pxImgs["Spot"] = dict()
-    pxImgs["Spot"][_xyKey] = __GenerateEmptySubSetStructure__()
+    # pxImgs["Spot"][_xyKey] = __GenerateEmptySubSetStructure__()
 
 
   for _iImg in range(len(imgSets[_bKey]["Full"]["Blank"])):
@@ -220,14 +220,15 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
           continue                                                               #  -> Search in next div-SS
 
         else: # Div-SS-Image not overexposed -> Add corresponding upscaled values to brightness-vectors
-          __AppendDataset__(bright2Append=bright["Full"], pxImgs2Append=pxImgs["Full"], scaledAnyBright=scaledAnyBright[_bKey][_dKey]["Full"], scaledAnyPxImg=scaledAnyPxImgs[_bKey][_dKey]["Full"], imgIndex=_iImg)
+          # __AppendDataset__(bright2Append=bright["Full"], pxImgs2Append=pxImgs["Full"], scaledAnyBright=scaledAnyBright[_bKey][_dKey]["Full"], scaledAnyPxImg=scaledAnyPxImgs[_bKey][_dKey]["Full"], imgIndex=_iImg)
+          __AppendDataset__(bright2Append=bright["Full"], pxImgs2Append=None, scaledAnyBright=scaledAnyBright[_bKey][_dKey]["Full"], scaledAnyPxImg=None, imgIndex=_iImg)
           bright["Full"]["Overexposed"].append(False)
           bright["Full"]["BrightnessFromSS"].append(_dKey)
           break
 
       else: # No unoverexposed (or no matching) Div-SS-Image has been found
         __AppendBright2All__(bright=bright["Full"], bValue=0)
-        __AppendPxImg2All__(pxImg=pxImgs["Full"], img=imgSets[_bKey]["Full"]["Blank"][_iImg]) # Add original Image by default, but imply that:
+        # __AppendPxImg2All__(pxImg=pxImgs["Full"], img=imgSets[_bKey]["Full"]["Blank"][_iImg]) # Add original Image by default, but imply that:
         bright["Full"]["Overexposed"].append(True)                                                                          #  by marking as overexposed
         bright["Full"]["BrightnessFromSS"].append(-1)                                                                       #  and use -1 as "origin"-SS
 
@@ -235,7 +236,7 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
     else: # Base-SS-Image has no overexposed pixels
       blankBright = brightSets[_bKey]["Full"]["Blank"][_iImg]
       __AppendBright2All__(bright=bright["Full"], bValue=blankBright)
-      __AppendPxImg2All__(pxImg=pxImgs["Full"], img=imgSets[_bKey]["Full"]["Blank"][_iImg])
+      # __AppendPxImg2All__(pxImg=pxImgs["Full"], img=imgSets[_bKey]["Full"]["Blank"][_iImg])
 
       bright["Full"]["Overexposed"].append(False)
       bright["Full"]["BrightnessFromSS"].append(_bKey)
@@ -270,7 +271,8 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
             continue                                                               #  -> Search in next div-SS
 
           else: # Div-SS-Image not overexposed -> Add corresponding upscaled values to brightness-vectors
-            __AppendDataset__(bright2Append=bright["Spot"][_xyKey], pxImgs2Append=pxImgs["Spot"][_xyKey], scaledAnyBright=scaledAnyBright[_bKey][_dKey]["Spot"][_xyKey], scaledAnyPxImg=scaledAnyPxImgs[_bKey][_dKey]["Spot"][_xyKey], imgIndex=_iImg)
+            # __AppendDataset__(bright2Append=bright["Spot"][_xyKey], pxImgs2Append=pxImgs["Spot"][_xyKey], scaledAnyBright=scaledAnyBright[_bKey][_dKey]["Spot"][_xyKey], scaledAnyPxImg=scaledAnyPxImgs[_bKey][_dKey]["Spot"][_xyKey], imgIndex=_iImg)
+            __AppendDataset__(bright2Append=bright["Spot"][_xyKey], pxImgs2Append=None, scaledAnyBright=scaledAnyBright[_bKey][_dKey]["Spot"][_xyKey], scaledAnyPxImg=None, imgIndex=_iImg) # No Pxl-wise detection anymore
             bright["Spot"][_xyKey]["Overexposed"].append(False)
             bright["Spot"][_xyKey]["BrightnessFromSS"].append(_dKey)
             break
@@ -280,7 +282,7 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
         if _ndKeys <= 0: # No Divs available, so use the base key values !!! ATTENTION !!! Same 5 lines of code as directly below under "else:"
           blankBright = brightSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg]
           __AppendBright2All__(bright=bright["Spot"][_xyKey], bValue=blankBright)
-          __AppendPxImg2All__(pxImg=pxImgs["Spot"][_xyKey], img=imgSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg])
+          # __AppendPxImg2All__(pxImg=pxImgs["Spot"][_xyKey], img=imgSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg])
 
           bright["Spot"][_xyKey]["Overexposed"].append(True) # if oeMax = False it would not go to this piece of code
           bright["Spot"][_xyKey]["BrightnessFromSS"].append(_bKey)
@@ -291,10 +293,10 @@ def UpscaleOverexposed(imgSets, brightSets, scaledAnyBright, scaledAnyPxImgs):
       else: # Base-SS-Image has no overexposed pixels
         blankBright = brightSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg]
         __AppendBright2All__(bright=bright["Spot"][_xyKey], bValue=blankBright)
-        __AppendPxImg2All__(pxImg=pxImgs["Spot"][_xyKey], img=imgSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg])
+        # __AppendPxImg2All__(pxImg=pxImgs["Spot"][_xyKey], img=imgSets[_bKey]["Spot"][_xyKey]["Blank"][_iImg])
 
         bright["Spot"][_xyKey]["Overexposed"].append(False)
         bright["Spot"][_xyKey]["BrightnessFromSS"].append(_bKey)
     
 
-  return bright, pxImgs
+  return bright#, pxImgs
