@@ -55,7 +55,8 @@ from PMPLib.ImgManipulation import MeanImages
 from PMPLib.ImgManipulation import SubtractFromImgCollection
 from PMPLib.ImgManipulation import ConvertBitsPerPixel
 from PMPLib.ImgManipulation import BuildThreshold
-from PMPLib.ImgManipulation import CircleDraw
+from PMPLib.ImgManipulation import DrawCircleAroundEachSpot
+from PMPLib.ImgManipulation import DrawCircleAroundEachXYKey
 
 from PMPLib.CircleDetectAndXYSort import DetectSpots
 from PMPLib.CircleDetectAndXYSort import CollectCirclesAsXYKeys
@@ -130,39 +131,40 @@ opt.Image_MinBright2CountArea = 3* 0xFF                                 # Define
 # Spot-detection
 opt.SpotDetect_Dilate = 5                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
-opt.CircleDetect_pxMinRadius = 4                                        # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
-opt.CircleDetect_pxMaxRadius = 50                                       # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
+opt.SpotDetect_pxMinRadius = 4                                          # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
+opt.SpotDetect_pxMaxRadius = 50                                         # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
 
 
 # Spot-Draw on Images
-opt.CircleDraw_pxRadius = opt.CircleDetect_pxMaxRadius                  # Draws a circle using pxRadius to visualize the detected spots on the "circle-draw-images"
+opt.CircleDraw_pxRadius = opt.SpotDetect_pxMaxRadius                    # Draws a circle using pxRadius to visualize the detected spots on the "circle-draw-images"
 opt.CircleDraw_AddPxRadius = False                                      # When enabled, the circles detected spot-radius is added to pxRadius
 
 
-# Brightness-Extraction
-# opt.bDetect_SpotBrightFromAllImgs = True                                # When enabled, the brightness is extracted from ALL images based on the xy-key position! (NOTE: This ensures, that all vectors have the same)
-# opt.bDetect_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness is extracted
-# opt.bDetect_AddPxSideLen = False                                        # When enabled, the circles radius is added to bDetect_pxSideLen
-opt.BrightExtract_pxSideLen = 2 * opt.CircleDetect_pxMaxRadius          # Sidelength of a square around the circle center from which the circle-brightness is extracted
-opt.BrightExtract_AddPxSideLen = False                                  # When enabled, the circles radius is added to bDetect_pxSideLen
+# SensorSignal-Extraction
+# opt.bDetect_SpotBrightFromAllImgs = True                              # When enabled, the brightness is extracted from ALL images based on the xy-key position! (NOTE: This ensures, that all vectors have the same)
+# opt.bDetect_pxSideLen = 2 * opt.SpotDetect_pxMaxRadius                # Sidelength of a square around the circle center from which the circle-brightness is extracted
+# opt.bDetect_AddPxSideLen = False                                      # When enabled, the circles radius is added to bDetect_pxSideLen
+opt.SesExtraction_pxSideLen = 2 * opt.SpotDetect_pxMaxRadius            # Sidelength of a square around the circle center from which the circle-brightness is extracted
+opt.SesExtraction_AddPxSideLen = False                                  # When enabled, the circles radius is added to bDetect_pxSideLen
 
 
-# XY-Keys
-opt.XYKeys_pxCollectRadius = opt.CircleDetect_pxMaxRadius               # Valid radius around a xy-coordinate a detected image-spot is collected under, when located within this area.
-opt.XYKeys_AddPxCollectRadius = False                                   # When enabled, the image-spots radius is added to CircleDetect_pxMaxRadius
+# XY-Keys: Detected spots are collected as a XYKey-pair (x,y) when being near together (see tolerances of SEnsorSignal Extraction above)
+opt.XYKeys_pxCollectRadius = opt.SpotDetect_pxMaxRadius                 # Valid radius around a xy-coordinate a detected image-spot is collected under, when located within this area.
+opt.XYKeys_AddPxCollectRadius = False                                   # When enabled, the image-spots radius is added to SpotDetect_pxMaxRadius
 opt.XYKeys_FollowSpots = True                                           # When enabled, the xy-key follows the related circle-centers by meaning them
 opt.XYKeys_pxCorrectionRadius = opt.XYKeys_pxCollectRadius              # For each SS a set of XY-Key-Pairs can be found. To assign them together, this radius is used as a tolerance and is then re-attached to ssData.
 
 
 # XY-Key Sorting
-opt.XYKeySort_Rowdistance = opt.CircleDetect_pxMaxRadius                # Each leftmost spot of a row does a horizontal raycast to the right. XYKeySort_Rowdistance (in [px]) defines the vertical distance to that ray, in which a spot needs to be located to count as part of the row.
+opt.XYKeySort_Rowdistance = opt.SpotDetect_pxMaxRadius                # Each leftmost spot of a row does a horizontal raycast to the right. XYKeySort_Rowdistance (in [px]) defines the vertical distance to that ray, in which a spot needs to be located to count as part of the row.
 
 
 # Dump, Save & Datacopy
 opt.PngDump_16bitGrayScale                          = True              # Dump imagecollection of the raw 16-bit images as PNGs                                                   (highest SS only)
 opt.PngDump_8bitThreshhold                          = False             # Dump imagecollection of the raw threshhold images as PNGs                                               (highest SS only)
 opt.PngDump_8bitCircleDetect                        = True              # Dump imagecollection of the dilated and eroded threshhold images, used for the circle-detection as PNGs (highest SS only)
-opt.PngDump_8bitCircleDraw                          = True              # Dump imagecollection of the 8-bit images with cirlces drawn around each detected spot as PNGs           (highest SS only)
+opt.PngDump_8bitCircleDrawAroundEachDetection       = False             # Dump imagecollection of the 8-bit images with a cirlce drawn around each detected spot as PNGs          (highest SS only)
+opt.PngDump_8bitXYKeyDrawAroundEachXYKey            = True              # Dump imagecollection of the 8-bit images with cirlces drawn around each XYKey as PNGs                   (highest SS only)
 
 opt.PklDump_imgContainer                            = False             # Dump the entire image-container as pickle-binary (all images incl. subarea-images -> HUGE filesize)
 opt.PklDump_cirContainer                            = False             # Dump the circle-container as pickle-binary (all circle data)
@@ -352,8 +354,8 @@ for root, dirs, files in os.walk(parentDir):
 
       LogLine(t0, "Detecting circles on 8-bit (dilated & eroded) threshhold-images...")
       # _8bitDetectImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["Threshold"], originBPP=16, targetBPP=8)
-      # [detectImgs, circles]= DetectSpots(ImgCollection=_8bitDetectImgs, pxDetectRadiusMin=opt.CircleDetect_pxMinRadius, pxDetectRadiusMax=opt.CircleDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
-      [detectImgs, circles]= DetectSpots(ImgCollection=imgContainer[SS]["8BitThresh"], pxDetectRadiusMin=opt.CircleDetect_pxMinRadius, pxDetectRadiusMax=opt.CircleDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
+      # [detectImgs, circles]= DetectSpots(ImgCollection=_8bitDetectImgs, pxDetectRadiusMin=opt.SpotDetect_pxMinRadius, pxDetectRadiusMax=opt.SpotDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
+      [detectImgs, circles]= DetectSpots(ImgCollection=imgContainer[SS]["8BitThresh"], pxDetectRadiusMin=opt.SpotDetect_pxMinRadius, pxDetectRadiusMax=opt.SpotDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
       LogLineOK()
       LogLine(t0, "Cleanup (raw) threshold (uint8) images...")
       # ssData[SS]["Images"].pop("Threshold")
@@ -380,31 +382,52 @@ for root, dirs, files in os.walk(parentDir):
 
 
 
+      if (opt.PngDump_8bitCircleDrawAroundEachDetection == True): # This images are only for optical observation by the user. Therefore the conversion and draw only needs to be done, when the dump was requested!
+        LogLine(t0, "Drawing circles around each detected spot on the images...")
+        # drawImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
+        # ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+        drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
+        imgContainer[SS]["8BitCirDraw"] = DrawCircleAroundEachSpot(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+        del drawImgs
 
-      LogLine(t0, "Drawing detected circles on images...")
-      # drawImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
-      # ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
-      drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
-      imgContainer[SS]["8BitCirDraw"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
-      del drawImgs
-
-      if (SS == Shutterspeeds[0]) and (opt.PngDump_8bitCircleDraw == True):
-        # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
-        SaveImageCollection(ImgCollection=imgContainer[SS]["8BitCirDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitCirDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitCirDraw SS={}", SS)))
-      LogLineOK()
-      # Cleanup old ressources
-      LogLine(t0, "Cleanup circle-draw images...")
-      # ssData[SS]["Images"].pop("8BitCirDraw")
-      imgContainer[SS].pop("8BitCirDraw")
-      LogLineOK()
+        if (SS == Shutterspeeds[0]):
+          # SaveImageCollection(ImgCollection=ssData[SS]["Images"]["DrawedCircles"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "DrawnCircles", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("DrawnCircles SS={}", SS)))
+          SaveImageCollection(ImgCollection=imgContainer[SS]["8BitCirDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitCirDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitCirDraw SS={}", SS)))
+        LogLineOK()
+        # Cleanup old ressources
+        LogLine(t0, "Cleanup circle-draw images...")
+        # ssData[SS]["Images"].pop("8BitCirDraw")
+        imgContainer[SS].pop("8BitCirDraw")
+        LogLineOK()
 
 
       # Sort them into XY-pairs
       LogLine(t0, "Sort circles into XYKey-pairs...")
       # ssData[SS]["Circles"]["XYKeys"] = CollectCirclesAsXYKeys(CircleCollection=circles, pxRadius=opt.XYKeys_pxCollectRadius, AddPxRadius=opt.XYKeys_AddPxCollectRadius, FollowSpots=opt.XYKeys_FollowSpots)
       cirContainer[SS]["XYKeys"] = CollectCirclesAsXYKeys(CircleCollection=circles, pxRadius=opt.XYKeys_pxCollectRadius, AddPxRadius=opt.XYKeys_AddPxCollectRadius, FollowSpots=opt.XYKeys_FollowSpots)
+      del circles # From here circles is a part of cirContainer
       LogLineOK()
       print("")
+
+
+
+      if (opt.PngDump_8bitXYKeyDrawAroundEachXYKey == True): # This images are only for optical observation by the user. Therefore the conversion and draw only needs to be done, when the dump was requested!
+        LogLine(t0, "Drawing circles around the detected XYKeys on the images...")
+        SS = Shutterspeeds[0] # As we are not in the SS-Loop anymore, SS needs to be set to the correct SS
+        drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
+        imgContainer[SS]["8BitXYKeyDraw"] = DrawCircleAroundEachXYKey(ImgCollection=drawImgs, CircleContainer=cirContainer, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+        del drawImgs
+
+        
+        if (SS == Shutterspeeds[0]):
+          SaveImageCollection(ImgCollection=imgContainer[SS]["8BitXYKeyDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitXYKeyDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitXYKeyDraw SS={}", SS)))
+        LogLineOK()
+        # Cleanup old ressources
+        LogLine(t0, "Cleanup xyKey-draw images...")
+        # ssData[SS]["Images"].pop("8BitCirDraw")
+        imgContainer[SS].pop("8BitXYKeyDraw")
+        LogLineOK()
+
 
 
 
@@ -467,7 +490,7 @@ for root, dirs, files in os.walk(parentDir):
     # Extract image informations
     LogLine(t0, "Extracting raw brightness data...")
     # sesContainer = SEnsor Signal Container
-    sesContainer = SubareaImagesAndSensorsignalInfo(cirContainer=cirContainer, pxSidelen=opt.BrightExtract_pxSideLen, addSidelen=opt.BrightExtract_AddPxSideLen, imgContainer=imgContainer, imgKey="uint16")
+    sesContainer = SubareaImagesAndSensorsignalInfo(cirContainer=cirContainer, pxSidelen=opt.SesExtraction_pxSideLen, addSidelen=opt.SesExtraction_AddPxSideLen, imgContainer=imgContainer, imgKey="uint16")
     LogLineOK()
 
     LogLine(t0, "Extracting pixelcounts and overexposureinfo...")

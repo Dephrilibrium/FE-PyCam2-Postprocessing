@@ -168,7 +168,7 @@ def BuildThreshold(ImgCollection, Threshold:int, ThreshType, OtsuDiv:int, Overex
 
 
 
-def CircleDraw(ImgCollection, CircleCollection, bgrColor:tuple = (255, 255, 255), pxRadius:int = 12, AddPxRadius:bool = False, ShowImg:bool = False):
+def DrawCircleAroundEachSpot(ImgCollection, CircleCollection, pxRadius:int, AddPxRadius:bool, ShowImg:bool, bgrColor:tuple = (255, 255, 255)):
   """Draws all circle of the given circleCollection on the images of the given image-collection
 
   Args:
@@ -208,6 +208,60 @@ def CircleDraw(ImgCollection, CircleCollection, bgrColor:tuple = (255, 255, 255)
 
   _drawnImgs = np.array(_drawnImgs)
   return _drawnImgs
+
+
+
+
+def DrawCircleAroundEachXYKey(ImgCollection, CircleContainer, pxRadius:int, AddPxRadius:bool, ShowImg:bool, bgrColor:tuple = (255, 255, 255)):
+  """Draws all circle of the given circleCollection on the images of the given image-collection
+
+  Args:
+      ImgCollection (iterable, image): Iterable object with images on which should be drawn on.
+      CircleCollection (iterable, circle): Iterable object of circles with same length. Their center-coordinates to a circle with pxRadius around.
+      bgrColor (Trituple, optional): 24bit color of the circle in (R, G, B). Defaults to (255, 255, 255).
+      pxRadius (int, optional): Radius of the draw-circles. Defaults to 12.
+      AddPxRadius (bool, optional): The circles radius is added to pxRadius. Defaults to False.
+      ShowImg (bool, optional): Show each image (during debugging). Defaults to False.
+
+  Returns:
+      images: A list with images containing circles around the centers of the given CircleCollection
+  """
+  _ssKeys = list(CircleContainer.keys())
+  _xyKeys = list(CircleContainer[_ssKeys[0]]["XYKeys"].keys())
+
+  _nImgs = len(ImgCollection)
+  # _nssKeys = len(_ssKeys)
+  _nxyKeys = len(_xyKeys)
+  # _ss0 = _ssKeys[0] # Only this one is necessary!
+
+
+  _drawnImgs = []
+  _xyCollection = CircleContainer[_ssKeys[0]]["XYKeys"]
+
+  for _iImg in range(_nImgs):
+    _drawImg = ImgCollection[_iImg].copy()
+
+    for _ixyKey in range(_nxyKeys):
+      _xyKey = _xyKeys[_ixyKey]
+      _xyInfo = _xyCollection[_xyKey]
+
+      _radius = pxRadius
+      if AddPxRadius: # When requested, add the XYKeys radius to the circles draw-radius
+        _radius += _xyInfo["radius"]
+
+      _drawImg = cv.circle(_drawImg, _xyKey, _radius, bgrColor, thickness=1)
+
+
+    if ShowImg:
+      cv.imshow("Circles on image...", _drawImg)
+      
+    _drawnImgs.append(_drawImg)
+  if ShowImg:
+    cv.destroyAllWindows()
+
+  _drawnImgs = np.array(_drawnImgs)
+  return _drawnImgs
+
 
 
 
