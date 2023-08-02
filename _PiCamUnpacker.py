@@ -41,9 +41,10 @@ from misc import bcolors, Logger, ClearLine, DiffTime, Time2Human, LogLine, LogL
 
 
 def PrintProcessStats():
-    print("Extracted *.7z:".ljust(20) + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
-    print("Extraced *.tar:".ljust(20) + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
-    print("Deleted *.tar:" .ljust(20) + bcolors.OKGREEN + str(fCnt).rjust(24) + bcolors.ENDC)
+    print("Extracted *.7z:".ljust(20) + bcolors.OKGREEN + str(_nExtracted7z)   .rjust(24) + bcolors.ENDC)
+    print("Extraced *.tar:".ljust(20) + bcolors.OKGREEN + str(_nExtractedTars) .rjust(24) + bcolors.ENDC)
+    print("Deleted *.tar:" .ljust(20) + bcolors.OKGREEN + str(_nDeletedTars)   .rjust(24) + bcolors.ENDC)
+    print("Deleted *.log:" .ljust(20) + bcolors.OKGREEN + str(_nDeletedCapLogs).rjust(24) + bcolors.ENDC)
 
 
 def PrintVerbosePaths(fPath, xPath, fPathAbs, xPathAbs):
@@ -83,7 +84,7 @@ fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # 
 # Debug flags
 debug               = False      # Debug-flag if 7zip should ouput infos to it's extraction progresses
 verbose             = False      # Verbose output
-skipCmd             = False      # Set to true to skip the cmd-exection (for test purposes)
+skipCmd             = True      # Set to true to skip the cmd-exection (for test purposes)
 log2File            = False      # Define if you want to have a log-file
 SkipBadSubdirs      = True       # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
 DeleteCaptureLogs   = True       # Automatically searches for the extraced SSCapture.logs and deletes them too
@@ -283,22 +284,24 @@ for workDir in workDirs:                # Iterate the working directories
 
 
     # Count pictures
+    print(str.format("-------------- Process stats --------------"))
+    PrintProcessStats()
     print("\r\n")
+    print(str.format("--------------- Image stats ---------------"))
     print(str.format("Counting files of type: {}", fileTypes))
-    fCnt = 0
+    imgCnt = 0
     for dirpath, dirnames, filenames in os.walk("."):
         _filenames = [fn for fn in os.listdir(dirpath) if any(fn.lower().endswith(fType) for fType in fileTypes)]
 
         _fCnt = len(_filenames)
-        fCnt = fCnt + _fCnt
+        imgCnt = imgCnt + _fCnt
         if verbose == True:
             print("Found" + bcolors.OKGREEN + str(_fCnt).rjust(10) + bcolors.ENDC + '   files in "' + dirpath + '"')
         else:
             if not _fCnt == 0:
                 print("Found" + bcolors.OKGREEN + str(_fCnt).rjust(10) + bcolors.ENDC + '   files in "' + dirpath + '"')
     t4 = time.time()
-    print("Found" + bcolors.OKBLUE + str(fCnt).rjust(10) + bcolors.ENDC + "   files overall")
-    PrintProcessStats()
+    print("Found" + bcolors.OKBLUE + str(imgCnt).rjust(10) + bcolors.ENDC + "   files overall")
 
 
 print("EOS")
