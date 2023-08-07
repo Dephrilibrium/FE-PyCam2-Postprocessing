@@ -61,6 +61,7 @@ from PMPLib.ImgManipulation import DrawCircleAroundEachXYKey
 from PMPLib.CircleDetectAndXYSort import DetectSpots
 from PMPLib.CircleDetectAndXYSort import CollectCirclesAsXYKeys
 from PMPLib.CircleDetectAndXYSort import CorrectXYSortKeys
+from PMPLib.CircleDetectAndXYSort import CrossCheckXYKeys
 from PMPLib.CircleDetectAndXYSort import SortXYFromLUtoRL
 
 # from PMPLib.DataProcessing import DataExtractionAndUpscaling
@@ -81,6 +82,8 @@ from PMPLib.PiMageOptions import PiMageOptions
 ###### USER AREA ######
 # Paths
 parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList"
+# parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m (fully sat.)"
+# parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\99_01 TestPoints"
 
 picDir = "Pics"
 
@@ -95,7 +98,7 @@ opt = PiMageOptions()
 # LogFile
 LogFilePath = os.path.join(saveDir, "PiMage.log")
 _logger = Logger(LogFilePath) # Keep instance for closing logger
-LogLen = 70
+LogLen = 80
 
 
 # PiMage-sequence
@@ -111,7 +114,7 @@ opt.ShowImages_Draw = False                                             # True =
 
 
 # SS Autodetection
-opt.DetectSS_AllowedPercentDeviation = 2.5                              # Is the detected SS within the range of an already known SS its counted as the same SS
+opt.DetectSS_AllowedPercentDeviation = 2.5                              # Is the detected SS within the range of an already known SS its counted as the same SS (untested, as AGC not working correctly for electron signals)
 
 
 # Image processing
@@ -129,7 +132,7 @@ opt.Image_MinBright2CountArea = 3* 0xFF                                 # Define
 
 
 # Spot-detection
-opt.SpotDetect_Dilate = 5                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
+opt.SpotDetect_Dilate = 10                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
 opt.SpotDetect_pxMinRadius = 4                                          # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
 opt.SpotDetect_pxMaxRadius = 50                                         # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
@@ -163,7 +166,7 @@ opt.XYKeySort_Rowdistance = opt.SpotDetect_pxMaxRadius                # Each lef
 opt.PngDump_16bitGrayScale                          = True              # Dump imagecollection of the raw 16-bit images as PNGs                                                   (highest SS only)
 opt.PngDump_8bitThreshhold                          = False             # Dump imagecollection of the raw threshhold images as PNGs                                               (highest SS only)
 opt.PngDump_8bitCircleDetect                        = True              # Dump imagecollection of the dilated and eroded threshhold images, used for the circle-detection as PNGs (highest SS only)
-opt.PngDump_8bitCircleDrawAroundEachDetection       = False             # Dump imagecollection of the 8-bit images with a cirlce drawn around each detected spot as PNGs          (highest SS only)
+opt.PngDump_8bitCircleDrawAroundEachDetection       = True              # Dump imagecollection of the 8-bit images with a cirlce drawn around each detected spot as PNGs          (highest SS only)
 opt.PngDump_8bitXYKeyDrawAroundEachXYKey            = True              # Dump imagecollection of the 8-bit images with cirlces drawn around each XYKey as PNGs                   (highest SS only)
 
 opt.PklDump_imgContainer                            = False             # Dump the entire image-container as pickle-binary (all images incl. subarea-images -> HUGE filesize)
@@ -409,44 +412,47 @@ for root, dirs, files in os.walk(parentDir):
       LogLineOK()
       print("")
 
-
-
-      if (opt.PngDump_8bitXYKeyDrawAroundEachXYKey == True): # This images are only for optical observation by the user. Therefore the conversion and draw only needs to be done, when the dump was requested!
-        LogLine(t0, "Drawing circles around the detected XYKeys on the images...")
-        SS = Shutterspeeds[0] # As we are not in the SS-Loop anymore, SS needs to be set to the correct SS
-        drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
-        imgContainer[SS]["8BitXYKeyDraw"] = DrawCircleAroundEachXYKey(ImgCollection=drawImgs, CircleContainer=cirContainer, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
-        del drawImgs
-
-        
-        if (SS == Shutterspeeds[0]):
-          SaveImageCollection(ImgCollection=imgContainer[SS]["8BitXYKeyDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitXYKeyDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitXYKeyDraw SS={}", SS)))
-        LogLineOK()
-        # Cleanup old ressources
-        LogLine(t0, "Cleanup xyKey-draw images...")
-        # ssData[SS]["Images"].pop("8BitCirDraw")
-        imgContainer[SS].pop("8BitXYKeyDraw")
-        LogLineOK()
-
-
-
-
     LogLine(t0, "Finished circle detection and XYKey-pairing", end="\n")
 
 
     print("")
     # LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(ssData.keys()))))
-    LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(imgContainer.keys()))))
+    LogLine(t0, "Correct XYKeys based on SS=", str(next(iter(imgContainer.keys()))))
     # CorrectXYSortKeys(ssData=ssData, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
     CorrectXYSortKeys(cirContainer=cirContainer, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
     LogLineOK()
 
+    print("")
+    # LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(ssData.keys()))))
+    LogLine(t0, "Crosscheck XYKeys...")
+    # CorrectXYSortKeys(ssData=ssData, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
+    CrossCheckXYKeys(cirContainer=cirContainer, pxTolerance=opt.XYKeys_pxCorrectionRadius)
+    LogLineOK()
 
 
     LogLine(t0, "Sorting spot-keys from topleft to bottomright")
     # SortXYFromLUtoRL(cirContainer=ssData, pxRowband=opt.XYKeySort_Rowdistance)
     SortXYFromLUtoRL(cirContainer=cirContainer, pxRowband=opt.XYKeySort_Rowdistance)
     LogLineOK()
+
+
+
+    if (opt.PngDump_8bitXYKeyDrawAroundEachXYKey == True): # This images are only for optical observation by the user. Therefore the conversion and draw only needs to be done, when the dump was requested!
+      LogLine(t0, "Drawing circles around the detected XYKeys on the images...")
+      SS = Shutterspeeds[0] # As we are not in the SS-Loop anymore, SS needs to be set to the correct SS
+      drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
+      imgContainer[SS]["8BitXYKeyDraw"] = DrawCircleAroundEachXYKey(ImgCollection=drawImgs, CircleContainer=cirContainer, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+      del drawImgs
+
+      
+      if (SS == Shutterspeeds[0]):
+        SaveImageCollection(ImgCollection=imgContainer[SS]["8BitXYKeyDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitXYKeyDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitXYKeyDraw SS={}", SS)))
+      LogLineOK()
+      # Cleanup old ressources
+      LogLine(t0, "Cleanup xyKey-draw images...")
+      # ssData[SS]["Images"].pop("8BitCirDraw")
+      imgContainer[SS].pop("8BitXYKeyDraw")
+      LogLineOK()
 
 
 

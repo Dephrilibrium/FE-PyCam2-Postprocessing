@@ -4,10 +4,15 @@ import numpy as np
 ###import matplotlib.pyplot as plt
 import pickle
 
+from math import sqrt
 ###from misc import bcolors
 
 
-
+def __2PointsDistance__(xy1, xy2):
+  x = xy1[0] - xy2[0]
+  y = xy1[1] - xy2[1]
+  d = sqrt(x**2 + y**2)
+  return d
 
 
 
@@ -261,6 +266,81 @@ def CorrectXYSortKeys(cirContainer, pxCorrectionRadius:int):
 
 
 
+
+
+
+def CrossCheckXYKeys(cirContainer, pxTolerance:int):
+
+  _ssKeys = list(cirContainer.keys())
+  _xyContainer = cirContainer[_ssKeys[0]]["XYKeys"]
+  _xyKeys = list(_xyContainer.keys())
+
+  _xyKeyTracker = _xyKeys.copy()
+  _xyContainerNew = {}
+
+  _nssKeys = len(_ssKeys)
+  _nxyKeys = len(_xyKeys)
+  _nxyTracker = len(_xyKeyTracker)
+
+  while _nxyTracker > 0:
+    _xyKey = _xyKeyTracker.pop(0)
+    _nxyTracker = len(_xyKeyTracker)  # Get new tracker-length
+    
+    _keyInfo1 = _xyContainer[_xyKey]  # Read out once
+
+    _icmpKey = 0
+    while _icmpKey < _nxyTracker:
+      _cmpKey = _xyKeyTracker[_icmpKey]
+      _keyDist = int(__2PointsDistance__(xy1=_xyKey, xy2=_cmpKey) + 0.5) # Distance in pixels (rounded)
+      if _keyDist > pxTolerance: # If the keys to far away,
+        _icmpKey += 1
+        continue                #  head for the next compare-key
+      
+      # Otherwise they are to close -> Merge both keys in a new XYKey
+      _xyKeyTracker.remove(_cmpKey)   # Pop merge-key from tracker
+      _nxyTracker = len(_xyKeyTracker)  # Get new tracker-length
+      # _keyInfo1 = _xyContainer[_xyKey]
+      _keyInfo2 = _xyContainer[_cmpKey]
+
+      _xNew             = int((_keyInfo1["x"] + _keyInfo2["x"]) / 2 + 0.5)      # Get the mean x-coordinate (rounded)
+      _yNew             = int((_keyInfo1["y"] + _keyInfo2["y"]) / 2 + 0.5)      # Get the mean y-coordinate (rounded)
+      _radiusNew        = _keyDist + _keyInfo1["radius"] + _keyInfo2["radius"]  # The new outer circle is around both circles
+
+      _ic1              = _keyInfo1["ImageCount"]
+      _ic2              = _keyInfo2["ImageCount"]
+      _ImageCountNew    = _ic1 if (_ic1 > _ic2) else _ic2                       # Grab the higher ImageCount
+
+      _foi1             = _keyInfo1["FoundOnImgs"]
+      _foi2             = _keyInfo2["FoundOnImgs"]
+      _FoundOnImagesNew = _foi1 if (_foi1 > _foi2) else _foi2                   # Grab the higher FoundOnImages
+
+      _imgind1          = _keyInfo1["ImageIndex"]
+      _imgind2          = _keyInfo2["ImageIndex"]
+      _imgindNew        = _imgind1 + _imgind2                                   # Both keys have normally already all circles, sometimes there is one missing -> More complex cross-check algorithm to determine which one is missing. Currently just all added!
+
+      _imgcir1          = _keyInfo1["ImgCircles"]
+      _imgcir2          = _keyInfo2["ImgCircles"]
+      _imgcirNew        = _imgcir1 + _imgcir2                                  # Both keys have normally already all circles, sometimes there is one missing -> More complex cross-check algorithm to determine which one is missing. Currently just all added!
+
+      _keyInfo1 = { # Override key
+        "x"          : _xNew,
+        "y"          : _yNew,
+        "radius"     : _radiusNew,
+        "ImageCount" : _ImageCountNew,
+        "FoundOnImgs": _FoundOnImagesNew,
+        "ImageIndex" : _imgindNew,
+        "ImgCircles" : _imgcirNew,
+      }
+
+      ### Currently just added as memo aid, but deactivated, as I didn't had time for testing
+      #_icmpKey = 0  # 2 Keys were merged, maybe there is no another key in range -> Iterate through all residual keys again!
+
+
+    _xyContainerNew[_xyKey] = _keyInfo1 # Append the same XYKey repectively the adjusted one
+
+  # _xyContainer = _xyContainerNew
+  cirContainer[_ssKeys[0]]["XYKeys"] = _xyContainerNew
+  return
 
 
 
