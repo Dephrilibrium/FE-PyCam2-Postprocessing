@@ -69,7 +69,7 @@ class PiMageOptions():
     _output += str.format("\n[Spot-Draw on Images]\n")
     _output += str.format("opt.CircleDraw_pxRadius"                         .ljust(_fill) + "={}", self.CircleDraw_pxRadius   )                         # Draws a circle using pxRadius to visualize the detected spots on the "circle-draw-images"
     _output += str.format("opt.CircleDraw_AddPxRadius"                      .ljust(_fill) + "={}", self.CircleDraw_AddPxRadius)                         # When enabled, the circles detected spot-radius is added to pxRadius
-
+    _output += str.format("opt.CircleDraw_pxThickness"                      .ljust(_fill) + "={}", self.CircleDraw_pxThickness)                         # Determine the line-thickness of the drawn circles around of each spot respectively each xyKey in [px]
 
 
     _output += str.format("\n[Brightness-Extraction]\n")

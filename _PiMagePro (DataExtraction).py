@@ -81,8 +81,8 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 ###### USER AREA ######
 # Paths
-parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList"
-# parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m (fully sat.)"
+# parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList"
+parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m (fully sat.)"
 # parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\99_01 TestPoints"
 
 picDir = "Pics"
@@ -141,6 +141,7 @@ opt.SpotDetect_pxMaxRadius = 50                                         # Maximu
 # Spot-Draw on Images
 opt.CircleDraw_pxRadius = opt.SpotDetect_pxMaxRadius                    # Draws a circle using pxRadius to visualize the detected spots on the "circle-draw-images"
 opt.CircleDraw_AddPxRadius = False                                      # When enabled, the circles detected spot-radius is added to pxRadius
+opt.CircleDraw_pxThickness = 1                                          # Determine the line-thickness of the drawn circles around of each spot respectively each xyKey in [px]
 
 
 # SensorSignal-Extraction
@@ -356,7 +357,8 @@ for root, dirs, files in os.walk(parentDir):
 
 
 
-      LogLine(t0, "Detecting circles on 8-bit (dilated & eroded) threshhold-images...")
+      LogLine(t0, "Detecting circles on the dilated and eroded", end="\n")
+      LogLine(None, "8-bit threshhold-images...")
       # _8bitDetectImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["Threshold"], originBPP=16, targetBPP=8)
       # [detectImgs, circles]= DetectSpots(ImgCollection=_8bitDetectImgs, pxDetectRadiusMin=opt.SpotDetect_pxMinRadius, pxDetectRadiusMax=opt.SpotDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
       [detectImgs, circles]= DetectSpots(ImgCollection=imgContainer[SS]["8BitThresh"], pxDetectRadiusMin=opt.SpotDetect_pxMinRadius, pxDetectRadiusMax=opt.SpotDetect_pxMaxRadius, Dilate=opt.SpotDetect_Dilate, Erode=opt.SpotDetect_Erode, ShowImg=opt.ShowImages_SpotDetection)
@@ -387,11 +389,12 @@ for root, dirs, files in os.walk(parentDir):
 
 
       if (opt.PngDump_8bitCircleDrawAroundEachDetection == True): # This images are only for optical observation by the user. Therefore the conversion and draw only needs to be done, when the dump was requested!
-        LogLine(t0, "Drawing circles around each detected spot on the images...")
+        LogLine(t0, "Drawing circles around each detected spot on the images", end="\n")
+        LogLine(None, "and dumping them...")
         # drawImgs = ConvertBitsPerPixel(ImgCollection=ssData[SS]["Images"]["uint16"], originBPP=16, targetBPP=8)
         # ssData[SS]["Images"]["DrawedCircles"] = CircleDraw(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
         drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
-        imgContainer[SS]["8BitCirDraw"] = DrawCircleAroundEachSpot(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+        imgContainer[SS]["8BitCirDraw"] = DrawCircleAroundEachSpot(ImgCollection=drawImgs, CircleCollection=circles, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, pxLineThickness=opt.CircleDraw_pxThickness, ShowImg=opt.ShowImages_Draw)
         del drawImgs
 
         if (SS == Shutterspeeds[0]):
@@ -440,10 +443,11 @@ for root, dirs, files in os.walk(parentDir):
 
 
     if (opt.PngDump_8bitXYKeyDrawAroundEachXYKey == True): # This images are only for optical observation by the user. Therefore the conversion and draw only needs to be done, when the dump was requested!
-      LogLine(t0, "Drawing circles around the detected XYKeys on the images...")
+      LogLine(t0, "Drawing circles around the detected XYKeys on the images...", end="\n")
+      LogLine(None, "and dumping them...")
       SS = Shutterspeeds[0] # As we are not in the SS-Loop anymore, SS needs to be set to the correct SS
       drawImgs = ConvertBitsPerPixel(ImgCollection=imgContainer[SS]["uint16"], originBPP=16, targetBPP=8)
-      imgContainer[SS]["8BitXYKeyDraw"] = DrawCircleAroundEachXYKey(ImgCollection=drawImgs, CircleContainer=cirContainer, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, ShowImg=opt.ShowImages_Draw)
+      imgContainer[SS]["8BitXYKeyDraw"] = DrawCircleAroundEachXYKey(ImgCollection=drawImgs, CircleContainer=cirContainer, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, pxLineThickness=opt.CircleDraw_pxThickness, ShowImg=opt.ShowImages_Draw)
       del drawImgs
 
       

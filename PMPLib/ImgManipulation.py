@@ -168,7 +168,7 @@ def BuildThreshold(ImgCollection, Threshold:int, ThreshType, OtsuDiv:int, Overex
 
 
 
-def DrawCircleAroundEachSpot(ImgCollection, CircleCollection, pxRadius:int, AddPxRadius:bool, ShowImg:bool, bgrColor:tuple = (255, 255, 255)):
+def DrawCircleAroundEachSpot(ImgCollection, CircleCollection, pxRadius:int, AddPxRadius:bool, pxLineThickness:int, ShowImg:bool, bgrColor:tuple = (255, 255, 255)):
   """Draws all circle of the given circleCollection on the images of the given image-collection
 
   Args:
@@ -196,7 +196,7 @@ def DrawCircleAroundEachSpot(ImgCollection, CircleCollection, pxRadius:int, AddP
       if AddPxRadius: # When not added radius is a constant -> See begin of the
         _radius = _imgCircles[_iCircle]["radius"] + pxRadius
 
-      _drawImg = cv.circle(_drawImg, _midPnt, _radius, bgrColor, thickness=1)
+      _drawImg = cv.circle(_drawImg, _midPnt, _radius, bgrColor, thickness=pxLineThickness)
 
 
     if ShowImg:
@@ -212,7 +212,7 @@ def DrawCircleAroundEachSpot(ImgCollection, CircleCollection, pxRadius:int, AddP
 
 
 
-def DrawCircleAroundEachXYKey(ImgCollection, CircleContainer, pxRadius:int, AddPxRadius:bool, ShowImg:bool, bgrColor:tuple = (255, 255, 255)):
+def DrawCircleAroundEachXYKey(ImgCollection, CircleContainer, pxRadius:int, AddPxRadius:bool, pxLineThickness:int, ShowImg:bool, bgrColor:tuple = (255, 255, 255)):
   """Draws all circle of the given circleCollection on the images of the given image-collection
 
   Args:
@@ -249,7 +249,7 @@ def DrawCircleAroundEachXYKey(ImgCollection, CircleContainer, pxRadius:int, AddP
       if AddPxRadius: # When requested, add the XYKeys radius to the circles draw-radius
         _radius += _xyInfo["radius"]
 
-      _drawImg = cv.circle(_drawImg, _xyKey, _radius, bgrColor, thickness=1)
+      _drawImg = cv.circle(_drawImg, _xyKey, _radius, bgrColor, thickness=pxLineThickness)
 
 
     if ShowImg:
