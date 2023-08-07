@@ -83,6 +83,7 @@ class PiMageOptions():
     _output += str.format("opt.XYKeys_AddPxCollectRadius"                   .ljust(_fill) + "={}", self.XYKeys_AddPxCollectRadius)                      # When enabled, the image-spots radius is added to SpotDetect_pxMaxRadius
     _output += str.format("opt.XYKeys_FollowSpots"                          .ljust(_fill) + "={}", self.XYKeys_FollowSpots       )                      # When enabled, the xy-key follows the related circle-centers by meaning them
     _output += str.format("opt.XYKeys_pxCorrectionRadius"                   .ljust(_fill) + "={}", self.XYKeys_pxCorrectionRadius)                      # For each SS a set of XY-Key-Pairs can be found. To assign them together, this radius is used as a tolerance and is then re-attached to ssData.
+    _output += str.format("opt.XYKeys_CrossCheckKeys"                       .ljust(_fill) + "={}", self.XYKeys_CrossCheckKeys)                          # This option defines if the XYKeys are iterated again and combined if they are in range of each other (range = opt.XYKeys_pxCorrectionRadius)
 
 
 

@@ -156,6 +156,7 @@ opt.XYKeys_pxCollectRadius = opt.SpotDetect_pxMaxRadius                 # Valid 
 opt.XYKeys_AddPxCollectRadius = False                                   # When enabled, the image-spots radius is added to SpotDetect_pxMaxRadius
 opt.XYKeys_FollowSpots = True                                           # When enabled, the xy-key follows the related circle-centers by meaning them
 opt.XYKeys_pxCorrectionRadius = opt.XYKeys_pxCollectRadius              # For each SS a set of XY-Key-Pairs can be found. To assign them together, this radius is used as a tolerance and is then re-attached to ssData.
+opt.XYKeys_CrossCheckKeys = True                                        # This option defines if the XYKeys are iterated again and combined if they are in range of each other (range = opt.XYKeys_pxCorrectionRadius)
 
 
 # XY-Key Sorting
@@ -422,12 +423,13 @@ for root, dirs, files in os.walk(parentDir):
     CorrectXYSortKeys(cirContainer=cirContainer, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
     LogLineOK()
 
-    print("")
-    # LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(ssData.keys()))))
-    LogLine(t0, "Crosscheck XYKeys...")
-    # CorrectXYSortKeys(ssData=ssData, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
-    CrossCheckXYKeys(cirContainer=cirContainer, pxTolerance=opt.XYKeys_pxCorrectionRadius)
-    LogLineOK()
+    if opt.XYKeys_CrossCheckKeys:
+      print("")
+      # LogLine(t0, "Correct spot-keys based on SS=", str(next(iter(ssData.keys()))))
+      LogLine(t0, "Crosscheck XYKeys...")
+      # CorrectXYSortKeys(ssData=ssData, pxCorrectionRadius=opt.XYKeys_pxCorrectionRadius)
+      CrossCheckXYKeys(cirContainer=cirContainer, pxTolerance=opt.XYKeys_pxCorrectionRadius)
+      LogLineOK()
 
 
     LogLine(t0, "Sorting spot-keys from topleft to bottomright")
