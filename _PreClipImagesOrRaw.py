@@ -52,7 +52,7 @@ from misc import LogLineOK
 ###### USER AREA ######
 parentDirs = [
 # 21x21
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen",
 ]
 picDir = "Pics"
 skipBadSubDir = True
@@ -67,12 +67,12 @@ skipBadSubDir = True
 #  When clipping an already demosaicked image, there are no such limitations, as there is no index-scaling necessary
 #
 ## Coordinates of the left upper corner (startpoint)
-x = int(2)
-y = int(0)
+x = int(410)
+y = int(490)
 
 ## Size of the image in pixels
-w = int(2798 * 1.5)     # Image Width (use -*1.5 for bayer-space)
-h = int(2798)           # Image Height
+w = int(700)     # Image Width (use *1.5 for bayer-space)
+h = int(700)           # Image Height
 
 
 
@@ -147,15 +147,15 @@ for parentDir in parentDirs: # Iterate through parentDirs
 
     picFiles = os.listdir(loadPicDir)
     picFiles = natsort.natsorted(picFiles, alg=natsort.ns.IGNORECASE) # Be sure that all pictures sorted correctly!
-    fileIsType = ".png" # by default, png ist assumed
     for _iFile in range(len(picFiles)):
       pFile = picFiles[_iFile]
       if pFile.endswith(".jpg"):
-        fileIsType = ".jpg"
+        fileIsType = "image"
       elif pFile.endswith(".raw"):
-        fileIsType = ".raw"
+        fileIsType = "RAW"
       else:
-        continue
+        fileIsType = ".png" # by default, png ist assumed
+      #   continue
 
       lPath = os.path.join(loadPicDir, pFile)
       sPath = lPath
