@@ -103,7 +103,7 @@ xPath = "Pics"  # Subdirectory where extract to. !!! Do not add a leading / or \
 xLog = "_PiCamUnpacker.log"  # Filename to log output
 
 workDirs = [
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList",
+r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)",
 ]
 
 fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # List of filetype which is counted at the end for statistics
@@ -111,13 +111,24 @@ fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # 
 # Debug flags
 debug               = False      # Debug-flag if 7zip should ouput infos to it's extraction progresses
 verbose             = False      # Verbose output
-skipCmd             = True      # Set to true to skip the cmd-exection (for test purposes)
+skipCmd             = False      # Set to true to skip the cmd-exection (for test purposes)
 log2File            = False      # Define if you want to have a log-file
 SkipBadSubdirs      = True       # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
 DeleteCaptureLogs   = True       # Automatically searches for the extraced SSCapture.logs and deletes them too
 
 
 ###### DO NOT TOUCH AREA ######
+print(f"\n\n\n\n")
+print(f"------------- {bcolors.OKBLUE}Used options{bcolors.ENDC} (sometimes helpful, when \"weird\" things happen) -------------")
+print(f" - {bcolors.WARNING}debug"            .ljust(25) + f"{bcolors.ENDC} = {debug}")
+print(f" - {bcolors.WARNING}verbose"          .ljust(25) + f"{bcolors.ENDC} = {verbose}")
+print(f" - {bcolors.WARNING}skipCmd"          .ljust(25) + f"{bcolors.ENDC} = {skipCmd}")
+print(f" - {bcolors.WARNING}log2File"         .ljust(25) + f"{bcolors.ENDC} = {log2File}")
+print(f" - {bcolors.WARNING}SkipBadSubdirs"   .ljust(25) + f"{bcolors.ENDC} = {SkipBadSubdirs}")
+print(f" - {bcolors.WARNING}DeleteCaptureLogs".ljust(25) + f"{bcolors.ENDC} = {DeleteCaptureLogs}")
+print(f"\n\n\n\n")
+
+print(f"------------- {bcolors.OKBLUE}Unpacker-Script starts{bcolors.ENDC} -------------")
 t0 = time.time()  # Script starts
 szCmd = xCmd + ' x "{}" -o"{}" -r -y' # Prepared format-string for 7zip
 
@@ -209,7 +220,7 @@ for workDir in workDirs:                # Iterate the working directories
                     print(" and " + bcolors.OKGREEN + "deleted" + bcolors.ENDC) # Keep line
                 else:
                     print(" and " + bcolors.OKGREEN + "deleted" + bcolors.ENDC + "\033[K", end="\r") # Override line
-                _nDeletedTars += _nDeletedTars
+                _nDeletedTars += 1
             print("\r\n")
 
 
@@ -227,7 +238,7 @@ for workDir in workDirs:                # Iterate the working directories
                         print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC) # Keep line
                     else:
                         print(bcolors.OKGREEN + "Deleted".rjust(15) + bcolors.ENDC + "\033[K", end="\r") # Override line
-                    _nDeletedTars += 1
+                    _nDeletedCapLogs += 1
             print("\r\n\r\n")
 
             # print("Delete nested *.tars:")
