@@ -26,6 +26,7 @@ from os.path import join, basename, dirname
 import subprocess
 import glob
 import natsort
+import colorama as col
     
 
 
@@ -78,7 +79,7 @@ targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 verbose = True
 
 wds = [
-    r"Z:\_FEMDAQ V2 for Measurement\Hausi\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\230829 HQCam SOI2x2_0012\Messungen",
 ]
 
 
@@ -114,9 +115,10 @@ for wd in wds:
                 _XXBadDirs.append(root)
             print("Skipping:" + root)
             continue
-
-
-
+        
+        tarFilter = join(os.getcwd(), root, globSearch4TarName)
+        if any([tarFilter.__contains__(umlaut) for umlaut in ['ä', 'ö', 'ü', '[', ']']]):
+               print(f"{col.Fore.RED}!!!! ATTENTION !!!! ==> {col.Fore.YELLOW}glob.glob has a problem with {['ä', 'ö', 'ü', '[', ']']} and may ignore your tars!{col.Fore.RESET}")
         print(f"Scanning for tars in: \"{root}\"".ljust(100), end="")
         tarFiles = glob.glob(join(root, globSearch4TarName))
         tarFiles = natsort.os_sorted(tarFiles)

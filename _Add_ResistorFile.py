@@ -28,13 +28,14 @@ opt.SkipBadSubdirs = False                                   # If a parent folde
 
 
 wds = [
-r"P:\MIKRO\Mikrosensorik\Mitarbeiter\Hausladen\Veröffentlichung, Vorträge, etc\230403 IEEE PyCam2\Measurements 21x21",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\230829 HQCam SOI2x2_0012\Messungen",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen",
 ]
 picDir = "Pics"
 
 
-OverrideValue = False
-ResistorValue = 10e3
+OverrideValue = True
+ResistorValue = 29.93e6
 
 
 
@@ -73,7 +74,7 @@ for parentDir in wds:
                 if os.path.exists(_fPathResistor):  # When file exists already
                     LogLine(t0=t0, yellowMsg=f'"value.resistor"', whiteMessage=f" already exsist (Override=Off)", wFill=0, end="\n" )
                     continue                        #  Jump over
-            _output = "%.0e" % ResistorValue
+            _output = "%e" % ResistorValue
             f = open(_fPathResistor, "w")
             f.write(_output)
             f.close()
