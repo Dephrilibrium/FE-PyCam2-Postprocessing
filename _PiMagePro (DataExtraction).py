@@ -81,9 +81,80 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 ###### USER AREA ######
 # Paths
-# parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList"
-parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m (fully sat.)"
-# parentDir = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\99_01 TestPoints"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen"
+
+
+# bThres: 55; Radius: 120
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In"
+###parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In\231024_103555 -1kV 75nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In\231024_121905 -1kV 75nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In\231024_132107 -1kV 75nA E1234 30min"
+
+# bThres: 25; Radius: 120
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold"
+###parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold\231024_152341 -1kV 25..75nA E1234 IRot"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold\231024_153906 -1kV 300nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold\231024_181834 -1kV 75..300mA E1234 IRot"
+
+# bThres: 25; Radius: 100
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe"
+###parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe\231026_135229 -1kV 750nA E1234 USwp Gain8"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe\231026_150021 -1kV 750nA E1234 USwp Gain7"
+
+# bThres: 25; Radius: 100
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_204218 -800V 750nA E1234 Gain8"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_205621 -800V 750nA E1234 Gain7"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_211022 -800V 750nA E1234 Gain6"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_212422 -800V 750nA E1234 Gain5"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_213823 -800V 750nA E1234 Gain4"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_215224 -800V 750nA E1234 Gain3"
+# bThres: 5; Radius: 100
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_220626 -800V 750nA E1234 Gain2"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_222026 -800V 750nA E1234 Gain1"
+# bThres: 25; Radius: 100
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231027_000416 -800V 750nA E1234 Gain4#3"
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231027_003542 -800V 750nA E1234 Gain4#4"
+
+# bThres: 25; Radius: 100
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231026_223652 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231026_233029 -1kV 750nA E1234 30min"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_002041 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_095300 -1kV 750nA E1234 30min"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_103058 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_113730 -1kV 750nA E1234 30min"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_124048 -1kV 750nA E1234 USwp"
+
+
+# bThres: 25; Radius: 100
+# parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations"
+###parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_185631 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_192754 -1kV 300,750,450,600nA E1234 IRot1x4"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_194630 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_200329-1kV 300,750,450,600nA E1234 IRot1x4"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_235559 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_012058-1kV 300,750,450,600nA E1234 IRot1x4"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_013932 -1kV 750nA E1234 USwp"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_015538 -1kV 300,750,450,600nA E1234 IRot1x4"
+### parentDir = r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_021431 -1kV 750nA E1234 USwp"
+
+
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_163001 -1kV 750nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_185451 -1kV 100nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_190835 -1kV 250nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_201325 -1kV 500nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_202739 -1kV 750nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_204823 -1kV 900nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_210513 -1kV 925nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_213737 -1kV 950nA E1234 ETSwp1..100ms"
+# parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_220956 -1kV 975nA E1234 ETSwp1..100ms"
+parentDir=r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)"
+
+
+
+
+
 
 picDir = "Pics"
 
@@ -103,7 +174,7 @@ LogLen = 80
 
 # PiMage-sequence
 opt.PiMage_SkipBadSubdirs = True                                        # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
-opt.PiMage_ForceOverride = True                                         # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
+opt.PiMage_ForceOverride = True                                        # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
 
 
 # Visualization
@@ -114,12 +185,12 @@ opt.ShowImages_Draw = False                                             # True =
 
 
 # SS Autodetection
-opt.DetectSS_AllowedPercentDeviation = 2.5                              # Is the detected SS within the range of an already known SS its counted as the same SS (untested, as AGC not working correctly for electron signals)
+opt.DetectSS_AllowedPercentDeviation = 1.5                              # Is the detected SS within the range of an already known SS its counted as the same SS (untested, as AGC not working correctly for electron signals)
 
 
 # Image processing
 opt.Image_CropWin = None                                                # None/False: Images not cropped; [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
-opt.Image_bThresh = 35*255                                              # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
+opt.Image_bThresh = 5*255                                              # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
 opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THRESH_OTSU:                     Tries otsu
                                                                         # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
                                                                         # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
@@ -132,16 +203,16 @@ opt.Image_MinBright2CountArea = 3* 0xFF                                 # Define
 
 
 # Spot-detection
-opt.SpotDetect_Dilate = 10                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
+opt.SpotDetect_Dilate = 10                                              # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
 opt.SpotDetect_pxMinRadius = 4                                          # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
-opt.SpotDetect_pxMaxRadius = 50                                         # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
+opt.SpotDetect_pxMaxRadius = 100                                        # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
 
 
 # Spot-Draw on Images
 opt.CircleDraw_pxRadius = opt.SpotDetect_pxMaxRadius                    # Draws a circle using pxRadius to visualize the detected spots on the "circle-draw-images"
 opt.CircleDraw_AddPxRadius = False                                      # When enabled, the circles detected spot-radius is added to pxRadius
-opt.CircleDraw_pxThickness = 1                                          # Determine the line-thickness of the drawn circles around of each spot respectively each xyKey in [px]
+opt.CircleDraw_pxThickness = 5                                          # Determine the line-thickness of the drawn circles around of each spot respectively each xyKey in [px]
 
 
 # SensorSignal-Extraction

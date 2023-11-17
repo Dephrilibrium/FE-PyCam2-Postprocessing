@@ -28,14 +28,41 @@ opt.SkipBadSubdirs = False                                   # If a parent folde
 
 
 wds = [
-r"Z:\_FEMDAQ V2 for Measurement\Hausi\230829 HQCam SOI2x2_0012\Messungen",
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\01_02 DarkShots pre+Post",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\02_00 DarkShots",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\03_00 DarkShots Pre+Post",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\03_01 Change 10Meg 4 UIB Plot",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\04_00 Darkshots Pre+Post",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\05_00 + 06_00 Darkshots Pre+Post",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\08_01 USwp 4 diff IMax",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)",
+
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_02 DarkShots pre+Post",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_00 DarkShots",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\03_00 DarkShots Pre+Post",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\03_01 Change 10Meg 4 UIB Plot",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_00 Darkshots Pre+Post",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_00 + 06_00 Darkshots Pre+Post",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\08_01 USwp 4 diff IMax",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)",
 ]
 picDir = "Pics"
 
 
-OverrideValue = True
-ResistorValue = 29.93e6
+OverrideValue = False
+ResistorValue = 10e6
 
 
 
@@ -66,7 +93,7 @@ for parentDir in wds:
         #    Directory found when it contains a Pics directory and *.dat files
         # if not dirs.__contains__(picDir) or not any(f.endswith(".dat") for f in files): # Old one, but sometime i want to have value.resistor also in folders were the pictures are not extracted yet!
         if not any(f.endswith(".dat") for f in files):
-            print("".rjust(18) + bcolors.WARNING + " Nothing interesting here" + bcolors.ENDC + root)
+            print("".rjust(18) + bcolors.WARNING + " Nothing interesting here" + bcolors.ENDC)
         else:
             print(bcolors.OKBLUE + Time2Human(DiffToNow(t0)).rjust(18) + bcolors.WARNING + " Possible directory found: " + bcolors.ENDC + root)
             _fPathResistor = os.path.join(root, "value.resistor")

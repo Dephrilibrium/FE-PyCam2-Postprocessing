@@ -32,7 +32,7 @@ ch = h
 
 
 
-imgPath = r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS\230724_105940 500V IMax2V, SS=100ms (ref)\Pics\Dev101_rPiHQCam2-0000_ss=100000_0000.raw"
+imgPath = r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\04_01 Rantasten an Regelstroeme\230831_175925 750V 4x200nA\Pics\Dev101_rPiHQCam2-0000_ss=1000_0000.raw"
 
 
 

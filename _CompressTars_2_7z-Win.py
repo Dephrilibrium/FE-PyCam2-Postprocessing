@@ -79,7 +79,7 @@ targetArchiveName = 'Dev101_rPiHQCam2-tars.7z'
 verbose = True
 
 wds = [
-r"Z:\_FEMDAQ V2 for Measurement\Hausi\230829 HQCam SOI2x2_0012\Messungen",
+r"Z:\_FEMDAQ V2 for Measurement\Hausi\231023 150nm HQCam SOI2x2_0036\Messungen",
 ]
 
 

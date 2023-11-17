@@ -103,7 +103,64 @@ xPath = "Pics"  # Subdirectory where extract to. !!! Do not add a leading / or \
 xLog = "_PiCamUnpacker.log"  # Filename to log output
 
 workDirs = [
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\05_01 10k, AutoSS (not working correctly)",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In\231024_103555 -1kV 75nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In\231024_121905 -1kV 75nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\01_03 Burn-In\231024_132107 -1kV 75nA E1234 30min",
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold\231024_152341 -1kV 25..75nA E1234 IRot",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold\231024_153906 -1kV 300nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\02_01 Rumprobieren USwp, IRot, UHold\231024_181834 -1kV 75..300mA E1234 IRot",
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe\231026_135229 -1kV 750nA E1234 USwp Gain8",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\04_01 Gut eingefahrene Probe\231026_150021 -1kV 750nA E1234 USwp Gain7",
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_204218 -800V 750nA E1234 Gain8",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_205621 -800V 750nA E1234 Gain7",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_211022 -800V 750nA E1234 Gain6",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_212422 -800V 750nA E1234 Gain5",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_213823 -800V 750nA E1234 Gain4",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_215224 -800V 750nA E1234 Gain3",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_220626 -800V 750nA E1234 Gain2",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231026_222026 -800V 750nA E1234 Gain1",
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231027_000416 -800V 750nA E1234 Gain4#3",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\05_01 Swp Gain changed\231027_003542 -800V 750nA E1234 Gain4#4",
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231026_223652 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231026_233029 -1kV 750nA E1234 30min",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_002041 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_095300 -1kV 750nA E1234 30min",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_103058 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_113730 -1kV 750nA E1234 30min",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\06_01 90min\231027_124048 -1kV 750nA E1234 USwp",
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_185631 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_192754 -1kV 300,750,450,600nA E1234 IRot1x4",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_194630 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_200329-1kV 300,750,450,600nA E1234 IRot1x4",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231027_235559 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_012058-1kV 300,750,450,600nA E1234 IRot1x4",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_013932 -1kV 750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_015538 -1kV 300,750,450,600nA E1234 IRot1x4",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\07_01 IRotations\231028_021431 -1kV 750nA E1234 USwp",
+
+
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\08_01 USwp 4 diff IMax\231028_180255 -1kV 300..750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\08_01 USwp 4 diff IMax\231028_184127 -1kV 300..750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\08_01 USwp 4 diff IMax\231028_191733 -1kV 300..750nA E1234 USwp",
+# r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\08_01 USwp 4 diff IMax\231028_195337 -1kV 300..750nA E1234 USwp",
+
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_163001 -1kV 750nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_185451 -1kV 100nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_190835 -1kV 250nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_201325 -1kV 500nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_202739 -1kV 750nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_204823 -1kV 900nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_210513 -1kV 925nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_213737 -1kV 950nA E1234 ETSwp1..100ms",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen\09_01 Brightness vs. SS (cam-linearity)\231030_220956 -1kV 975nA E1234 ETSwp1..100ms",
+
+
 ]
 
 fileTypes = [".raw", ".gray", ".jpg", ".jpeg", ".png", ".rgb", ".yuv", ".y"]  # List of filetype which is counted at the end for statistics

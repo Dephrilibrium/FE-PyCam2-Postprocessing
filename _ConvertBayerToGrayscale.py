@@ -179,14 +179,7 @@ def DeleteFiles(FilepathCollection):
 
 ###### USER AREA ######
 wds = [
-# 21x21
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_171103 700V IMax1V",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_173431 500V IMax1V - 15m (full unsat.)",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_175303 700V IMax1V",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_181207 700V IMax1V - 15m (start was sat.)",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_183133 700V IMax1V",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_185401 1000V IMax1V - 15m (fully sat.)",
-r"D:\05 PiCam\230719 HQCam SOI21x21_0003 150nm Cu-Cam\Messungen\08_01 10k, SSList\230727_193006 700V IMax1V",
+r"D:\05 PiCam\231023 150nm HQCam SOI2x2_0036\Messungen",
 ]
 
 
@@ -198,7 +191,7 @@ demosaicType = "png"            # gs for gray-scale
 nPicsPerSS = 3                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
-ConvertImageByImage = True      # Big size images can cause a "out of RAM" exception, when all images
+ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
                                 #  loaded simultaneously into RAM.
                                 #  This option splits up all measurement-image paths into blocks which 
                                 #  converts exactly one mean image for the steps:

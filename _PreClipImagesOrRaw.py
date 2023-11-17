@@ -51,8 +51,11 @@ from misc import LogLineOK
 
 ###### USER AREA ######
 parentDirs = [
-# 21x21
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_182029 500V 750nA USwp",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_183629 500V 750nA USwp",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_185811 425V 750nA UHold 15m",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_235813 425V 750nA UHold 120m",
+r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230907_084603 425V 750nA UHold 120m #2",
 ]
 picDir = "Pics"
 skipBadSubDir = True
@@ -67,12 +70,12 @@ skipBadSubDir = True
 #  When clipping an already demosaicked image, there are no such limitations, as there is no index-scaling necessary
 #
 ## Coordinates of the left upper corner (startpoint)
-x = int(410)
-y = int(490)
+x = int(2)
+y = int(0)
 
 ## Size of the image in pixels
-w = int(700)     # Image Width (use *1.5 for bayer-space)
-h = int(700)           # Image Height
+w = int(848 * 1.5)     # Image Width (use *1.5 for bayer-space)
+h = int(848)           # Image Height
 
 
 
