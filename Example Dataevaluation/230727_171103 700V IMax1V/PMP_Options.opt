@@ -1,0 +1,27 @@
+# PiMagePro settings
+
+[PiMage sequence]
+PiMage_SkipBadSubdirs    =True
+
+[PiMage-sequence]
+opt.PiMage_SkipBadSubdirs=True
+opt.PiMage_ForceOverride =True
+
+[Visualization]
+opt.ShowImages_Read      =Falseopt.ShowImages_Mean      =Falseopt.ShowImages_SpotDetection=Falseopt.ShowImages_Draw      =False
+[SS Autodetection]
+opt.DetectSS_AllowedPercentDeviation=2.5
+[Image processing]
+opt.Image_CropWin        =Noneopt.Image_bThresh        =8925opt.Image_ThreshType     =8opt.Image_AutoThresDiv   =8opt.Image_UseForMeanNPoints=.swpopt.Image_MeanNPicsPerSS =1opt.Image_OverexposedBrightness=65520opt.Image_MinBright2CountArea=765
+[Spot-detection]
+opt.SpotDetect_Dilate    =10opt.SpotDetect_Erode     =10opt.SpotDetect_pxMinRadius=4opt.SpotDetect_pxMaxRadius=50
+[Spot-Draw on Images]
+opt.CircleDraw_pxRadius  =50opt.CircleDraw_AddPxRadius=Falseopt.CircleDraw_pxThickness=5
+[Brightness-Extraction]
+opt.SesExtraction_pxSideLen=100opt.SesExtraction_AddPxSideLen=False
+[XY-Keys]
+opt.XYKeys_pxCollectRadius=50opt.XYKeys_AddPxCollectRadius=Falseopt.XYKeys_FollowSpots   =Trueopt.XYKeys_pxCorrectionRadius=50opt.XYKeys_CrossCheckKeys=True
+[XY-Key Sorting]
+opt.XYKeySort_Rowdistance=50
+[Dump, Save & Datacopy]
+opt.PngDump_16bitGrayScale=Trueopt.PngDump_8bitThreshhold=Falseopt.PngDump_8bitCircleDetect=Trueopt.PngDump_8bitCircleDrawAroundEachDetection=Trueopt.PngDump_8bitXYKeyDrawAroundEachXYKey=Trueopt.PklDump_imgContainer =Falseopt.PklDump_cirContainer =Falseopt.PklDump_pcoContainer =Trueopt.PklDump_sesContainer =Trueopt.PklDump_mssContainer =Trueopt.Copy_FEMDAQData      =True
