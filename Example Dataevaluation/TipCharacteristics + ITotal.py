@@ -218,7 +218,7 @@ for _iFolder in range(len(folders)):
         _xyKey = _xyKeys[_iKey]
 
         # axL.semilogy(u, mssCurrent[_xyKey], "1--"  , markersize=12, linewidth=0.5, alpha=0.5, label="$I_{opt.}$")
-        axL.semilogy(t, mssCurrent[_xyKey], "1--"  , markersize=12, linewidth=0.35, alpha=0.5, label="$Share_{opt.}$")
+        axL.semilogy(t, mssCurrent[_xyKey], "1--"  , markersize=12, linewidth=0.35, alpha=0.5, label="$I_{OMap.}$")
 
     ShowMajorMinorY(axis=[axL], useLogLocator=True)
     ShowMajorMinorY(axis=[axR], useLogLocator=False)
@@ -573,32 +573,6 @@ for _iFolder in range(len(folders)):
         fc = fc.replace("\n ", "\n")
         fJSON.seek(0)
         fJSON.write(fc)
-
-
-
-
-
-
-    # Save high-noise keys
-    jsonFName = join(savepath, f"{fPrefix} High noise XYKeys.json")
-    with open(jsonFName, "w") as fJSON:
-
-        fJSON.write(json.dumps(_xyKeysHiNoise))
-    
-    
-    with open(f"{jsonFName}", "r+") as fJSON: # Postformatting
-        fc = fJSON.read()
-        fc = fc.replace(",", "\n")
-        fc = fc.replace("{", "\n")
-        fc = fc.replace("}", "")
-        fc = fc.replace("]", "\n]\n")
-        fc = fc.replace("[", "\n[\n")
-        fc = fc.replace("\"(", "\n\n\"(")
-        fc = fc.replace("\n ", "\n")
-        fJSON.seek(0)
-        fJSON.write(fc)
-
-
 
 
 
