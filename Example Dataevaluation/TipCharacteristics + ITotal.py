@@ -1,4 +1,3 @@
-import os
 import pickle
 import FieldEmission as fe
 import matplotlib.pyplot as plt
@@ -6,7 +5,12 @@ from matplotlib.cm import get_cmap
 import numpy as np
 import json
 
+import os
 from os.path import join, dirname, basename, abspath, splitext
+
+
+import sys
+sys.path.append(dirname(dirname(abspath(__file__))))
 
 from _lib import SplitAndMean, ReadElAsDP, ReadSwpAsDP, ReadSwpAsDPFromFolder, ReadPkl, ReadResistor, ReadResistorFromFolder
 from _lib import GetQuadrantOfSpot, CombinePlots, Twinx2D_2x2, Twinx2D_3x2, SameXYLimitsOnAxisColl, SameXYLimitsOnLRSubplots, SaveFigList
@@ -21,7 +25,7 @@ showImgs = True
 plotFN2EstimateFitRange = False # Not necessary anymore, as below the voltages can be given directly to auto-calculate the FN-coordinate range
 
 folders = [
-r"230727_171103 700V IMax1V",
+r".\230727_171103 700V IMax1V",
 ]
 
 legLocs = [ # LegendLocations
@@ -29,12 +33,12 @@ legLocs = [ # LegendLocations
 ]
 
 USigMin = [ # U where the IV-Characteristic "starts"
-    310, # Sweep 700V
+    290, # Sweep 700V
 ]
 
 
 USigMax = [ # U where the IV-Characteristics is not in regulation/Saturation
-    450, # Sweep 700V
+    400, # Sweep 700V
 ]
 
 d_um = [ # distance in µm between tips and Camera
@@ -43,17 +47,9 @@ d_um = [ # distance in µm between tips and Camera
 
 
 replace4thOne = [
-    # (529, 2182),    # Sweep 700V    (can be used to replace the 4th tip, specified here!)
-    None,           # Sweep 700V -> No risk for discussion!
+    # (529, 2182),    # Sweep 700V    (replace with a specific one)
+    None,           # Sweep 700V -> Take the 4th most contribution tip as 4th tip
 ]
-
-
-
-
-
-
-
-
 
 
 
@@ -66,20 +62,7 @@ fnFitRegion = [
 ]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 os.chdir(dirname(__file__))
-
 for _iFolder in range(len(folders)):
     folder = folders[_iFolder]
 
@@ -94,7 +77,7 @@ for _iFolder in range(len(folders)):
     # CurrentFlow
     resistor = ReadResistorFromFolder(folder)
     cf = ReadElAsDP(join(folder, r"Dev100_FEAR16v2(Ch0CF).dat"))
-    cf.RemoveRows(0) # Remove initial datapoint
+    cf.RemoveRows(0)
 
     # VoltageDrop
     ud = ReadElAsDP(join(folder, r"Dev100_FEAR16v2(Ch0UD).dat"))
@@ -122,8 +105,15 @@ for _iFolder in range(len(folders)):
 
 
 
-    #### Get iteration values
+    #### Prepare lumiData
     _nImgs = len(mss["MergedSensorSignal"])
+
+    # len(lumiData["Spot"][(274, 125)]["SpotBright"]["xTheory"])
+    # len(lumiData["Spot"][(274, 125)]["PxlBright"]["xTheory"])
+    # len(lumiData["Spot"][(274, 125)]["Overexposed"])
+    # len(lumiData["Spot"][(274, 125)]["BrightnessFromSS"])
+
+
     _xyKeys = list(mss["XYKeys"].keys())
     _nxyKeys = len(_xyKeys)
 
@@ -134,12 +124,21 @@ for _iFolder in range(len(folders)):
     mssShares["Sum"]      = []
 
 
+    # lenOfLumiVecs = dict()
+    # for _iKey in range(_nxyKeys):
+    #     _xyKey = _xyKeys[_iKey]
+    #     lenOfLumiVecs[_xyKey] = len(mss["Spot"][_xyKey]["SpotBright"]["xTheory"])
+
+
     # Build lumiSpot/U
     for _iKey in range(_nxyKeys):
         _xyKey = _xyKeys[_iKey]
         mssShares["mss/U"][_xyKey] = []
+        # for _iImg in range(_nImgs):
+            # mssSpot = mss["XYKeys"][_xyKey]["MergedSensorSignal"][_iImg]
+            # uSply = ud["UExt"][_iImg]
         mssSpot = mss["XYKeys"][_xyKey]["MergedSensorSignal"]
-        uSply = [1] * ud["UExt"].__len__() # Voltage for division = 1 --> When all tips emit at the same voltage, the division creates on all signals the same reduction --> Cancels out of the equation
+        uSply = [1] * ud["UExt"].__len__()
         mssShares["mss/U"][_xyKey] = np.divide(mssSpot, uSply)
 
     # Build lumiSum
@@ -158,6 +157,9 @@ for _iFolder in range(len(folders)):
         _xyKey = _xyKeys[_iKey]
         mssShares["ShareFac"][_xyKey] = []
         mssCurrent[_xyKey] = []
+        # for _iImg in range(_nImgs):
+            # mssU = mss["XYKeys"][_xyKey]["MergedSensorSignal"][_iImg]
+            # mssShares["ShareFac"][_xyKey].append(np.divide(mssU, mssShares["Sum"]))
         mssU = mssShares["mss/U"][_xyKey]
         mssShares["ShareFac"][_xyKey] = np.divide(mssU, mssShares["Sum"])
 
@@ -169,7 +171,7 @@ for _iFolder in range(len(folders)):
 
         __ssK = list(ses.keys())[0]
         __xyK = replace4thOne[_iFolder]
-        if __xyK != None: # If some XY Key is given, replace the 4th tip with it
+        if __xyK != None:
             __min = np.array(mss["XYKeys"][__xyK]["MergedSensorSignal"][0])
             __vec = np.array(mss["XYKeys"][__xyK]["MergedSensorSignal"])
             __all = np.array(mss["MergedSensorSignal"])
@@ -178,12 +180,15 @@ for _iFolder in range(len(folders)):
             __dmgRelAll = np.divide(__min, __all)
             __dmgRelAllPerc = np.multiply(__dmgRelAll, 100)
 
-            _iOff = int(USigMin[_iFolder] / 6 + 1) # Clip away when supply voltage < min-voltage to see only points with enough signal/current!
+            _iOff = int(USigMin[_iFolder] / 6 + 1) # Clip away when supply voltage < min-voltage to see some correct signal!
             _dmgRelAppPercNoNoise = __dmgRelAllPerc[_iOff:-_iOff]
             __meanDmgOnAll = np.mean(_dmgRelAppPercNoNoise)
             __stdDmgOnAll = np.std(_dmgRelAppPercNoNoise)
 
 
+
+    # _dLen = mssCurrent[_xyKeys[0]].size
+    # _xyKeysHiNoise = FindXYKeysAboveMinValInMSSCurrents(mssCurrentContainer=mssCurrent, minVal=1e-9, onIndicies=range(_dLen-5, _dLen))
     _xyKeysHiNoise = FindXYKeysAboveMinValInMSSCurrents(mssCurrentContainer=mssCurrent, minVal=1e-9, onIndicies=range(-6, -1))
     print(f"High-noise tips in {folder}")
     print(str(_xyKeysHiNoise))
@@ -197,7 +202,7 @@ for _iFolder in range(len(folders)):
 
 
 
-    # Plot all I vs. time
+
     SetTexFont(24)
     fig, axL = plt.subplots(nrows=1, ncols=1)
     axR = axL.twinx()
@@ -218,7 +223,7 @@ for _iFolder in range(len(folders)):
         _xyKey = _xyKeys[_iKey]
 
         # axL.semilogy(u, mssCurrent[_xyKey], "1--"  , markersize=12, linewidth=0.5, alpha=0.5, label="$I_{opt.}$")
-        axL.semilogy(t, mssCurrent[_xyKey], "1--"  , markersize=12, linewidth=0.35, alpha=0.5, label="$I_{OMap.}$")
+        axL.semilogy(t, mssCurrent[_xyKey], "1--"  , markersize=12, linewidth=0.35, alpha=0.5, label="$Share_{opt.}$")
 
     ShowMajorMinorY(axis=[axL], useLogLocator=True)
     ShowMajorMinorY(axis=[axR], useLogLocator=False)
@@ -248,13 +253,14 @@ for _iFolder in range(len(folders)):
         axR.lines[1]._label,
     ]
     PlotLegend(fig, lHandles=lHndls, lLabels=lLbls, loc=legLocs[_iFolder], ncol=1, LabelColor="#000000")
-    fig.text(x=0.65, y=0.125, s="$n_{Active\ Tips} = $" + f"${_nxyKeys}$")
+    fig.text(x=0.6, y=0.125, s="$n_{Active\ Tips} = $" + f"${_nxyKeys}$")
 
     fig.suptitle("Currents and voltages\nof the 21x21 cathode")
     axL.set_xlabel("Time [s]")
     axL.set_ylabel("Emissionsstrom [A]")
     axR.set_ylabel("Voltage [V]")
 
+    # Set y-Scales explicit
 
 
 
@@ -264,7 +270,8 @@ for _iFolder in range(len(folders)):
 
 
 
-    #### Prepare Plot ITotal + 4 tip-quadrants
+
+    #### Plot 4 tips
     _nTipsInSeparateQuadrantPlot = 4            # The n tips with the hightes currents are plotted in a separate plot window
 
     tipKeys = []
@@ -291,6 +298,9 @@ for _iFolder in range(len(folders)):
         _highestxyKeys.append(_maxCurrKey)
         _highestxyKeyCurrents.append(_maxCurr)
 
+    # Replace exemplarely for the first 700V sweep
+    #  the last highest current with the damaged
+    #  spot for paper (discussion of damaged area of coated cam)
     if replace4thOne[_iFolder] != None:
         del _highestxyKeys[-1]          # Delete last key to append the one slightly damaged one!
         del _highestxyKeyCurrents[-1]   # Delete last key to append the one slightly damaged one!
@@ -298,13 +308,14 @@ for _iFolder in range(len(folders)):
         _highestxyKeys.append(dmgKeyInfo)
         _highestxyKeyCurrents.append(mssCurrent[dmgKeyInfo].max())
 
-
-    # Plot Total and 4 quadrants
     SetTexFont(24)
     fig4, axL4 = plt.subplots(nrows=3, ncols=2)
     CombinePlots(fig4, axL4[0, 0:])
     axR4 = Twinx2D_3x2(fig=fig4, lAxis=axL4)
-    fig4.set_size_inches(w=14, h=10)
+    # axR4 = Twinx2D_2x2(fig=fig4, lAxis=axL4)
+    fig4.set_size_inches(w=14, h=12)
+    fig4.subplots_adjust(left=0.11, right=0.92, top=0.92, bottom=0.1, wspace=0.4, hspace=0.3)
+
     if showImgs:
         plt.show(block=False)
 
@@ -349,28 +360,28 @@ for _iFolder in range(len(folders)):
     
     cmap = get_cmap('Dark2')
     if plotFN2EstimateFitRange:
-        axL4[1,0].plot(dpArr[0]["FNx"], dpArr[0]["FNy"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[0], label="$I_{opt.}$")
-        axL4[1,1].plot(dpArr[1]["FNx"], dpArr[1]["FNy"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[1], label="$I_{opt.}$")
-        axL4[2,0].plot(dpArr[2]["FNx"], dpArr[2]["FNy"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[2], label="$I_{opt.}$")
-        axL4[2,1].plot(dpArr[3]["FNx"], dpArr[3]["FNy"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[3], label="$I_{opt.}$")
+        axL4[1,0].plot(dpArr[0]["FNx"], dpArr[0]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[0], label="$I_{opt.}$")
+        axL4[1,1].plot(dpArr[1]["FNx"], dpArr[1]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[1], label="$I_{opt.}$")
+        axL4[2,0].plot(dpArr[2]["FNx"], dpArr[2]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[2], label="$I_{opt.}$")
+        axL4[2,1].plot(dpArr[3]["FNx"], dpArr[3]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[3], label="$I_{opt.}$")
 
         axL4[1,0].plot(fit[0]["interpolatedFN"]["fnx"], fit[0]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
         axL4[1,1].plot(fit[1]["interpolatedFN"]["fnx"], fit[1]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
         axL4[2,0].plot(fit[2]["interpolatedFN"]["fnx"], fit[2]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
         axL4[2,1].plot(fit[3]["interpolatedFN"]["fnx"], fit[3]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
     else:
-        axL4[0,0].semilogy(dpArr[4]["USply"], dpArr[4]["ITotal"], "1"  , markersize=12, linewidth=1.5, color="#000000", label=r"$I_{Total}$")
-        axL4[1,0].semilogy(dpArr[0]["USply"], dpArr[0]["ITip"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[0], label=r"$I_{OMap.}$")
-        axL4[1,1].semilogy(dpArr[1]["USply"], dpArr[1]["ITip"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[1], label=r"$I_{OMap.}$")
-        axL4[2,0].semilogy(dpArr[2]["USply"], dpArr[2]["ITip"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[2], label=r"$I_{OMap.}$")
-        axL4[2,1].semilogy(dpArr[3]["USply"], dpArr[3]["ITip"], "1"  , markersize=12, linewidth=1.5, color=cmap.colors[3], label=r"$I_{OMap.}$")
+        axL4[0,0].semilogy(dpArr[4]["USply"], dpArr[4]["ITotal"], "o--"  , markersize=7, linewidth=2.5, color="#000000", label=r"$I_{Total}$")
+        axL4[1,0].semilogy(dpArr[0]["USply"], dpArr[0]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[0], label=r"$I_{OMap.}$")
+        axL4[1,1].semilogy(dpArr[1]["USply"], dpArr[1]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[1], label=r"$I_{OMap.}$")
+        axL4[2,0].semilogy(dpArr[2]["USply"], dpArr[2]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[2], label=r"$I_{OMap.}$")
+        axL4[2,1].semilogy(dpArr[3]["USply"], dpArr[3]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[3], label=r"$I_{OMap.}$")
 
-        axL4[0,0].semilogy(fit[4]["interpolatedUI"]["U"], fit[4]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=1.5, color="#606060", label=r"$Fit$")
+        axL4[0,0].semilogy(fit[4]["interpolatedUI"]["U"], fit[4]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=2.5, color="#606060", label=r"$Fit$")
 
-        axL4[1,0].semilogy(fit[0]["interpolatedUI"]["U"], fit[0]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=1.5, color="#606060", label=r"$Fit$")
-        axL4[1,1].semilogy(fit[1]["interpolatedUI"]["U"], fit[1]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=1.5, color="#606060", label=r"$Fit$")
-        axL4[2,0].semilogy(fit[2]["interpolatedUI"]["U"], fit[2]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=1.5, color="#606060", label=r"$Fit$")
-        axL4[2,1].semilogy(fit[3]["interpolatedUI"]["U"], fit[3]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=1.5, color="#606060", label=r"$Fit$")
+        axL4[1,0].semilogy(fit[0]["interpolatedUI"]["U"], fit[0]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=2.5, color="#606060", label=r"$Fit$")
+        axL4[1,1].semilogy(fit[1]["interpolatedUI"]["U"], fit[1]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=2.5, color="#606060", label=r"$Fit$")
+        axL4[2,0].semilogy(fit[2]["interpolatedUI"]["U"], fit[2]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=2.5, color="#606060", label=r"$Fit$")
+        axL4[2,1].semilogy(fit[3]["interpolatedUI"]["U"], fit[3]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=2.5, color="#606060", label=r"$Fit$")
 
         # axL4[0,0].semilogy(dpArr[4]["UExt"], dpArr[4]["ITotal"], "x--"  , markersize=10, linewidth=1.5, color="#000000", label="$I_{Total}$")
         # axL4[0,1].semilogy(dpArr[4]["UExt"], dpArr[4]["ITotal"], "x--"  , markersize=10, linewidth=1.5, color="#000000", label="$I_{Total}$")
@@ -384,18 +395,18 @@ for _iFolder in range(len(folders)):
 
         # axR4[0,0].plot(dpArr[4]["UExt"], dpArr[0]["Share"], ".--"  , markersize=7, linewidth=1.5, color="#000000", alpha=0.3, label=r"$S_{Total}$")
 
-        axR4[1,0].plot(dpArr[0]["USply"], dpArr[0]["Share"], ".--"  , markersize=7, linewidth=1.5, color=cmap.colors[0], alpha=0.4, label=r"$F_{OMap.}$")
-        axR4[1,1].plot(dpArr[1]["USply"], dpArr[1]["Share"], ".--"  , markersize=7, linewidth=1.5, color=cmap.colors[1], alpha=0.4, label=r"$F_{OMap.}$")
-        axR4[2,0].plot(dpArr[2]["USply"], dpArr[2]["Share"], ".--"  , markersize=7, linewidth=1.5, color=cmap.colors[2], alpha=0.4, label=r"$F_{OMap.}$")
-        axR4[2,1].plot(dpArr[3]["USply"], dpArr[3]["Share"], ".--"  , markersize=7, linewidth=1.5, color=cmap.colors[3], alpha=0.4, label=r"$F_{OMap.}$")
+        axR4[1,0].plot(dpArr[0]["USply"], dpArr[0]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[0], alpha=0.4, label=r"$F_{OMap.}$")
+        axR4[1,1].plot(dpArr[1]["USply"], dpArr[1]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[1], alpha=0.4, label=r"$F_{OMap.}$")
+        axR4[2,0].plot(dpArr[2]["USply"], dpArr[2]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[2], alpha=0.4, label=r"$F_{OMap.}$")
+        axR4[2,1].plot(dpArr[3]["USply"], dpArr[3]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[3], alpha=0.4, label=r"$F_{OMap.}$")
 
 
 
-    fig4.text(x=0.130, y=0.8450, s="$Total$", color="#000000")
-    fig4.text(x=0.130, y=0.5000, s="$Tip (x,y)$\n" + f"$({_highestxyKeys[0][0]},{_highestxyKeys[0][1]})$", color=cmap.colors[0])
-    fig4.text(x=0.550, y=0.5000, s="$Tip (x,y)$\n" + f"$({_highestxyKeys[1][0]},{_highestxyKeys[1][1]})$", color=cmap.colors[1])
-    fig4.text(x=0.130, y=0.2275, s="$Tip (x,y)$\n" + f"$({_highestxyKeys[2][0]},{_highestxyKeys[2][1]})$", color=cmap.colors[2])
-    fig4.text(x=0.550, y=0.2275, s="$Tip (x,y)$\n" + f"$({_highestxyKeys[3][0]},{_highestxyKeys[3][1]})$", color=cmap.colors[3])
+    axL4[0,0].text(x=160, y=7e-5, fontsize=36, s="$Total$", color="#000000")
+    axL4[1,0].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[0][0]},{_highestxyKeys[0][1]})$" + "\n$(x,y)$", color=cmap.colors[0])
+    axL4[1,1].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[1][0]},{_highestxyKeys[1][1]})$" + "\n$(x,y)$", color=cmap.colors[1])
+    axL4[2,0].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[2][0]},{_highestxyKeys[2][1]})$" + "\n$(x,y)$", color=cmap.colors[2])
+    axL4[2,1].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[3][0]},{_highestxyKeys[3][1]})$" + "\n$(x,y)$", color=cmap.colors[3])
 
 
     # fig4.suptitle("Optical derived currents and shares of the 4 most contributing tips")
@@ -413,6 +424,10 @@ for _iFolder in range(len(folders)):
     axL4[2, 0].set_xlabel("$U_{Supply}\ [V]$")
     axL4[2, 1].set_xlabel("$U_{Supply}\ [V]$")
 
+    axL4[0, 0].xaxis.set_label_coords(0.5, -0.15)
+    # axL4[2, 0].xaxis.set_label_coords(1.18, 0.3) # not used!!!
+    # axL4[2, 1].xaxis.set_label_coords(1.18, 0.3) # not used!!!
+
 
     if plotFN2EstimateFitRange:
         ShowMajorMinorY(axL4.flatten(), useLogLocator=False)
@@ -420,18 +435,18 @@ for _iFolder in range(len(folders)):
         ShowMajorMinorY(axL4.flatten(), useLogLocator=True)
 
     axL4[0, 0].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True , labelright=False)
-    axR4[0, 0].tick_params(which="both", bottom=False, left=False, right=False, labelbottom=False, labelleft=False, labelright=False)
+    axR4[0, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
 
-    axL4[1, 0].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=False, labelleft=True , labelright=False)
-    axR4[1, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=False)
+    axL4[1, 0].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True , labelright=False)
+    axR4[1, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
 
-    axL4[1, 1].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=False, labelleft=False, labelright=False)
+    axL4[1, 1].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True , labelright=False)
     axR4[1, 1].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
 
     axL4[2, 0].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True,  labelright=False)
-    axR4[2, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=False)
+    axR4[2, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
 
-    axL4[2, 1].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=False, labelright=False)
+    axL4[2, 1].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True , labelright=False)
     axR4[2, 1].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
 
 
@@ -480,13 +495,17 @@ for _iFolder in range(len(folders)):
                axL4[2,0].lines[1],
                axL4[2,1].lines[1],
     ]),
+    #     tuple([axL4[0,0].lines[2]
+    # ]),
     ]
     lLbls = [
         axL4[1,0].lines[0]._label,
         axR4[1,0].lines[0]._label,
+        # axR4[0,0].lines[0]._label,
         axL4[1,0].lines[1]._label,
+        # axL4[0,0].lines[2]._label,
     ]
-    PlotLegend(fig4, lHandles=lHndls, lLabels=lLbls, loc=(0.125, 0.885), ncol=3, LabelColor="#000000")
+    PlotLegend(fig4, lHandles=lHndls, lLabels=lLbls, loc=(0.12, 0.93), ncol=3, LabelColor="#000000")
 
 
 
@@ -501,10 +520,13 @@ for _iFolder in range(len(folders)):
     # Just a plot, being able to extract the turn-on voltage (before the inner vectors removed from json dump)
     SetTexFont(24)
     figTotal, axLTotal = plt.subplots(nrows=1, ncols=1)
+    # axR = axL.twinx()
     figTotal.set_size_inches(w=14, h=10)
     if showImgs:
         plt.show(block=False)
 
+    # u = ud["UExt"]
+    # i = cf["IAll"]
     dpTotalUI = dpArr[4]
     fitTotalUI = fit[4]["interpolatedUI"]
     axLTotal.semilogy(dpTotalUI ["UExt"], dpTotalUI ["ITotal"], "x--", color="#FF0000", label="ITotal")
@@ -549,6 +571,9 @@ for _iFolder in range(len(folders)):
         del jsonFitOut[_fitKey]["interpolatedFN"]
         del jsonFitOut[_fitKey]["interpolatedUI"]
 
+        # dpArr[_iFitKey].ClipData("UExt", RemoveAtValue=dpArr)
+        # jsonFitOut[_fitKey]["MeanShare"] = 
+
         # Only single tips
         if _iFitKey < 4:
             _hiKey = _highestxyKeys[_iFitKey]
@@ -556,6 +581,14 @@ for _iFolder in range(len(folders)):
             _indexOfIMax = np.where(mssCurrent[_hiKey] == jsonFitOut[_fitKey]["MaxCurrent"])[0][0]
             jsonFitOut[_fitKey]["MaxShare"] = mssShares["ShareFac"][_hiKey][_indexOfIMax]
             jsonFitOut[_fitKey]["MaxSharePerc"] = jsonFitOut[_fitKey]["MaxShare"] * 100
+
+
+        jsonFitOut["(Cathode)"]["MaxCurrent"] = np.max(cf["IAll"])
+        _indexOfIMax = np.where(cf["IAll"] == np.max(cf["IAll"]))[0][0]
+        jsonFitOut["(Cathode)"]["MaxShare"] = 1.0
+        jsonFitOut["(Cathode)"]["MaxSharePerc"] = jsonFitOut["(Cathode)"]["MaxShare"] * 100
+
+        
 
     jsonFName = join(savepath, f"{fPrefix} FNParams, 4x IOpt.json")
     with open(jsonFName, "w") as fJSON:
@@ -577,9 +610,36 @@ for _iFolder in range(len(folders)):
 
 
 
+
+
+    # Save high-noise keys
+    jsonFName = join(savepath, f"{fPrefix} High noise XYKeys.json")
+    with open(jsonFName, "w") as fJSON:
+
+        fJSON.write(json.dumps(_xyKeysHiNoise))
+    
+    
+    with open(f"{jsonFName}", "r+") as fJSON: # Postformatting
+        fc = fJSON.read()
+        fc = fc.replace(",", "\n")
+        fc = fc.replace("{", "\n")
+        fc = fc.replace("}", "")
+        fc = fc.replace("]", "\n]\n")
+        fc = fc.replace("[", "\n[\n")
+        fc = fc.replace("\"(", "\n\n\"(")
+        fc = fc.replace("\n ", "\n")
+        fJSON.seek(0)
+        fJSON.write(fc)
+
+
+
+
+
+
     ### Save plots
-    fig4.savefig(join(savepath, "IV-Characteristic of the 4 strongest tips.png"), dpi=300)
-    fig .savefig(join(savepath, "I vs t with total and all tip currents.png"), dpi=300)
+    fig4.savefig(join(savepath, "IV-Characteristic of the 4 strongest tips.svg"), dpi=900)
+    fig .savefig(join(savepath, "I vs t with total and all tip currents.svg"), dpi=900)
+    # SaveFigList(figList=[fig], saveFolder=savepath, prefix=fPrefix, figSize=(14,10), dpi=300, ClearSaved=False)
     plt.close("all")
 
 
