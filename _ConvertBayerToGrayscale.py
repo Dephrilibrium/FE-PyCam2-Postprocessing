@@ -179,24 +179,8 @@ def DeleteFiles(FilepathCollection):
 
 ###### USER AREA ######
 wds = [
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\02_01 Activation",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_00 Kritischer Strom (10nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_01 Kritischer Strom (15nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_02 Kritischer Strom (20nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_03 Kritischer Strom (25nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_04 Kritischer Strom (30nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_05 Kritischer Strom (40nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_06 Kritischer Strom (50nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_07 Kritischer Strom (65nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_08 Kritischer Strom (80nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_09 Kritischer Strom (100nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_10 Kritischer Strom (125nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_11 Kritischer Strom (150nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_12 Kritischer Strom (175nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_13 Kritischer Strom (200nA)+DarkShots",
-r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_14 Kritischer Strom (250nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_15 Kritischer Strom (300nA)+DarkShots",
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_16 Kritischer Strom (350nA)+DarkShots",
+# Your (parent)-folderpaths go here
+r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
 ]
 
 

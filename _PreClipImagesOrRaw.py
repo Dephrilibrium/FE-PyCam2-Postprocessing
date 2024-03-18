@@ -51,11 +51,8 @@ from misc import LogLineOK
 
 ###### USER AREA ######
 parentDirs = [
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_182029 500V 750nA USwp",
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_183629 500V 750nA USwp",
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_185811 425V 750nA UHold 15m",
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230906_235813 425V 750nA UHold 120m",
-r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\13_01 Change 10Meg Playing\230907_084603 425V 750nA UHold 120m #2",
+# Your (parent)-folderpaths go here
+r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
 ]
 picDir = "Pics"
 skipBadSubDir = True

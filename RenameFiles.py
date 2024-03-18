@@ -8,8 +8,8 @@ ReadFormat = "{}_rPiHQCam-{}_ss={}_{}.jpg"
 ConvertFormat = "LT{:08d}_ss={:09d}_{:03d}"
 
 
-ImgDir = r"C:\Users\ham38517\Downloads\220725 PiCam Einzelemitter\Messungen\03 1h I500nA U1400V\220804_163908 (#3)\Pics"
-OutDir = r"C:\Users\ham38517\Downloads\220725 PiCam Einzelemitter\Messungen\03 1h I500nA U1400V\220804_163908 (#3)\Pics Ketek"
+ImgDir = r"<Drive>\<Input Pics folderpath here>"
+OutDir = r"<Drive>\<Output Pics folderpath here>",
 if not os.path.exists(OutDir):
   os.makedirs(OutDir)
 

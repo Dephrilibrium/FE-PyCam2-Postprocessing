@@ -31,8 +31,8 @@ cw = int((x+w) * 1.5)
 ch = h
 
 
-
-imgPath = r"D:\05 PiCam\230829 HQCam SOI2x2_0012\Messungen\04_01 Rantasten an Regelstroeme\230831_175925 750V 4x200nA\Pics\Dev101_rPiHQCam2-0000_ss=1000_0000.raw"
+# One direct RAW-image path goes here
+imgPath = r"<Drive>\<Input Pics folderpath here>\01_01 Activation\Pics\FirstImage.raw", # Topmost Parent --> Scans the child-folders iteratively
 
 
 

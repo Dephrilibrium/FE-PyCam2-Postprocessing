@@ -81,7 +81,9 @@ from PMPLib.PiMageOptions import PiMageOptions
 
 ###### USER AREA ######
 # Paths
-parentDir = r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\02_01 Activation"
+# Your (parent)-folderpath goes here
+parentDir = r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
+
 
 
 
@@ -122,7 +124,7 @@ opt.DetectSS_AllowedPercentDeviation = 1.5                              # Is the
 
 # Image processing
 opt.Image_CropWin = None                                                # None/False: Images not cropped; [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
-opt.Image_bThresh = 5*0xFF                                              # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
+opt.Image_bThresh = 15*0xFF                                              # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
 opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THRESH_OTSU:                     Tries otsu
                                                                         # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
                                                                         # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
@@ -137,7 +139,7 @@ opt.Image_MinBright2CountArea = 3* 0xFF                                 # Define
 # Spot-detection
 opt.SpotDetect_Dilate = 10                                              # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
-opt.SpotDetect_pxMinRadius = 4                                          # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
+opt.SpotDetect_pxMinRadius = 10                                          # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
 opt.SpotDetect_pxMaxRadius = 100                                        # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
 
 
@@ -180,7 +182,7 @@ opt.PklDump_pcoContainer                            = True              # Dump t
 opt.PklDump_sesContainer                            = True              # Dump the SEnsorSignal-container as pickle-binary
 opt.PklDump_mssContainer                            = True              # Dump the MergedSensorSignal-container as pickle-binary (combination of the sensor signals on the different SS-images)
 
-opt.Copy_FEMDAQData                                 = True                      # Creates copies of the relevant FEMDAQ-data (if FEMDAQ was used as measurement-tool!)
+opt.Copy_FEMDAQData                                 = True              # Creates copies of the relevant FEMDAQ-data (if FEMDAQ was used as measurement-tool!)
 
 
 
@@ -453,7 +455,7 @@ for root, dirs, files in os.walk(parentDir):
       imgContainer[SS]["8BitXYKeyDraw"] = DrawCircleAroundEachXYKey(ImgCollection=drawImgs, CircleContainer=cirContainer, pxRadius=opt.CircleDraw_pxRadius, AddPxRadius=opt.CircleDraw_AddPxRadius, pxLineThickness=opt.CircleDraw_pxThickness, ShowImg=opt.ShowImages_Draw)
       del drawImgs
 
-      
+
       if (SS == Shutterspeeds[0]):
         SaveImageCollection(ImgCollection=imgContainer[SS]["8BitXYKeyDraw"], FileFormat=str.format(ImageFormat, "Dev101", "{:05d}", SS, "8BitXYKeyDraw", SaveFileType), SaveDir=os.path.join(cSaveDir, str.format("8BitXYKeyDraw SS={}", SS)))
       LogLineOK()
