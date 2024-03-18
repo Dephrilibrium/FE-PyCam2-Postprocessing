@@ -1,7 +1,11 @@
 import pickle
 import FieldEmission as fe
 import matplotlib.pyplot as plt
+from matplotlib import colors
+from matplotlib.patches import Circle
 from matplotlib.cm import get_cmap
+from matplotlib.ticker import ScalarFormatter
+from matplotlib.ticker import LogLocator
 import numpy as np
 import json
 
@@ -10,46 +14,90 @@ from os.path import join, dirname, basename, abspath, splitext
 
 
 import sys
-sys.path.append(dirname(dirname(abspath(__file__))))
 
-from _lib import SplitAndMean, ReadElAsDP, ReadSwpAsDP, ReadSwpAsDPFromFolder, ReadPkl, ReadResistor, ReadResistorFromFolder
-from _lib import GetQuadrantOfSpot, CombinePlots, Twinx2D_2x2, Twinx2D_3x2, SameXYLimitsOnAxisColl, SameXYLimitsOnLRSubplots, SaveFigList
-from _lib import PlotSupTitleAndLegend, PlotLegend, ShowMajorMinorY
+from lib import SplitAndMean, ReadElAsDP, ReadSwpAsDP, ReadSwpAsDPFromFolder, ReadPkl, ReadResistor, ReadResistorFromFolder
+from lib import GetQuadrantOfSpot, CombinePlots, Twinx2D_2x2, Twinx2D_3x2, SameXYLimitsOnAxisColl, SameXYLimitsOnLRSubplots, SaveFigList
+from lib import PlotSupTitleAndLegend, PlotLegend, ShowMajorMinorY
 
-from _misc import SetTexFont
+from misc import SetTexFont
 
-from _findMethods import FindXYKeysAboveMinValInMSSCurrents
+from findMethods import FindXYKeysAboveMinValInMSSCurrents
+
+
+
+
 
 
 showImgs = True
 plotFN2EstimateFitRange = False # Not necessary anymore, as below the voltages can be given directly to auto-calculate the FN-coordinate range
 
+
+
+
 folders = [
-r".\230727_171103 700V IMax1V",
+r".\230727_171103 700V IMax1V"
 ]
 
 legLocs = [ # LegendLocations
+    (0.43, 0.1175), # Sweep 700V
+    (0.43, 0.1175), # 15m 500V
+    (0.43, 0.1175), # Sweep 700V
+    (0.43, 0.1175), # 15m 700V
+    (0.43, 0.1175), # Sweep 700V
+    (0.43, 0.1175), # 15m 1000V
     (0.43, 0.1175), # Sweep 700V
 ]
 
 USigMin = [ # U where the IV-Characteristic "starts"
     290, # Sweep 700V
+    310, # 15m 500V
+    310, # Sweep 700V
+    310, # 15m 700V
+    310, # Sweep 700V
+    310, # 15m 1000V
+    310, # Sweep 700V
 ]
 
 
 USigMax = [ # U where the IV-Characteristics is not in regulation/Saturation
     400, # Sweep 700V
+    500, # 15m 500V
+    500, # Sweep 700V
+    500, # 15m 700V
+    500, # Sweep 700V
+    500, # 15m 1000V
+    500, # Sweep 700V
 ]
 
 d_um = [ # distance in µm between tips and Camera
+    60, # Sweep 700V
+    60, # 15m 500V
+    60, # Sweep 700V
+    60, # 15m 700V
+    60, # Sweep 700V
+    60, # 15m 1000V
     60, # Sweep 700V
 ]
 
 
 replace4thOne = [
-    # (529, 2182),    # Sweep 700V    (replace with a specific one)
-    None,           # Sweep 700V -> Take the 4th most contribution tip as 4th tip
+    # (529, 2182),    # Sweep 700V    (replace with damaged one for paper-discussion)
+    None,           # Sweep 700V -> No risk for discussion!
+    None,           # 15m 500V
+    None,           # Sweep 700V
+    None,           # 15m 700V
+    None,           # Sweep 700V
+    None,           # 15m 1000V
+    None,           # Sweep 700V
 ]
+minCurrent4ProperSignal = 20e-9  # Only active if replace4thOne is != None! (search for: _xyK)
+
+
+
+
+
+
+
 
 
 
@@ -59,28 +107,51 @@ replace4thOne = [
 
 fnFitRegion = [
     [d_um[0] / USigMax[0], d_um[0] / USigMin[0]], # Sweep     700V
+    [d_um[1] / USigMax[1], d_um[1] / USigMin[1]], # 15m       500V
+    [d_um[2] / USigMax[2], d_um[2] / USigMin[2]], # Sweep     700V
+    [d_um[3] / USigMax[3], d_um[3] / USigMin[3]], # 15m       700V
+    [d_um[4] / USigMax[4], d_um[4] / USigMin[4]], # Sweep     700V
+    [d_um[5] / USigMax[5], d_um[5] / USigMin[5]], # 15m       1000V
+    [d_um[6] / USigMax[6], d_um[6] / USigMin[6]], # Sweep     700V
 ]
 
 
-os.chdir(dirname(__file__))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 for _iFolder in range(len(folders)):
     folder = folders[_iFolder]
 
     # Lumi
-    mss = ReadPkl(join(folder, r"PMP_mssContainer.pkl"))
-    ses = ReadPkl(join(folder, r"PMP_sesContainer.pkl"))
+    mss = ReadPkl(join(dirname(__file__), folder, r"PMP_mssContainer.pkl"))
+    ses = ReadPkl(join(dirname(__file__), folder, r"PMP_sesContainer.pkl"))
 
 
     # Sweep
     swp = ReadSwpAsDPFromFolder(folder)
 
+    # ITotal 6517
+    iTotal = ReadElAsDP(join(dirname(__file__), folder, r"Dev7_ISum.dat"))
+    iTotal.RemoveRows(0)
+
     # CurrentFlow
     resistor = ReadResistorFromFolder(folder)
-    cf = ReadElAsDP(join(folder, r"Dev100_FEAR16v2(Ch0CF).dat"))
+    cf = ReadElAsDP(join(dirname(__file__), folder, r"Dev100_FEAR16v2(Ch0CF).dat"))
     cf.RemoveRows(0)
 
     # VoltageDrop
-    ud = ReadElAsDP(join(folder, r"Dev100_FEAR16v2(Ch0UD).dat"))
+    ud = ReadElAsDP(join(dirname(__file__), folder, r"Dev100_FEAR16v2(Ch0UD).dat"))
     ud.RemoveRows(0) # Remove initial datapoint
 
 
@@ -94,6 +165,7 @@ for _iFolder in range(len(folders)):
     cf["IAll"] = np.divide(cf["Y"], resistor)
     cf.RemoveColumns(["Y", "Dev7", "Time"])
     cf.AbsColumn("IAll")
+    cf["ITotal6517"] = iTotal["Y"]
 
     # UD
     ud["UExt"] = np.subtract(abs(swp["U7"]), abs(ud["Y"]))
@@ -169,19 +241,27 @@ for _iFolder in range(len(folders)):
         fnProvider = fe.DataProvider(["U", "I"], [ud["UExt"], mssCurrent[_xyKey]])
         fn = fe.FowlerNordheim(DatMgr=fnProvider, ColumnU="U", ColumnI="I", distance_μm=60)
 
+
+        
+        # Search for percentage influence of the damaged spot (black level)
         __ssK = list(ses.keys())[0]
         __xyK = replace4thOne[_iFolder]
         if __xyK != None:
+            _iKeep = np.where(cf["ITotal6517"] >= minCurrent4ProperSignal)[0]
             __min = np.array(mss["XYKeys"][__xyK]["MergedSensorSignal"][0])
-            __vec = np.array(mss["XYKeys"][__xyK]["MergedSensorSignal"])
-            __all = np.array(mss["MergedSensorSignal"])
+            __vec = np.array(mss["XYKeys"][__xyK]["MergedSensorSignal"][_iKeep[0]:_iKeep[-1]])
+            __all = np.array(mss["MergedSensorSignal"]                 [_iKeep[0]:_iKeep[-1]])
+
             __dmgRelSpot = np.divide(__min, __vec)
             __dmgRelSpotPerc = np.multiply(__dmgRelSpot, 100)
             __dmgRelAll = np.divide(__min, __all)
             __dmgRelAllPerc = np.multiply(__dmgRelAll, 100)
 
-            _iOff = int(USigMin[_iFolder] / 6 + 1) # Clip away when supply voltage < min-voltage to see some correct signal!
-            _dmgRelAppPercNoNoise = __dmgRelAllPerc[_iOff:-_iOff]
+            # Clipping is now done by min-current instead of voltages!
+            # _iKeep = int(USigMin[_iFolder] / 6 + 1) # Clip away when supply voltage < min-voltage to see some correct signal!
+            # _dmgRelAppPercNoNoise = __dmgRelAllPerc[_iKeep:-_iKeep]
+            _dmgRelAppPercNoNoise = __dmgRelAllPerc
+
             __meanDmgOnAll = np.mean(_dmgRelAppPercNoNoise)
             __stdDmgOnAll = np.std(_dmgRelAppPercNoNoise)
 
@@ -212,9 +292,11 @@ for _iFolder in range(len(folders)):
 
     u = ud["UExt"]
     i = cf["IAll"]
+    # i = cf["ITotal6517"]
 
     tDelta = 6.0
-    t = np.linspace(start=0, stop=tDelta * (len(u)-1), num=len(u), endpoint=True)
+    tScale = 60 # sec -> min
+    t = np.divide(np.linspace(start=0, stop=tDelta * (len(u)-1), num=len(u), endpoint=True), tScale)
     # axL.semilogy(u, i, "x--", markersize=10, linewidth=1.5, color="#000000", label="$I_{el.}$")
     axL.semilogy(t, i, "x--", markersize=10, linewidth=1.5, color="#000000", label="$I_{el.}$")
     axR.plot(t, abs(swp["U7"]), "+--", markersize=10, linewidth=1.5, color="#FF00FF", label="$U_{Supply}$")
@@ -227,7 +309,8 @@ for _iFolder in range(len(folders)):
 
     ShowMajorMinorY(axis=[axL], useLogLocator=True)
     ShowMajorMinorY(axis=[axR], useLogLocator=False)
-    axL.set_xlim([t.min()-25, t.max()+25])
+    # axL.set_xlim([t.min()-15, t.max()+15])
+    axL.set_xlim([t.min(), t.max()])
     axL.set_ylim([1e-13, 2e-4])
     axR.set_ylim([-50, 2550])
 
@@ -265,6 +348,133 @@ for _iFolder in range(len(folders)):
 
 
 
+
+
+    # Building 2D-Histogram Plot data for Hist over Time
+    mssCurrList = np.array([mssCurrent[_xy] for _xy in mssCurrent]).T
+    mssCurrFlat = mssCurrList.flatten()
+    
+
+    mssCurrTLen = len(mssCurrList[0])
+    mssCurrLen = len(mssCurrList)
+    
+    _singleHistIndex = 108 #mssCurrLen // 2
+
+    tFlat = np.array([[t[_i]] * mssCurrTLen for _i in range(mssCurrLen)]).flatten()
+
+    iKeep = np.where(mssCurrFlat > 1e-9)[0]
+    mssCurrFlat = mssCurrFlat[iKeep]
+    tFlat = tFlat[iKeep]
+
+    # Plot Histogram2D of all tips over time
+    mssFig, mssAxL = plt.subplots(nrows=1, ncols=1)
+    mssAxR = mssAxL.twinx()
+    mssFig.set_size_inches(w=16, h=10)
+    if showImgs:
+        plt.show(block=False)
+
+
+    mssInsAxL = mssAxL.inset_axes([0.25, 0.11, 0.45, 0.25])
+    mssInsAxL.spines['bottom']  .set_color('red')
+    mssInsAxL.spines['top']     .set_color('red')
+    mssInsAxL.spines['right']   .set_color('red')
+    mssInsAxL.spines['left']    .set_color('red')
+    mssInsAxL.spines['bottom']  .set_linewidth(5)
+    mssInsAxL.spines['top']     .set_linewidth(5)
+    mssInsAxL.spines['right']   .set_linewidth(5)
+    mssInsAxL.spines['left']    .set_linewidth(5)
+    mssInsAxL.spines['bottom']  .set_linestyle("--")
+    mssInsAxL.spines['top']     .set_linestyle("--")
+    mssInsAxL.spines['right']   .set_linestyle("--")
+    mssInsAxL.spines['left']    .set_linestyle("--")
+    mssInsAxL.tick_params(axis='both', colors='white')
+
+    # matrix, *opt = np.histogram2d(tFlat, mssCurrFlat)
+    # img = plt.imshow(matrix, norm = colors.LogNorm(), #cmap = matplotlib.cm.gray, 
+    #              interpolation="None")
+    
+    xBins = np.linspace(0, t[-1], 171, endpoint=True)
+    yBins = np.logspace(np.log10(1e-9), np.log10(150e-6), 81)
+    # for _i in range(ssCurrLen):
+    #     pass
+
+    # mssAxL.scatter(tFlat, mssCurrFlat)
+    
+    h = mssAxL.hist2d(tFlat, mssCurrFlat, bins=[xBins, yBins], norm=plt.Normalize(vmin=0, clip=True), cmap="afmhot", linewidth=0, edgecolors="black", rasterized=True)
+    hVertLine = mssAxL.semilogy([t[_singleHistIndex]] * 2, [1e-10, 150e-6], "r--", linewidth=5)
+    mssAxL.semilogy(t, i, "-", color="#00FF00", alpha=0.75, linewidth=5)
+
+    mssAxR.plot(t, abs(swp["U7"]), "-", color="#FF00FF", alpha=0.5, linewidth=5)
+    mssAxR.plot(t, abs(u), "-", color="#FF00FF", alpha=1, linewidth=5)
+
+    # mssInsAxL.hist(mssCurrList[_singleHistIndex], bins=np.logspace(np.log10(1e-10), np.log10(15e-6), 51), color="#ac2d00", edgecolor="black")
+    mssInsAxL.hist(mssCurrList[_singleHistIndex], bins=yBins, color="#ac2d00", edgecolor="black")
+
+
+    ### HBar on top (Size: 14x10)
+    # hbarPos = mssFig.add_axes([0.1, 0.875, 0.8, 0.035])
+    # hbar = mssFig.colorbar(h[3], cax=hbarPos, ax=mssAxL, orientation="horizontal", location="top")#, label="$n_{Tips}$")
+    ### HBar at right side (Size: 16x10)
+    hbarPos = mssFig.add_axes([0.915, 0.085, 0.02, 0.865])
+    hbar = mssFig.colorbar(h[3], cax=hbarPos, ax=mssAxL, orientation="vertical", location="right")#, label="$n_{Tips}$")
+    
+    # mssAxL.set_xscale("log")
+    mssAxL.set_yscale("log")
+    hbar.formatter = ScalarFormatter()
+    hbar.set_ticks([1,2,3,4,5,6,7,8, 9, 10, 11, 12])
+    hbar.set_label("$n_{Tips}$", labelpad=10)
+    hbar.update_ticks()
+
+    mssInsAxL.set_xscale("log")
+    
+
+
+    # Make the plot it beatuiful :)
+    # Mainplot
+    # mssAxL.grid(visible=True, which="both", axis="both", color="#CCCCCC", linestyle="-", linewidth=0.5)
+    # ShowMajorMinorY(axis=[mssAxL], useLogLocator=True, which="both") # Is shown correctly, but not saved correctly!
+
+    mssAxL.set_xlim([t.min(), t.max()])
+    mssAxL.set_ylim([1e-9, 150e-6])
+    mssAxR.set_ylim([0, 724])
+
+    mssAxL.set_xticks([0, 2, 4, 6, 8, 10, 12, 14, 16])
+    mssAxL.set_yticks([1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4])
+
+    # Legend and Labeling
+    # PlotLegend(fig, lHandles=lHndls, lLabels=lLbls, loc=legLocs[_iFolder], ncol=1, LabelColor="#000000")
+    # mssFig.text(x=0.1, y=0.83, s="$n_{contributing\ Tips} = $" + f"${_nxyKeys}$") # For vertical HBar above the plot
+    mssFig.text(x=0.1, y=0.965, s="$n_{contributing\ Tips} = $" + f"${_nxyKeys}$") # For vertical HBar right of plot 
+
+    specialFont = {"weight": "bold", "size": 35}
+    mssAxL.text(x= 110/tScale, y=50e-6, s="$I_{Total}$", color="#00FF00", alpha=1, rotation=0, fontdict=specialFont)
+
+    mssAxR.text(x=290/tScale, y=570, s="$U_{Supply}$", color="#FF00FF", alpha=0.5, rotation=37, fontdict=specialFont)
+    mssAxR.text(x=450/tScale, y=575, s="$U_{Extr.}$", color="#FF00FF", alpha=1, rotation=0, fontdict=specialFont)
+
+
+    # fig.suptitle("Histogram of current over time (colorized by count of tip in bin-range)")
+    mssAxL.set_xlabel("Time [min]")
+    mssAxL.set_ylabel("Current [A]")
+    mssAxR.set_ylabel("Voltage [V]")
+    # mssFig.subplots_adjust(left=0.1, right=0.91, top=0.82, bottom=0.085, wspace=0.25, hspace=0.2) # For vertical HBar above the plot (Size: 14x10)
+    mssFig.subplots_adjust(left=0.085, right=0.825, top=0.95, bottom=0.085, wspace=0.25, hspace=0.2) # For vertical HBar right of plot (Size: 16x10)
+
+
+    # Inset
+    mssInsAxL.set_xlim([0.5e-9, 20e-6])
+    mssInsAxL.set_ylim([0, 12.5])
+
+    # mssInsAxL.set_xticks([1e-9, 1e-8, 1e-7, 1e-6, 1e-5])
+    mssInsAxL.set_xticks([1e-9, 1e-8, 1e-7, 1e-6, 1e-5])
+    mssInsAxL.set_yticks([0, 2, 4, 6, 8, 10, 12])
+
+
+    ### Inset-Beatifulization x)
+    # mssInsAxL.text  (x=0.7e-9, y=7.25, s=f"1D Histogram #{_singleHistIndex}\n(red dashed line)")
+    mssInsAxL.text(x=0.7e-9, y=7, s="1D-histogram\n(dashed red line)")
+    mssInsAxL.set_xlabel("Emission current [A]", color="white")
+    mssInsAxL.set_ylabel("$n_{tips}$", color="white")
 
 
 
@@ -358,12 +568,24 @@ for _iFolder in range(len(folders)):
     fit[3]["interpolatedUI"].ClipData(ColumnKeyOrIndex="U", RemoveAtValue=150, ClipFlag=fe.ClipFlags.Below)
     fit[4]["interpolatedUI"].ClipData(ColumnKeyOrIndex="U", RemoveAtValue=150, ClipFlag=fe.ClipFlags.Below)
     
-    cmap = get_cmap('Dark2')
+    dark2   = get_cmap('Dark2')
+    tab10   = get_cmap('tab10')
+    tab20b  = get_cmap('tab20b')
+    tab20c  = get_cmap('tab20c')
+    accent  = get_cmap("Accent")
+    set2    = get_cmap("Set2")
+    
+    cmap = [                    # Mapping proper colors with contrast to black and white
+        tab10   .colors[ 0],
+        tab10   .colors[ 1],
+        tab10   .colors[ 2],
+        tab10   .colors[ 3],
+    ]
     if plotFN2EstimateFitRange:
-        axL4[1,0].plot(dpArr[0]["FNx"], dpArr[0]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[0], label="$I_{opt.}$")
-        axL4[1,1].plot(dpArr[1]["FNx"], dpArr[1]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[1], label="$I_{opt.}$")
-        axL4[2,0].plot(dpArr[2]["FNx"], dpArr[2]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[2], label="$I_{opt.}$")
-        axL4[2,1].plot(dpArr[3]["FNx"], dpArr[3]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[3], label="$I_{opt.}$")
+        axL4[1,0].plot(dpArr[0]["FNx"], dpArr[0]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap[0], label="$I_{opt.}$")
+        axL4[1,1].plot(dpArr[1]["FNx"], dpArr[1]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap[1], label="$I_{opt.}$")
+        axL4[2,0].plot(dpArr[2]["FNx"], dpArr[2]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap[2], label="$I_{opt.}$")
+        axL4[2,1].plot(dpArr[3]["FNx"], dpArr[3]["FNy"], "o--"  , markersize=7, linewidth=2.5, color=cmap[3], label="$I_{opt.}$")
 
         axL4[1,0].plot(fit[0]["interpolatedFN"]["fnx"], fit[0]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
         axL4[1,1].plot(fit[1]["interpolatedFN"]["fnx"], fit[1]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
@@ -371,10 +593,10 @@ for _iFolder in range(len(folders)):
         axL4[2,1].plot(fit[3]["interpolatedFN"]["fnx"], fit[3]["interpolatedFN"]["fny"], "--"  , markersize=12, linewidth=1.5, color="#606060", label="$Fitted$")
     else:
         axL4[0,0].semilogy(dpArr[4]["USply"], dpArr[4]["ITotal"], "o--"  , markersize=7, linewidth=2.5, color="#000000", label=r"$I_{Total}$")
-        axL4[1,0].semilogy(dpArr[0]["USply"], dpArr[0]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[0], label=r"$I_{OMap.}$")
-        axL4[1,1].semilogy(dpArr[1]["USply"], dpArr[1]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[1], label=r"$I_{OMap.}$")
-        axL4[2,0].semilogy(dpArr[2]["USply"], dpArr[2]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[2], label=r"$I_{OMap.}$")
-        axL4[2,1].semilogy(dpArr[3]["USply"], dpArr[3]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap.colors[3], label=r"$I_{OMap.}$")
+        axL4[1,0].semilogy(dpArr[0]["USply"], dpArr[0]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap[0], label=r"$I_{OMap.}$")
+        axL4[1,1].semilogy(dpArr[1]["USply"], dpArr[1]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap[1], label=r"$I_{OMap.}$")
+        axL4[2,0].semilogy(dpArr[2]["USply"], dpArr[2]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap[2], label=r"$I_{OMap.}$")
+        axL4[2,1].semilogy(dpArr[3]["USply"], dpArr[3]["ITip"]  , "o--"  , markersize=7, linewidth=2.5, color=cmap[3], label=r"$I_{OMap.}$")
 
         axL4[0,0].semilogy(fit[4]["interpolatedUI"]["U"], fit[4]["interpolatedUI"]["I"], "--"  , markersize=12, linewidth=2.5, color="#606060", label=r"$Fit$")
 
@@ -395,18 +617,22 @@ for _iFolder in range(len(folders)):
 
         # axR4[0,0].plot(dpArr[4]["UExt"], dpArr[0]["Share"], ".--"  , markersize=7, linewidth=1.5, color="#000000", alpha=0.3, label=r"$S_{Total}$")
 
-        axR4[1,0].plot(dpArr[0]["USply"], dpArr[0]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[0], alpha=0.4, label=r"$F_{OMap.}$")
-        axR4[1,1].plot(dpArr[1]["USply"], dpArr[1]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[1], alpha=0.4, label=r"$F_{OMap.}$")
-        axR4[2,0].plot(dpArr[2]["USply"], dpArr[2]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[2], alpha=0.4, label=r"$F_{OMap.}$")
-        axR4[2,1].plot(dpArr[3]["USply"], dpArr[3]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap.colors[3], alpha=0.4, label=r"$F_{OMap.}$")
+        axR4[1,0].plot(dpArr[0]["USply"], dpArr[0]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap[0], alpha=0.25, label=r"$F_{OMap.}$")
+        axR4[1,1].plot(dpArr[1]["USply"], dpArr[1]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap[1], alpha=0.25, label=r"$F_{OMap.}$")
+        axR4[2,0].plot(dpArr[2]["USply"], dpArr[2]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap[2], alpha=0.25, label=r"$F_{OMap.}$")
+        axR4[2,1].plot(dpArr[3]["USply"], dpArr[3]["Share"], ".--"  , markersize=12, linewidth=2.5, color=cmap[3], alpha=0.25, label=r"$F_{OMap.}$")
 
 
 
     axL4[0,0].text(x=160, y=7e-5, fontsize=36, s="$Total$", color="#000000")
-    axL4[1,0].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[0][0]},{_highestxyKeys[0][1]})$" + "\n$(x,y)$", color=cmap.colors[0])
-    axL4[1,1].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[1][0]},{_highestxyKeys[1][1]})$" + "\n$(x,y)$", color=cmap.colors[1])
-    axL4[2,0].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[2][0]},{_highestxyKeys[2][1]})$" + "\n$(x,y)$", color=cmap.colors[2])
-    axL4[2,1].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[3][0]},{_highestxyKeys[3][1]})$" + "\n$(x,y)$", color=cmap.colors[3])
+    # axL4[1,0].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[0][0]},{_highestxyKeys[0][1]})$" + "\n$(x,y)$", color=cmap[0])
+    # axL4[1,1].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[1][0]},{_highestxyKeys[1][1]})$" + "\n$(x,y)$", color=cmap[1])
+    # axL4[2,0].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[2][0]},{_highestxyKeys[2][1]})$" + "\n$(x,y)$", color=cmap[2])
+    # axL4[2,1].text(x=155, y=1e-6, fontsize=36, s=f"$({_highestxyKeys[3][0]},{_highestxyKeys[3][1]})$" + "\n$(x,y)$", color=cmap[3])
+    axL4[1,0].text(x=160, y=50e-6, fontsize=36, s=r"$E_{FEA, 1}$", color=cmap[0])
+    axL4[1,1].text(x=160, y=50e-6, fontsize=36, s=r"$E_{FEA, 2}$", color=cmap[1])
+    axL4[2,0].text(x=160, y=50e-6, fontsize=36, s=r"$E_{FEA, 3}$", color=cmap[2])
+    axL4[2,1].text(x=160, y=50e-6, fontsize=36, s=r"$E_{FEA, 4}$", color=cmap[3])
 
 
     # fig4.suptitle("Optical derived currents and shares of the 4 most contributing tips")
@@ -435,7 +661,7 @@ for _iFolder in range(len(folders)):
         ShowMajorMinorY(axL4.flatten(), useLogLocator=True)
 
     axL4[0, 0].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True , labelright=False)
-    axR4[0, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
+    axR4[0, 0].tick_params(which="both", bottom=False, left=False, right=False, labelbottom=False, labelleft=False, labelright=False)
 
     axL4[1, 0].tick_params(which="both", bottom=True , left=True , right=False, labelbottom=True , labelleft=True , labelright=False)
     axR4[1, 0].tick_params(which="both", bottom=False, left=False, right=True , labelbottom=False, labelleft=False, labelright=True )
@@ -502,8 +728,8 @@ for _iFolder in range(len(folders)):
         axL4[1,0].lines[0]._label,
         axR4[1,0].lines[0]._label,
         # axR4[0,0].lines[0]._label,
-        axL4[1,0].lines[1]._label,
         # axL4[0,0].lines[2]._label,
+        axL4[1,0].lines[1]._label,
     ]
     PlotLegend(fig4, lHandles=lHndls, lLabels=lLbls, loc=(0.12, 0.93), ncol=3, LabelColor="#000000")
 
@@ -518,7 +744,7 @@ for _iFolder in range(len(folders)):
 
 
     # Just a plot, being able to extract the turn-on voltage (before the inner vectors removed from json dump)
-    SetTexFont(24)
+    SetTexFont(24) 
     figTotal, axLTotal = plt.subplots(nrows=1, ncols=1)
     # axR = axL.twinx()
     figTotal.set_size_inches(w=14, h=10)
@@ -536,12 +762,6 @@ for _iFolder in range(len(folders)):
     ShowMajorMinorY([axLTotal], useLogLocator=True)
     axLTotal.set_ylim([1e-13, 1e-3])
     axLTotal.set_xlim([200, 750])
-
-
-
-
-
-
 
 
 
@@ -632,13 +852,11 @@ for _iFolder in range(len(folders)):
         fJSON.write(fc)
 
 
-
-
-
-
     ### Save plots
-    fig4.savefig(join(savepath, "IV-Characteristic of the 4 strongest tips.svg"), dpi=900)
-    fig .savefig(join(savepath, "I vs t with total and all tip currents.svg"), dpi=900)
+    fig4   .savefig(join(savepath, "IV-Characteristic of the 4 strongest tips.svg"), dpi=900)
+    fig    .savefig(join(savepath, "I vs t with total and all tip currents.svg"), dpi=900)
+    mssFig .savefig(join(savepath, "Hist2D over time with single Hist1D as inset.svg"), dpi=900)
+    mssFig2.savefig(join(savepath, "Hist2D over ITotal with single Hist1D as inset.svg"), dpi=900)
     # SaveFigList(figList=[fig], saveFolder=savepath, prefix=fPrefix, figSize=(14,10), dpi=300, ClearSaved=False)
     plt.close("all")
 

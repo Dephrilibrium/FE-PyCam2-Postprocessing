@@ -24,4 +24,5 @@ def FindXYKeysAboveMinValInMSSCurrents(mssCurrentContainer, minVal:float, onIndi
             _iVal = _xyInfo[_i]
             if _iVal > minVal:
                 _xyKeysAbove.append(_xyKey)
+                break
     return _xyKeysAbove

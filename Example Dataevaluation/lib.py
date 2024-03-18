@@ -190,7 +190,7 @@ def ReadSwpAsDP(swpFilePath):
     return dp
 
 def ReadSwpAsDPFromFolder(FolderPath):
-    swPath = glob.glob(join(FolderPath, "*.swp"))[0]
+    swPath = glob.glob(join(dirname(__file__), FolderPath, "*.swp"))[0]
     return ReadSwpAsDP(swPath)
 
 def ReadPkl(pklFilePath):
@@ -206,7 +206,7 @@ def ReadResistor(resistorFilePath):
     return float(strVal)
 
 def ReadResistorFromFolder(FolderPath):
-    rFilePath = glob.glob(join(FolderPath, "*.resistor"))[0]
+    rFilePath = glob.glob(join(dirname(__file__), FolderPath, "*.resistor"))[0]
     return ReadResistor(rFilePath)
 
 
