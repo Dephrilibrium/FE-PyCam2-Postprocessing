@@ -318,6 +318,9 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
         mssContainer["BoolOfOverexposure"]  .append(_sesBOE)
         mssContainer["UpscaledFromSS"]      .append(_sesFromSS)
 
-    mssContainer["ContainsOverexposure"] = mssContainer["XYKeys"][_xyKey]["BoolOfOverexposure"].__contains__(True) # If there is at least one overexposed value in the merged vector, make that visible by a simple bool
+    try:
+        mssContainer["ContainsOverexposure"] = mssContainer["XYKeys"][_xyKey]["BoolOfOverexposure"].__contains__(True) # If there is at least one overexposed value in the merged vector, make that visible by a simple bool
+    except:
+        pass
 
     return mssContainer

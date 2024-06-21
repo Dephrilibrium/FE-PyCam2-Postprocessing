@@ -180,7 +180,21 @@ def DeleteFiles(FilepathCollection):
 ###### USER AREA ######
 wds = [
 # Your (parent)-folderpaths go here
-r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
+# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen", # Topmost Parent --> Scans the child-folders iteratively
+
+# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\05_02 Increasing USply (unreg)",
+
+
+# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\06_01 IVCs",
+# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\06_01 IVCs\240607_120645 E1-E4 0..1000V 2VS (IMax=5000nA)",
+
+# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\05_01 ReActivations",
+
+# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_06 Kritischer Strom (50nA)+DarkShots\240307_122038 U250_750V-2VS IMax=(0.5, 0.5, 0.5, 0.5) USwp",
+
+# r"D:\05 PiCam\240610 Cu150 Remeasure (new Cam)\Messungen\02_01 USply increase\E1\noFEAR\5m",
+# r"D:\05 PiCam\240610 Cu150 Remeasure (new Cam)\Messungen\02_01 USply increase\E2\noFEAR\5m",
+r"D:\05 PiCam\240610 Cu150 Remeasure (new Cam)\Messungen\02_01 USply increase\E3\noFEAR\5m",
 ]
 
 
@@ -192,7 +206,7 @@ demosaicType = "png"            # gs for gray-scale
 nPicsPerSS = 3                  # Images taken per SS
 nMeasPnts = 1                   # Amount of measurements were taken per line (Rpts of sweep per line)
 
-ConvertImageByImage = False     # Big size images can cause a "out of RAM" exception, when all images
+ConvertImageByImage = False      # Big size images can cause a "out of RAM" exception, when all images
                                 #  loaded simultaneously into RAM.
                                 #  This option splits up all measurement-image paths into blocks which 
                                 #  converts exactly one mean image for the steps:
@@ -336,6 +350,7 @@ for _fold in wds: # Iterate working directories
                         print(f"{Fore.YELLOW}!!! WARNING !!!")
                         print(f"{Fore.YELLOW}Blacklevel-value is abnormal high --> {sensBlackLevel} > {310}")
                         print(f"{Fore.YELLOW}The process will continue, but check your data manually!{Fore.RESET}")
+                        print(f"{Fore.YELLOW}HINT: If you use a higher Analogue Gain it could also increase the blacklevel by higher noise!{Fore.RESET}")
 
 
                 print(f"Subtracting black-level from 12Bit Images...")
