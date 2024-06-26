@@ -295,6 +295,46 @@ def DemosaicBayer(BayerCollection):
 
 
 
+def SuppressImageAreas(ImgCollection, SuppressAreas, SuppressAreaValue:int = 0):
+  """Takes a collection of debayered images and changes the pixel values within these areas to suppressAreaValue.
+  The "SuppressArea" are a list of areas in form of [x, y, w, h], with xy as left upper corner and w(idth) and h(eight).
+
+  Args:
+      ImgCollection (iterable, image): Iterable object of images.
+      SuppressAreas (iterable): List of areas -> [x, y, w, h]
+      SuppressAreaValue (int, default: 0): The pixel values of the areas are replaced with.
+
+  Returns:
+      Image array with suppressed areas: NDArray of converted images
+  """
+
+
+  suppressedCollection = []
+
+  nSuppressAreas = len(SuppressAreas)
+  if nSuppressAreas <= 0: # Skip when defined but without defined areas
+    return ImgCollection  # Return the given ImgCollection untouched
+  
+  else: # Clear Areas!
+    for _iImg in range(len(ImgCollection)):
+      _img = ImgCollection[_iImg]
+
+      for _iArea in range(len(SuppressAreas)):
+        _areaCoord = SuppressAreas[_iArea]
+        _x1 = _areaCoord[0]   # x-Coordinate of Left Upper Corner
+        _y1 = _areaCoord[1]   # y-Coordinate of Left Upper Corner
+        _x2 = _areaCoord[2]   # x-Coordinate of Right Lower Corner
+        _y2 = _areaCoord[3]   # y-Coordinate of Right Lower Corner
+
+        _img[_y1:_y2, _x1:_x2] = SuppressAreaValue
+      
+      suppressedCollection.append(_img)
+
+    return suppressedCollection
+  
+
+
+
 def ConvertBitsPerPixel(ImgCollection, originBPP:int, targetBPP:int):
     """Converts the incoming ImgCollection into another value-range and adjusts the data-type if necessary.
 

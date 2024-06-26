@@ -43,7 +43,7 @@ from PIL import Image
 import cv2 as cv
 
 from PMPLib.ImgFileHandling import GrabSSFromFilenames, ReadImageFilepaths, ReadImagesFromPaths, ReadImages, BlackFormat, ImageFormat
-from PMPLib.ImgManipulation import MeanImages, SubtractFromImgCollection, DemosaicBayer, ConvertBitsPerPixel, StretchBrightness
+from PMPLib.ImgManipulation import MeanImages, SubtractFromImgCollection, DemosaicBayer, ConvertBitsPerPixel, StretchBrightness, SuppressImageAreas
 from misc import DurationOfLambda
 
 
@@ -179,22 +179,7 @@ def DeleteFiles(FilepathCollection):
 
 ###### USER AREA ######
 wds = [
-# Your (parent)-folderpaths go here
-# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen", # Topmost Parent --> Scans the child-folders iteratively
-
-# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\05_02 Increasing USply (unreg)",
-
-
-# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\06_01 IVCs",
-# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\06_01 IVCs\240607_120645 E1-E4 0..1000V 2VS (IMax=5000nA)",
-
-# r"D:\05 PiCam\240515 Cu150 Remeasure\Messungen\05_01 ReActivations",
-
-# r"D:\05 PiCam\240229 UncoatedCam Remeasure\Messungen\03_06 Kritischer Strom (50nA)+DarkShots\240307_122038 U250_750V-2VS IMax=(0.5, 0.5, 0.5, 0.5) USwp",
-
-# r"D:\05 PiCam\240610 Cu150 Remeasure (new Cam)\Messungen\02_01 USply increase\E1\noFEAR\5m",
-# r"D:\05 PiCam\240610 Cu150 Remeasure (new Cam)\Messungen\02_01 USply increase\E2\noFEAR\5m",
-r"D:\05 PiCam\240610 Cu150 Remeasure (new Cam)\Messungen\02_01 USply increase\E3\noFEAR\5m",
+r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
 ]
 
 
@@ -226,6 +211,21 @@ ConvertImageByImage = False      # Big size images can cause a "out of RAM" exce
 sensBlackLevel = 0
 
 
+# In case you measure only one tip out of an array with individually addressable single emitters
+# it can happen, that you want analyze the image where one of the other tips caused already a 
+# damage on the sensor surface. This changes the results, PMP will extract!
+# -> To overcome this issue, you can add areas which should be suppressed when converting the image
+#    by setting the pixel values of the area to "suppressAreaValue" (default: 0) to remove the damage
+#    from the image!
+#    This means, that each entry contains [x, y, w, h]
+#    x = left upper corner
+#    y = left upper corner
+#    w = width of the area
+#    h = height of the area
+suppressAreaValue = 0
+suppressAreas = [   # Disable by commenting out the entire variable or its entries.
+    # [0, 0, 20, 10]
+]
 
 
 
@@ -236,6 +236,18 @@ sensBlackLevel = 0
 
 
 ###### DO NOT TOUCH AREA ######
+if "suppressAreas" in locals(): # When areas defined, suppress them !
+    nSuppressAreas = len(suppressAreas)
+    if nSuppressAreas > 0: # But only if there is at least one entry!
+        print(Fore.YELLOW + "!!! WARNING !!!" + Fore.RESET)
+        print(Fore.YELLOW + f"Supressing areas to value = {suppressAreaValue} is still active for:" + Fore.RESET)
+        for _iArea in range(len(suppressAreas)):
+            _areaEntry = suppressAreas[_iArea]
+            print(f"    - " + str(_areaEntry))
+        
+        print("\n")
+
+
 for _fold in wds: # Iterate working directories
 
     for root, dirs, files in os.walk(_fold): # Iterate current wd recurively
@@ -284,8 +296,13 @@ for _fold in wds: # Iterate working directories
             if _nConvIteration == 0: # Blackimage only on first cycle
                 print(f"Demosaic Darkfield-Bayer 2 Grayscale...")
                 blckImgs = DemosaicBayer(blckImgs)
+                if "suppressAreas" in locals(): # When areas defined, suppress them !
+                    blckImgs = SuppressImageAreas(ImgCollection=blckImgs, SuppressAreas=suppressAreas, SuppressAreaValue=suppressAreaValue)
             print(f"Demosaic Measurement-Bayer 2 Grayscale...")
             measImgs = DemosaicBayer(measImgs)
+            if "suppressAreas" in locals(): # When areas defined, suppress them !
+                    measImgs = SuppressImageAreas(ImgCollection=measImgs, SuppressAreas=suppressAreas, SuppressAreaValue=suppressAreaValue)
+
 
             # Meaning nPicsPerSS
             blckClipPaths = blckPaths.copy() # If nPicsPerSS == 1 && nMeasPnts == 1 --> measClipPath = measPaths
