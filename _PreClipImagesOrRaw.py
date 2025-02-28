@@ -18,9 +18,10 @@
 #                    1.) [x, y, w, h]: Defines the left upper corner (x, y) and  #
 #                                      the image size (width, height).           #
 #                    Note: The imgWin is ALWAYS the direct indicies at which the #
-#                          images/raw are clipped!
+#                          images/raw are clipped!                               #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 import os

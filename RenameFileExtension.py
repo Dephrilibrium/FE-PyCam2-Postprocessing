@@ -11,7 +11,8 @@
 # SkipBadSubdirs:   If this is enabled, the subfolders of any _XX marked parent  #
 #                    are skipped in addition.                                    #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 # Imports

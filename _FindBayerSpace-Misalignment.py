@@ -3,7 +3,8 @@
 # Visualizes what happens, if a odd clipwindow for the images was used (already  #
 # fixed in the latest PyCam2-Server). The determined x-shift can be used by      #
 # "PreClipImagesOrRaw.py" to restore the correct alignment of cost of a few      #
-# pixels in the iamges width.
+# pixels in the iamges width.                                                    #
+# Version: 1.0.0.0                                                               #
 # 2023 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 

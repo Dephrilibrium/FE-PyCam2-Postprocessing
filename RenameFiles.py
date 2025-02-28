@@ -1,3 +1,20 @@
+##################################################################################
+# This script can be used, to rename files from ReadFormat into ConvertFormat.   #
+# It scans the given input-folder for the type given by ReadFormat and converts  #
+# the filename into ConvertFormat into the OutDir-folder.
+#                                                                                #
+# How to use (variable explanation):                                             #
+# wds:              contains a list of paths which is scanned for files with the #
+#                    srcExtension                                                #
+# srcExtension:     wds are searched for ending with this string                 #
+# dstExtension:     The files srcExtension gets replaced with this string        #
+# SkipBadSubdirs:   If this is enabled, the subfolders of any _XX marked parent  #
+#                    are skipped in addition.                                    #
+#                                                                                #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
 import os
 import parse
 import shutil

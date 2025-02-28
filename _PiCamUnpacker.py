@@ -23,7 +23,8 @@
 #                    1.) [x, y, w, h]: Defines the left upper corner (x, y) and  #
 #                                      the image size (width, height).           #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 

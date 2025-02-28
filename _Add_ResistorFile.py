@@ -11,7 +11,8 @@
 #                      in.                                                       #
 # ResistorValue:      The value which gets stored in the value.resistor file.    #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 import os

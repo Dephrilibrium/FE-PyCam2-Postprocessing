@@ -22,7 +22,8 @@
 #                    row.                                                        #
 # sensBlackLevel:   Is used to subtract the black-level (see options below!)     #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 import os

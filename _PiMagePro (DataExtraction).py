@@ -18,7 +18,8 @@
 # LogLen:           Defines the length of a log-line (so that all logs have the  #
 #                    same length).                                               #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 

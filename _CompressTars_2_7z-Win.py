@@ -17,7 +17,8 @@
 #                        scanned iteratively for tar-archives using the          #
 #                        globSearch4Tarname filter.                              #
 #                                                                                #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 # Imports
