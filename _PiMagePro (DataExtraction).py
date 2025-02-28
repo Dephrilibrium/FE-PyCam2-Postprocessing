@@ -123,6 +123,7 @@ opt.DetectSS_AllowedPercentDeviation = 1.5                              # Is the
 
 
 # Image processing
+opt.Image_RemoveFirstImage = False                                      # Removes the very first image of each ET image set. (Can be used to remove an "initial" datapoint)
 opt.Image_CropWin = None                                                # None/False: Images not cropped; [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
 opt.Image_bThresh = 15*0xFF                                              # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
 opt.Image_ThreshType = cv.THRESH_OTSU                                   # cv.THRESH_OTSU:                     Tries otsu
@@ -137,7 +138,7 @@ opt.Image_MinBright2CountArea = 3* 0xFF                                 # Define
 
 
 # Spot-detection
-opt.SpotDetect_Dilate = 10                                              # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
+opt.SpotDetect_Dilate = 4                                               # Detected image-contours (on thresh-images) are extended by n pixel-rows (entire circumfence) to close small gaps between a splitted spot
 opt.SpotDetect_Erode = opt.SpotDetect_Dilate                            # The dilated image-contours are reduced by n pixel-rows (entire circumfence) (if erode=dilate the resulting spot should be the same as initially but whitout missing pixels within)
 opt.SpotDetect_pxMinRadius = 10                                          # Minimum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid artifacts detected as spots
 opt.SpotDetect_pxMaxRadius = 100                                        # Maximum radius for a valid spot: pxMinRadius <= r <= pxMaxRadius; Used to avoid the detection of spots bigger than being estimated
@@ -318,7 +319,10 @@ for root, dirs, files in os.walk(parentDir):
       # ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Cropped"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean) # Mean nPicsPerSS together
       # ssData[SS]["Images"]["uint16"] = ssData[SS]["Images"]["Mean"][1:]                                                                                           # Remove the "init-datapoint" directly after measurement start
       imgContainer[SS]["Mean"] = MeanImages(ImgCollection=imgContainer[SS]["AsRead"], ImgsPerMean=opt.Image_MeanNPicsPerSS, ShowImg=opt.ShowImages_Mean) # Mean nPicsPerSS together
-      imgContainer[SS]["uint16"] = imgContainer[SS]["Mean"][1:]                                                                                           # Remove the "init-datapoint" directly after measurement start
+      if (opt.Image_RemoveFirstImage):                                                                                                                      # If Image_RemoveFirstImage is set
+        imgContainer[SS]["uint16"] = imgContainer[SS]["Mean"][1:]                                                                                           #   Remove the "init-datapoint" directly after measurement start in all ET image sets
+      else:                                                                                                                                                 # otherwise
+        imgContainer[SS]["uint16"] = imgContainer[SS]["Mean"]                                                                                               #   Take all images
       if opt.Image_MeanNPoints > 1:
         # ssData[SS]["Images"]["Mean"] = MeanImages(ImgCollection=ssData[SS]["Images"]["Mean"], ImgsPerMean=opt.Image_MeanNPoints, ShowImg=opt.ShowImages_Mean)     # Meaning measurement points together
         imgContainer[SS]["Mean"] = MeanImages(ImgCollection=imgContainer[SS]["Mean"], ImgsPerMean=opt.Image_MeanNPoints, ShowImg=opt.ShowImages_Mean)     # Meaning measurement points together

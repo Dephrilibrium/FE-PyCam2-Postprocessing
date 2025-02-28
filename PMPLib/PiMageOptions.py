@@ -44,12 +44,13 @@ class PiMageOptions():
 
 
     _output += str.format("\n[Image processing]\n")
+    _output += str.format("opt.Image_RemoveFirstImage"                      .ljust(_fill) + "={}\n", self.Image_RemoveFirstImage     )                    # Removes the very first image of each ET image set. (Can be used to remove an "initial" datapoint)
     _output += str.format("opt.Image_CropWin"                               .ljust(_fill) + "={}\n", self.Image_CropWin              )                    # None/False: Images not cropped; [x, y, w, h]   -   x, y: left upper corner   -   w, h: size of window
     _output += str.format("opt.Image_bThresh"                               .ljust(_fill) + "={}\n", self.Image_bThresh              )                    # 16bit brightness Threshold value. It's only used, when the threshold of autodetect-algorithm (Image_ThreshType) is smaller than this one!
     _output += str.format("opt.Image_ThreshType"                            .ljust(_fill) + "={}\n", self.Image_ThreshType           )                    # cv.THRESH_OTSU:                     Tries otsu
-                                                                                                                                                        # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
-                                                                                                                                                        # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
-                                                                                                                                                        # Other else:                         Uses fixed bThres-Value
+                                                                                                                                                          # cv.ADAPTIVE_THRESH_GAUSSIAN_C:      Adaptive won't work with 16bit
+                                                                                                                                                          # cv.ADAPTIVE_THRESH_MEAN_C:          Adaptive won't work with 16bit
+                                                                                                                                                          # Other else:                         Uses fixed bThres-Value
     _output += str.format("opt.Image_AutoThresDiv"                          .ljust(_fill) + "={}\n", self.Image_AutoThresDiv         )                    # When ThrehType is used for auto-thresh, the returend threshold is divided by AutoThreshDiv and used to build the actual threshold (used for fine-tuning of threshhold)
     _output += str.format("opt.Image_UseForMeanNPoints"                     .ljust(_fill) + "={}\n", self.Image_UseForMeanNPoints    )                    # <int>: Means together n measurement-points; ".swp": Tryies to find a sweep-file where it can extract the number of n measurement points
     _output += str.format("opt.Image_MeanNPicsPerSS"                        .ljust(_fill) + "={}\n", self.Image_MeanNPicsPerSS       )                    # Means n pics (in row) together
