@@ -4,8 +4,9 @@
 # fixed in the latest PyCam2-Server). The determined x-shift can be used by      #
 # "PreClipImagesOrRaw.py" to restore the correct alignment of cost of a few      #
 # pixels in the iamges width.                                                    #
+#                                                                                ä
 # Version: 1.0.0.0                                                               #
-# 2023 © haum (OTH-Regensburg)                                                   #
+# 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
 
 

@@ -1,3 +1,18 @@
+##################################################################################
+# This script is a example data evaluation, yielding the FEA-plot from paper:    #
+# "Measurement of field emission array current  distributions by metal-coated    #
+# CMOS image  sensors" (doi: 10.1116/6.0004074)                                  #
+#                                                                                #
+# Note: You may need to install some PyPi-packages to make it run. Then, however,#
+# the script should run through and yield the same plot as in the paper          #
+# referenced above.                                                              ä
+#                                                                                #
+# Version: 1.0.0.0                                                               #
+# 2025 © haum (OTH-Regensburg)                                                   #
+##################################################################################
+
+
+
 import pickle
 import FieldEmission as fe
 import matplotlib.pyplot as plt
@@ -743,25 +758,25 @@ for _iFolder in range(len(folders)):
 
 
 
-    # Just a plot, being able to extract the turn-on voltage (before the inner vectors removed from json dump)
-    SetTexFont(24) 
-    figTotal, axLTotal = plt.subplots(nrows=1, ncols=1)
-    # axR = axL.twinx()
-    figTotal.set_size_inches(w=14, h=10)
-    if showImgs:
-        plt.show(block=False)
+    # # Just a plot, being able to extract the turn-on voltage (before the inner vectors removed from json dump)
+    # SetTexFont(24) 
+    # figTotal, axLTotal = plt.subplots(nrows=1, ncols=1)
+    # # axR = axL.twinx()
+    # figTotal.set_size_inches(w=14, h=10)
+    # if showImgs:
+    #     plt.show(block=False)
 
-    # u = ud["UExt"]
-    # i = cf["IAll"]
-    dpTotalUI = dpArr[4]
-    fitTotalUI = fit[4]["interpolatedUI"]
-    axLTotal.semilogy(dpTotalUI ["UExt"], dpTotalUI ["ITotal"], "x--", color="#FF0000", label="ITotal")
-    axLTotal.semilogy(fitTotalUI["U"], fitTotalUI["I"], "x--", color="#000000", label="ITotal")
+    # # u = ud["UExt"]
+    # # i = cf["IAll"]
+    # dpTotalUI = dpArr[4]
+    # fitTotalUI = fit[4]["interpolatedUI"]
+    # axLTotal.semilogy(dpTotalUI ["UExt"], dpTotalUI ["ITotal"], "x--", color="#FF0000", label="ITotal")
+    # axLTotal.semilogy(fitTotalUI["U"], fitTotalUI["I"], "x--", color="#000000", label="ITotal")
 
 
-    ShowMajorMinorY([axLTotal], useLogLocator=True)
-    axLTotal.set_ylim([1e-13, 1e-3])
-    axLTotal.set_xlim([200, 750])
+    # ShowMajorMinorY([axLTotal], useLogLocator=True)
+    # axLTotal.set_ylim([1e-13, 1e-3])
+    # axLTotal.set_xlim([200, 750])
 
 
 
@@ -856,7 +871,7 @@ for _iFolder in range(len(folders)):
     fig4   .savefig(join(savepath, "IV-Characteristic of the 4 strongest tips.svg"), dpi=900)
     fig    .savefig(join(savepath, "I vs t with total and all tip currents.svg"), dpi=900)
     mssFig .savefig(join(savepath, "Hist2D over time with single Hist1D as inset.svg"), dpi=900)
-    mssFig2.savefig(join(savepath, "Hist2D over ITotal with single Hist1D as inset.svg"), dpi=900)
+    # mssFig2.savefig(join(savepath, "Hist2D over ITotal with single Hist1D as inset.svg"), dpi=900)
     # SaveFigList(figList=[fig], saveFolder=savepath, prefix=fPrefix, figSize=(14,10), dpi=300, ClearSaved=False)
     plt.close("all")
 
