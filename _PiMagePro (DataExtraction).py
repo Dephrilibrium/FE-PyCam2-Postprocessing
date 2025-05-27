@@ -83,7 +83,7 @@ from PMPLib.PiMageOptions import PiMageOptions
 ###### USER AREA ######
 # Paths
 # Your (parent)-folderpath goes here
-parentDir = r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
+parentDir = r"<Drive>\<Input Pics folderpath here>" # Topmost Parent --> Scans the child-folders iteratively
 
 
 
