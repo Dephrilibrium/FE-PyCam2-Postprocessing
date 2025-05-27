@@ -40,14 +40,14 @@ The ```wds``` variable can assigned by arbitrary parent folders which are scanne
 
 
 
-### _PiCamUnpacker.py
+### _PyCamUnpacker.py
 After the files are copied to the data extraction PC, we unpack the compressed archives to get the ```*.raw``` image files.
 
 In the ```workDirs``` variable contains the target scan-paths, which can be parent paths (iterates nested folders). Thereby, the script checks each folder if there are `*.7z` or `*.tar.gz` files, which are then decompressed into ```<current directory>/<xPath>``` (default: ```xPath = "Pics"```). First, the `*.tar` files are extracted. Subsequently, the `*.raw` images are extracted from the `*.tar` archives. Finally, (only) the `*.tar` archives are deleted, keeping the original `*.7z`, or `*.tar.gz`, and the `*.raw` images for further post-processing.
 
 
-### _ConvertBayerToGrayscale.py
-This scripts takes again a folderpath-vector ```wds``` which are iterated recursively to the deepest nested subfolder. Thereby, the script checks the current scan-folder for the `Pics` folder which contains the `bayerType (default: "raw")` images. When detected, the conversion of the RAW images from Bayer-space into 16bit grayscale images of the `demosaicType (default: "png")` is carried out. The converted images can now be opened with an image viewer (e.g. Windows Photo Viewer or [IrfanView][IrfanView])
+### _ConvertRawToGrayscale.py (old: _ConvertBayerToGrayscale.py)
+This scripts takes again a folderpath-vector ```wds``` which are iterated recursively to the deepest nested subfolder. Thereby, the script checks the current scan-folder for the `Pics` folder which contains the `rawType (default: "raw")` images. When detected, the conversion of the RAW images into 16bit grayscale images of the `demosaicType (default: "png")` is carried out. The converted images can now be opened with an image viewer (e.g. Windows Photo Viewer or [IrfanView][IrfanView])
 
 **Note:** When you try to convert high resolution images (big filesize) and a lot of them, you may run out of RAM causing an out-of-memory-exception which crashes the script (in my case no message-dialog popped up, it just crashed!). For this reason, the option ```ConvertImageByImage (default: False)``` was added. When enabled, each RAW image data set is converted separately instead of loading all `*.raw` files simultaneously.
 
@@ -55,7 +55,7 @@ This scripts takes again a folderpath-vector ```wds``` which are iterated recurs
 ### _PreClipImagesOrRaw.py - (optional)
 As you now able to check the images by opening them. If you find out, that you can shrink down the pixel size of the images, you can clip the images before applying the data-extraction algorithm to it. With IrfanView a rectangle can be drawn around the area of interest. The tool shows to the offset of the left upper corner as well as the width and height of the drawn rectangle. These values can directly applied to the ```imgWin (order: [x1,y1,w,h])``` variable defining the position and size of the clip-window.
 This is carried out for all folders added to ```wds```, which are again checked recursively. Thereby, the script checks if a folder contains electrical measurement-data (```.dat``` files, created by [FEMDAQv2][FEMDAQ]) and a picture-folder (```default: "Pics"``` folder). If that is true, the script enters the picture-folder, opens all images (```*.png``` and ```*.jpg```), clips them and overrides them.
-***Note:*** In case `_ConvertBayerToGrayscale.py` yields weird noise-images, you may have chosen a odd pixel boundary for the crop-window setting of the PyCam2-Server. In case of this, check out `_FindBayerSpace-Misalignment.py` which is described below.
+***Note:*** In case `_ConvertRawToGrayscale.py` yields weird noise-images, you may have chosen a odd pixel boundary for the crop-window setting of the PyCam2-Server. In case of this, check out `_FindRawSpace-Misalignment.py` which is described below.
 
 
 ### PiMagePro (DataExtraction).py
@@ -104,7 +104,7 @@ where the script scans for the ```ReadFormat``` named files in the ```ImgDir``` 
 
 ----
 
-README by haum
+README by haum (2025)
 
 
 [PyCam-Server]: https://github.com/Dephrilibrium/FE-PyCam2-Server.git

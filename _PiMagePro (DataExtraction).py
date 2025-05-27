@@ -6,7 +6,7 @@
 # parentDir:        Folder which is scanned recursevly for measurement-files.    #
 # picDir:           Foldername of the subdir where the images for the data-      #
 #                    extraction are stored (mean-images of                       #
-#                    _ConvertBayerToGrayScale.py)                                #
+#                    _ConvertRawToGrayScale.py)                                #
 # saveDir:          The second argument of the replace-function determines the   #
 #                    folder in which the extraction results are stored.          #
 #                    This can be used to separate source and destination folder. #

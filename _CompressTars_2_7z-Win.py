@@ -33,7 +33,7 @@ import colorama as col
 
 
 ##########################################################
-# Script to extract the PiCam tar.gz to a Pics folder    #
+# Script to extract the PyCam tar.gz to a Pics folder    #
 # Tested on Win10 with standard-installation-path        #
 ##########################################################
 

@@ -34,7 +34,7 @@ ch = h
 
 
 # One direct RAW-image path goes here
-imgPath = r"<Drive>\<Input Pics folderpath here>\01_01 Activation\Pics\FirstImage.raw", # Topmost Parent --> Scans the child-folders iteratively
+imgPath = r"<Drive>\<Input Pics folderpath here>", # Topmost Parent --> Scans the child-folders iteratively
 
 
 

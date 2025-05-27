@@ -17,10 +17,10 @@ from PMPLib.ImgManipulation import CropImage
 
 
 SS_Index  = 2                                                  # Index of the ShutterSpeed within the ImageFormat
-# BlackFormat = "{}_HQCam-BlackSubtraction_ss={}_{}.{}"        # PiCam1
-# ImageFormat = "{}_HQCam-{}_ss={}_{}.{}"                      # PiCam1
-BlackFormat = "{}_rPiHQCam2-BlackSubtraction_ss={}_{}.{}"      # PiCam2
-ImageFormat = "{}_rPiHQCam2-{}_ss={}_{}.{}"                    # PiCam2
+# BlackFormat = "{}_HQCam-BlackSubtraction_ss={}_{}.{}"        # PyCam1
+# ImageFormat = "{}_HQCam-{}_ss={}_{}.{}"                      # PyCam1
+BlackFormat = "{}_rPiHQCam2-BlackSubtraction_ss={}_{}.{}"      # PyCam2
+ImageFormat = "{}_rPiHQCam2-{}_ss={}_{}.{}"                    # PyCam2
 
 LoadPickleTypes = ["gray", "raw"]
 LoadFileTypes = LoadPickleTypes + ["jpg", "png"]

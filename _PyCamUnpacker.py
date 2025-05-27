@@ -94,14 +94,14 @@ def RunCmd(cmd):
 
 
 ##########################################################
-# Script to extract the PiCam tar.gz to a Pics folder    #
+# Script to extract the PyCam tar.gz to a Pics folder    #
 # Tested on Win10 with standard-installation-path        #
 ##########################################################
 
 ###### USER AREA ######
 xCmd = '"C:\\Program Files\\7-Zip\\7z.exe"'  # Path to 7zip
 xPath = "Pics"  # Subdirectory where extract to. !!! Do not add a leading / or \ !!!
-xLog = "_PiCamUnpacker.log"  # Filename to log output
+xLog = "_PyCamUnpacker.log"  # Filename to log output
 
 workDirs = [
 # Your (parent)-folderpaths go here
