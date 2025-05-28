@@ -1,23 +1,6 @@
 ##################################################################################
 # Data Extractor for 16bit grayscale PNGs made with PyCam2-Server.               #
 #                                                                                #
-# How to use (variable explanation):                                             #
-# xCmd:             Path to the 7-zip executable.                                #
-# parentDir:        Folder which is scanned recursevly for measurement-files.    #
-# picDir:           Foldername of the subdir where the images for the data-      #
-#                    extraction are stored (mean-images of                       #
-#                    _ConvertRawToGrayScale.py)                                #
-# saveDir:          The second argument of the replace-function determines the   #
-#                    folder in which the extraction results are stored.          #
-#                    This can be used to separate source and destination folder. #
-# opt:              Is an instance of the PiMagePro options. This class has a    #
-#                    built in store-function to have the used extraction-option  #
-#                    as file on disk (see options below).                        #
-# LogFilePath:      If a filename is given, a logger-instance is created which   #
-#                    print the console messages to console as wall as to a file. #
-# LogLen:           Defines the length of a log-line (so that all logs have the  #
-#                    same length).                                               #
-#                                                                                #
 # Version: 1.0.0.0                                                               #
 # 2025 © haum (OTH-Regensburg)                                                   #
 ##################################################################################
@@ -83,19 +66,20 @@ from PMPLib.PiMageOptions import PiMageOptions
 ###### USER AREA ######
 # Paths
 # Your (parent)-folderpath goes here
-parentDir = r"<Drive>\<Input Pics folderpath here>" # Topmost Parent --> Scans the child-folders iteratively
+parentDir = r"<Drive>\<Input Pics folderpath here>"           # Topmost Parent --> Scans the child-folders iteratively
 
 
 
+picDir = "Pics"                                               # Subdictionary containing the PNGs for analysis
+                                                              # NOTE: The script checks also for an electrical data type
+                                                              #       Search for: 'f.endswith(".dat")' and adjust '".dat"' as you need.
+                                                              #       This may replaced by a variables in future!
 
-
-
-
-picDir = "Pics"
-
-saveDir = str.replace(parentDir, "Messungen", "Auswertung")
-if not os.path.exists(saveDir):
-  os.makedirs(saveDir)
+saveDir = str.replace(parentDir, "Messungen", "Auswertung")   # \ Use this to store the extracted data separately
+                                                              # | Example: parent-dir: r"D:/Data/Messungen/251011_400V-Sweep"
+                                                              # |    ->    save-dir:   r"D:/Data/Auswertung/251011_400V-Sweep"
+if not os.path.exists(saveDir):                               # |
+  os.makedirs(saveDir)                                        # /
 
 
 ### Options/Parameters ###
