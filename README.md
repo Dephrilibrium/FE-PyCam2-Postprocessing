@@ -58,8 +58,8 @@ This is carried out for all folders added to ```wds```, which are again checked 
 ***Note:*** In case `_ConvertRawToGrayscale.py` yields weird noise-images, you may have chosen a odd pixel boundary for the crop-window setting of the PyCam2-Server. In case of this, check out `_FindRawSpace-Misalignment.py` which is described below.
 
 
-### PiMagePro (DataExtraction).py
-PiMagePro (PMP) scans the folderpath ```parentDir``` recursively and checks for an existing picture-folder (```picDir (default: "Pics")```) as well as for electrical data (```*.dat``` files, created by [FEMDAQv2][FEMDAQ]). When a measurement folder is detected, it starts by extracting the existing exposure times/shutterspeeds (ETs/SSs) by analyzing the filenames. For that, checkout PMPLib/ImgFileHandling.py:
+### PyMagePro (DataExtraction).py
+Python iMage Processor scans the folderpath ```parentDir``` recursively and checks for an existing picture-folder (```picDir (default: "Pics")```) as well as for electrical data (```*.dat``` files, created by [FEMDAQv2][FEMDAQ]). When a measurement folder is detected, it starts by extracting the existing exposure times/shutterspeeds (ETs/SSs) by analyzing the filenames. For that, checkout PMPLib/ImgFileHandling.py:
 ```python
 SS_Index        (default: 2)
 BlackFormat     (default: "{}_rPiHQCam2-BlackSubtraction_ss={}_{}.{}"
@@ -71,7 +71,7 @@ Based on the options you choosed, the data extraction algorithm runs through and
 ```python
 parentDir   = r"C:\<Inputpath>\<To my actual>\Measurements\<sample XY>" # Input-Directory
 saveDir     = str.replace(parentDir, "Measurements", "Evaluation")
-parentDir   = r"C:\<Inputpath>\<To my actual>\Evaluation\<sample XY>"   # Output-Directory
+saveDir     = r"C:\<Inputpath>\<To my actual>\Evaluation\<sample XY>"   # Output-Directory
 ```
 
 

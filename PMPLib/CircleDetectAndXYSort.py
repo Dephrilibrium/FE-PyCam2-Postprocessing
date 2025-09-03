@@ -270,7 +270,13 @@ def CorrectXYSortKeys(cirContainer, pxCorrectionRadius:int):
 
 
 def CrossCheckXYKeys(cirContainer, pxTolerance:int):
+  """Iterates through all XY-Group-Keypairs and cross-checks if these are all not in "range" (tolerance) to each other.
+  In case they are in range, they get combined. Useful when you have an splitted spot (2 spots in close distance caused by one emitter).
 
+  Args:
+      circContainer (_type_): Main data structure (circleContainer).
+      pxTolerance (int, optional): Distance of XY-Keys to be "in range" to be merged.
+  """
   _ssKeys = list(cirContainer.keys())
   _xyContainer = cirContainer[_ssKeys[0]]["XYKeys"]
   _xyKeys = list(_xyContainer.keys())

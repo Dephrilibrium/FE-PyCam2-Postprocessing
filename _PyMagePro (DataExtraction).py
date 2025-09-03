@@ -66,7 +66,8 @@ from PMPLib.PiMageOptions import PiMageOptions
 ###### USER AREA ######
 # Paths
 # Your (parent)-folderpath goes here
-parentDir = r"<Drive>\<Input Pics folderpath here>"           # Topmost Parent --> Scans the child-folders iteratively
+# parentDir = r"<Drive>\<Input Pics folderpath here>"           # Topmost Parent --> Scans the child-folders iteratively
+parentDir = r"D:\05 PiCam\Test\Messungen"
 
 
 
@@ -92,15 +93,15 @@ LogLen = 80
 
 
 # PiMage-sequence
-opt.PiMage_SkipBadSubdirs = True                                        # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
+opt.PiMage_SkipBadSubdirs = True                                       # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
 opt.PiMage_ForceOverride = True                                        # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
 
 
 # Visualization
-opt.ShowImages_Read = False                                             # True = show each image (during debugging); False = Silent process
-opt.ShowImages_Mean = False                                             # True = show each image (during debugging); False = Silent process
-opt.ShowImages_SpotDetection = False                                    # True = show each image (during debugging); False = Silent process
-opt.ShowImages_Draw = False                                             # True = show each image (during debugging); False = Silent process
+opt.ShowImages_Read = False                                            # True = show each image (during debugging); False = Silent process
+opt.ShowImages_Mean = False                                            # True = show each image (during debugging); False = Silent process
+opt.ShowImages_SpotDetection = False                                   # True = show each image (during debugging); False = Silent process
+opt.ShowImages_Draw = False                                            # True = show each image (during debugging); False = Silent process
 
 
 # SS Autodetection
