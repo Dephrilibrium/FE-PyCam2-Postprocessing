@@ -18,13 +18,13 @@
 import os
 import time
 
-from PMPLib.PiMageOptions import PiMageOptions
+from PMPLib.PyMageOptions import PyMageOptions
 from misc import bcolors, Time2Human, DiffToNow, LogLine, LogLineOK
 
 
 
 ###### USER AREA ######
-opt = PiMageOptions()
+opt = PyMageOptions()
 opt.SkipBadSubdirs = False                                   # If a parent folder is marked as bad measurement, the subdirectories also skipped!y
 
 

@@ -15,6 +15,7 @@ PMPLib/Correction/
 
 ### Ignored files (specific) ###
 ArtificialOverexposing.py
+_ConvertPkl2OriginTxt.py
 ################################
 
 ### Allowed files (specific) ###

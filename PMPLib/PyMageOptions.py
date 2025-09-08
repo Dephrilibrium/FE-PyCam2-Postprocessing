@@ -1,7 +1,7 @@
 import os
 
-class PiMageOptions():
-  """Creates the object containing all PiMagePro (DataExtraction script) configurations. The class is used to provide a simple "store"-method on save.
+class PyMageOptions():
+  """Creates the object containing all PyMagePro (DataExtraction script) configurations. The class is used to provide a simple "store"-method on save.
   """
 
   def Save(self, saveDir:str, fName:str):
@@ -9,33 +9,28 @@ class PiMageOptions():
 
     Args:
         saveDir (str): Target folderpath
-        fName (str, optional): Target filename (incl. extension). Defaults to "PiMageOptions.opt".
+        fName (str, optional): Target filename (incl. extension). Defaults to "PyMageOptions.opt".
     """
     _output = ""
 
-    _output += str.format("# PiMagePro settings\n")
+    _output += str.format("# PyMagePro settings\n")
 
 
     
 
     # Processing
     _fill = 25
-    _output += str.format("\n[PiMage sequence]\n")
-    _output += str.format("PiMage_SkipBadSubdirs"                           .ljust(_fill) + "={}\n", self.PiMage_SkipBadSubdirs)                        # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
-
-
-
-    _output += str.format("\n[PiMage-sequence]\n")
-    _output += str.format("opt.PiMage_SkipBadSubdirs"                       .ljust(_fill) + "={}\n", self.PiMage_SkipBadSubdirs )                       # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
-    _output += str.format("opt.PiMage_ForceOverride"                        .ljust(_fill) + "={}\n", self.PiMage_ForceOverride  )                       # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
+    _output += str.format("\n[PyMage-sequence]\n")
+    _output += str.format("opt.PyMagePro_SkipBadSubdirs"                    .ljust(_fill) + "={}\n", self.PyMagePro_SkipBadSubdirs )                      # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
+    _output += str.format("opt.PyMagePro_ForceOverride"                     .ljust(_fill) + "={}\n", self.PyMagePro_ForceOverride  )                      # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
 
 
 
     _output += str.format("\n[Visualization]\n")
-    _output += str.format("opt.ShowImages_Read"                             .ljust(_fill) + "={}\n", self.ShowImages_Read               )                       # True = show each image (during debugging); False = Silent process
-    _output += str.format("opt.ShowImages_Mean"                             .ljust(_fill) + "={}\n", self.ShowImages_Mean               )                       # True = show each image (during debugging); False = Silent process
-    _output += str.format("opt.ShowImages_SpotDetection"                    .ljust(_fill) + "={}\n", self.ShowImages_SpotDetection      )                       # True = show each image (during debugging); False = Silent process
-    _output += str.format("opt.ShowImages_Draw"                             .ljust(_fill) + "={}\n", self.ShowImages_Draw               )                       # True = show each image (during debugging); False = Silent process
+    _output += str.format("opt.ShowImages_Read"                             .ljust(_fill) + "={}\n", self.ShowImages_Read               )                 # True = show each image (during debugging); False = Silent process
+    _output += str.format("opt.ShowImages_Mean"                             .ljust(_fill) + "={}\n", self.ShowImages_Mean               )                 # True = show each image (during debugging); False = Silent process
+    _output += str.format("opt.ShowImages_SpotDetection"                    .ljust(_fill) + "={}\n", self.ShowImages_SpotDetection      )                 # True = show each image (during debugging); False = Silent process
+    _output += str.format("opt.ShowImages_Draw"                             .ljust(_fill) + "={}\n", self.ShowImages_Draw               )                 # True = show each image (during debugging); False = Silent process
 
 
 
@@ -56,7 +51,7 @@ class PiMageOptions():
     _output += str.format("opt.Image_MeanNPicsPerSS"                        .ljust(_fill) + "={}\n", self.Image_MeanNPicsPerSS       )                    # Means n pics (in row) together
     _output += str.format("opt.Image_OverexposedBrightness"                 .ljust(_fill) + "={}\n", self.Image_OverexposedBrightness)                    # Defines at which 16bit value a pixel counts as overexposed
     _output += str.format("opt.Image_MinBright2CountArea"                   .ljust(_fill) + "={}\n", self.Image_MinBright2CountArea  )                    # Defines at which 16bit value a pixel counts as brightness-contributing pixel
-
+    _output += str.format("opt.Image_AllowedOverexposure"                   .ljust(_fill) + "={}\n", self.Image_AllowedOverexposure  )                    # Defines a factor which allows this (factorial) portion of overexposure for spot-signals/the full-image-signal (influences OE-tagging and replacment!).
 
 
     _output += str.format("\n[Spot-detection]\n")

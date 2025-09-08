@@ -1,11 +1,11 @@
-# PiMagePro settings
+# PyMagePro settings
 
-[PiMage sequence]
-PiMage_SkipBadSubdirs    =True
+[PyMage sequence]
+PyMagePro_SkipBadSubdirs    =True
 
-[PiMage-sequence]
-opt.PiMage_SkipBadSubdirs=True
-opt.PiMage_ForceOverride =True
+[PyMage-sequence]
+opt.PyMagePro_SkipBadSubdirs=True
+opt.PyMagePro_ForceOverride =True
 
 [Visualization]
 opt.ShowImages_Read      =Falseopt.ShowImages_Mean      =Falseopt.ShowImages_SpotDetection=Falseopt.ShowImages_Draw      =False

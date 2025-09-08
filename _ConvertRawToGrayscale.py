@@ -384,7 +384,7 @@ for _fold in wds: # Iterate working directories
             measImgs = ConvertBitsPerPixel(ImgCollection=measImgs, originBPP=12, targetBPP=16)
 
             # Saving 16bit PNGs
-            print("Dumping Measurement-Images as 16bit-PNGs for PiMagePro...")
+            print("Dumping Measurement-Images as 16bit-PNGs for PyMagePro...")
             start = time()
             # pklPaths = DumpCollectionAsGray(measImgs, measClipPaths)
             png16Paths, saveOk = DumpCollectionAs16BitPNG(measImgs, measClipPaths)

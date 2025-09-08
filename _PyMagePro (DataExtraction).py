@@ -54,7 +54,7 @@ from PMPLib.DataProcessing import PixelcountAndOverexposureInfo
 from PMPLib.DataProcessing import MergeSensorsignalVectors
 
 
-from PMPLib.PiMageOptions import PiMageOptions
+from PMPLib.PyMageOptions import PyMageOptions
 
 
 
@@ -66,8 +66,7 @@ from PMPLib.PiMageOptions import PiMageOptions
 ###### USER AREA ######
 # Paths
 # Your (parent)-folderpath goes here
-# parentDir = r"<Drive>\<Input Pics folderpath here>"           # Topmost Parent --> Scans the child-folders iteratively
-parentDir = r"D:\05 PiCam\Test\Messungen"
+parentDir = r"<Drive>\<Input Pics folderpath here>"           # Topmost Parent --> Scans the child-folders iteratively
 
 
 
@@ -84,17 +83,17 @@ if not os.path.exists(saveDir):                               # |
 
 
 ### Options/Parameters ###
-opt = PiMageOptions()
+opt = PyMageOptions()
 
 # LogFile
-LogFilePath = os.path.join(saveDir, "PiMage.log")
+LogFilePath = os.path.join(saveDir, "PyMage.log")
 _logger = Logger(LogFilePath) # Keep instance for closing logger
 LogLen = 80
 
 
-# PiMage-sequence
-opt.PiMage_SkipBadSubdirs = True                                       # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
-opt.PiMage_ForceOverride = True                                        # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
+# PyMage-sequence
+opt.PyMagePro_SkipBadSubdirs = True                                    # If a parent folder is marked as bad (postfix: _XX) measurement, the subdirectories also skipped!y
+opt.PyMagePro_ForceOverride = True                                     # False = Checks for already processed and skips in case; True = Won't check if a measurement is already processed!
 
 
 # Visualization
@@ -121,6 +120,7 @@ opt.Image_UseForMeanNPoints = ".swp"                                    # <int>:
 opt.Image_MeanNPicsPerSS = 1                                            # Means n pics (in row) together
 opt.Image_OverexposedBrightness = 0xFFF0                                # Defines at which 16bit value a pixel counts as overexposed
 opt.Image_MinBright2CountArea = 3* 0xFF                                 # Defines at which 16bit value a pixel counts as brightness-contributing pixel
+opt.Image_AllowedOverexposure = 0.05                                    # Defines a factor which allows this (factorial) portion of overexposure for spot-signals/the full-image-signal (influences OE-tagging and replacment!).
 
 
 # Spot-detection
@@ -196,7 +196,7 @@ opt.Copy_FEMDAQData                                 = True              # Create
 ###### DO NOT TOUCH AREA ######
 # Iterate through entire measurement-folder
 t0 = time.time()
-LogLine(t0, "Starting", bcolors.BOLD + "----- PiMagePro -----" + bcolors.ENDC, yFill=15, wFill=0, end="\n")
+LogLine(t0, "Starting", bcolors.BOLD + "----- PyMagePro -----" + bcolors.ENDC, yFill=15, wFill=0, end="\n")
 LogLine(t0, "Toolname:", "Raspberry " + bcolors.OKBLUE + "Pi" + bcolors.ENDC + "-i" + bcolors.OKBLUE + "Mage Pro"+ bcolors.ENDC + "cessor", yFill=15, wFill=30, end="\n")
 LogLine(t0, "Programmer:", "haum", yFill=15, wFill=30, end="\n")
 LogLine(t0, "Affiliation:", "OTH-Regensburg", yFill=15, wFill=30, end="\n")
@@ -214,7 +214,7 @@ for root, dirs, files in os.walk(parentDir):
     continue
   # Folder marked as bad measurement -> Skip
   if root.endswith("_XX"):
-    if opt.PiMage_SkipBadSubdirs == True:
+    if opt.PyMagePro_SkipBadSubdirs == True:
       _XXBadDirs.append(root)
     LogLine(None, "Marked as bad - skipped: ", root, wFill=0, end="\n")
     continue
@@ -237,7 +237,7 @@ for root, dirs, files in os.walk(parentDir):
 
     LogLine(t0, "Checking: ", "Already processed?")
     cSavFiles = os.listdir(cSaveDir)
-    if opt.PiMage_ForceOverride == True:
+    if opt.PyMagePro_ForceOverride == True:
       LogLineOK("Force override -> Process measurement")
     else:
       if any(f.endswith(".opt") for f in cSavFiles):      # Optionsfile is the last thing which is stored, so check for this if a measurement is processed or not
@@ -502,7 +502,8 @@ for root, dirs, files in os.walk(parentDir):
 
     LogLine(t0, "Extracting pixelcounts and overexposureinfo...")
     # PixelCount and Exposureinfo Container
-    pcoContainer = PixelcountAndOverexposureInfo(cirContainer=cirContainer, imgContainer=imgContainer, imgKey="uint16", valueOfAreacount=opt.Image_MinBright2CountArea, valueOfOverexposement=opt.Image_OverexposedBrightness)
+    # pcoContainer = PixelcountAndOverexposureInfo(cirContainer=cirContainer, imgContainer=imgContainer, imgKey="uint16", valueOfAreacount=opt.Image_MinBright2CountArea, valueOfOverexposement=opt.Image_OverexposedBrightness)
+    pcoContainer = PixelcountAndOverexposureInfo(cirContainer=cirContainer, imgContainer=imgContainer, imgKey="uint16", valueOfAreacount=opt.Image_MinBright2CountArea, valueOfOverexposement=opt.Image_OverexposedBrightness, factorOfAllowedOverexposure=opt.Image_AllowedOverexposure)
     LogLineOK()
 
     LogLine(t0, yellowMsg=f"Merging all sensor signal vectors on based on SS=", whiteMessage=f"{Shutterspeeds[0]}")
@@ -718,7 +719,7 @@ for root, dirs, files in os.walk(parentDir):
 
 
 print("\n")
-LogLine(t0, "Finished", bcolors.BOLD + "----- PiMagePro -----" + bcolors.ENDC, yFill=15, wFill=0, end="\n")
+LogLine(t0, "Finished", bcolors.BOLD + "----- PyMagePro -----" + bcolors.ENDC, yFill=15, wFill=0, end="\n")
 if "_logger" in locals():
   _logger.flush()
   del _logger

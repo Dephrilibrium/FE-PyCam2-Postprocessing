@@ -163,7 +163,7 @@ def SubareaImagesAndSensorsignalInfo(cirContainer, pxSidelen:int, addSidelen:boo
 
 
 
-def PixelcountAndOverexposureInfo(cirContainer, imgContainer, imgKey:str, valueOfOverexposement:int, valueOfAreacount:int):
+def PixelcountAndOverexposureInfo(cirContainer, imgContainer, imgKey:str, valueOfOverexposement:int, valueOfAreacount:int, factorOfAllowedOverexposure:float):
     # PixelCount and Overexposementinfo
     pcoContainer = {}
 
@@ -196,6 +196,7 @@ def PixelcountAndOverexposureInfo(cirContainer, imgContainer, imgKey:str, valueO
             "CountOfAllPixels"         : [], # Amount of all pixels
             "CountOfContributingPixels": [], # Amount of pixels >= valueOfContribution
             "CountOfOverexposedPixels" : [], # Amount of pixels >= valueOfOverexposement
+            "GradeOfOverexposure"      : [], # Amount overexposed pixels / amount contributing pixels
             "BoolOfOverexposure"       : [], # True if "CountOfOverexposedPixels" > 0
             "XYKeys"                   : {}, # Subcollection for the XY-Keys
         }
@@ -207,6 +208,7 @@ def PixelcountAndOverexposureInfo(cirContainer, imgContainer, imgKey:str, valueO
                 "CountOfAllPixels"         : [], # Amount of all pixels
                 "CountOfContributingPixels": [], # Amount of pixels >= valueOfContribution
                 "CountOfOverexposedPixels" : [], # Amount of pixels >= valueOfOverexposement
+                "GradeOfOverexposure"      : [], # Amount overexposed pixels / amount contributing pixels as a factor
                 "BoolOfOverexposure"       : [], # True if "CountOfOverexposedPixels" > 0
             }
 
@@ -215,11 +217,17 @@ def PixelcountAndOverexposureInfo(cirContainer, imgContainer, imgKey:str, valueO
                 _nAllPixels = _subareaimg.shape[0] * _subareaimg.shape[1]
                 _nContributingPixels = np.where(_subareaimg >= valueOfAreacount)[0].__len__()
                 _nOverexposedPixels = np.where(_subareaimg >= valueOfOverexposement)[0].__len__()
+                if _nContributingPixels == 0:                                           # If no contributing pixels
+                    _gradeOfOE = 0                                                      #    It cannot be overexposed
+                else:                                                                   #  otherwise
+                    _gradeOfOE = np.divide(_nOverexposedPixels, _nContributingPixels)   #    calculate grade of OE
 
                 pcoContainer[_ssKey]["XYKeys"][_xyKey]["CountOfAllPixels"]         .append(_nAllPixels)
                 pcoContainer[_ssKey]["XYKeys"][_xyKey]["CountOfContributingPixels"].append(_nContributingPixels)
                 pcoContainer[_ssKey]["XYKeys"][_xyKey]["CountOfOverexposedPixels"] .append(_nOverexposedPixels)
-                pcoContainer[_ssKey]["XYKeys"][_xyKey]["BoolOfOverexposure"]       .append(True if (_nOverexposedPixels > 0) else False)
+                pcoContainer[_ssKey]["XYKeys"][_xyKey]["GradeOfOverexposure"]      .append(_gradeOfOE)
+                # pcoContainer[_ssKey]["XYKeys"][_xyKey]["BoolOfOverexposure"]       .append(True if (_nOverexposedPixels > 0) else False)
+                pcoContainer[_ssKey]["XYKeys"][_xyKey]["BoolOfOverexposure"]       .append(True if (_gradeOfOE > factorOfAllowedOverexposure) else False)
 
 
         # Only full image!
@@ -228,11 +236,17 @@ def PixelcountAndOverexposureInfo(cirContainer, imgContainer, imgKey:str, valueO
             _nAllPixels = _fullimg.shape[0] * _fullimg.shape[1]
             _nContributingPixels = np.where(_fullimg >= valueOfAreacount)[0].__len__()
             _nOverexposedPixels = np.where(_fullimg >= valueOfOverexposement)[0].__len__()
+            if _nContributingPixels == 0:
+                _gradeOfOE = 0
+            else:
+                _gradeOfOE = np.divide(_nOverexposedPixels, _nContributingPixels)
 
             pcoContainer[_ssKey]["CountOfAllPixels"]         .append(_nAllPixels)
             pcoContainer[_ssKey]["CountOfContributingPixels"].append(_nContributingPixels)
             pcoContainer[_ssKey]["CountOfOverexposedPixels"] .append(_nOverexposedPixels)
-            pcoContainer[_ssKey]["BoolOfOverexposure"]       .append(True if (_nOverexposedPixels > 0) else False)
+            pcoContainer[_ssKey]["GradeOfOverexposure"]      .append(_gradeOfOE)
+            # pcoContainer[_ssKey]["BoolOfOverexposure"]       .append(True if (_nOverexposedPixels > 0) else False)
+            pcoContainer[_ssKey]["BoolOfOverexposure"]       .append(True if (_gradeOfOE > factorOfAllowedOverexposure) else False)
             
     return pcoContainer
 
@@ -254,11 +268,12 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
 
     # Merged Sensor Signal vectors
     mssContainer = {
-        "MergedSensorSignal"  : [],
-        "BoolOfOverexposure"  : [],
-        "ContainsOverexposure": None,           # Use a default-dummy, so that it can be seen, when its set at the end of the function!
-        "ReferenceSS"         : _ssKeys[0],
-        "UpscaledFromSS"      : [],
+        "MergedSensorSignal"      : [],
+        "GradeOfOverexposureMean" : [],
+        "BoolOfOverexposure"      : [],
+        "ContainsOverexposure"    : None,           # Use a default-dummy, so that it can be seen, when its set at the end of the function!
+        "ReferenceSS"             : _ssKeys[0],
+        "UpscaledFromSS"          : [],
         "XYKeys": {}
     }
 
@@ -268,6 +283,7 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
 
         mssContainer["XYKeys"][_xyKey] = {}
         mssContainer["XYKeys"][_xyKey]["MergedSensorSignal"]   = []
+        mssContainer["XYKeys"][_xyKey]["GradeOfOverexposure"]  = []
         mssContainer["XYKeys"][_xyKey]["BoolOfOverexposure"]   = []
         mssContainer["XYKeys"][_xyKey]["ContainsOverexposure"] = False,
         mssContainer["XYKeys"][_xyKey]["ReferenceSS"]          = _ssKeys[0]
@@ -277,15 +293,17 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
             for _issKey in range(_nssKeys):                                              #  Scan SSs for an unoverexposed sensor signal value
                 _ssKey = _ssKeys[_issKey]
                 _sesVec = sesContainer[_ssKey]["XYKeys"][_xyKey]["SumOfSubarea"]
+                _goeVec = pcoContainer[_ssKey]["XYKeys"][_xyKey]["GradeOfOverexposure"]
                 _boeVec = pcoContainer[_ssKey]["XYKeys"][_xyKey]["BoolOfOverexposure"]
                 _upScl = _ssKeys[0] / _ssKey
 
 
                 if (   (_boeVec[_iImg] == True) and (_ssKey == _ssKeys[-1])         # Reached shortest SS, but still overexposed! -> Still the best value we have -> Upscale this one and add BoolOfOverexposure = True
                     or (_boeVec[_iImg] == False)):                                  # Value is not overexposed                                                    -> Upscale this one and add BoolOfOverexposure = False
-                    mssContainer["XYKeys"][_xyKey]["MergedSensorSignal"].append(_sesVec[_iImg] * _upScl)    #  -> Append upscaled SEnsor Signal value
-                    mssContainer["XYKeys"][_xyKey]["BoolOfOverexposure"].append(_boeVec[_iImg])             #  -> Append if the value contains overexposure
-                    mssContainer["XYKeys"][_xyKey]["UpscaledFromSS"]    .append(_ssKey)                     #  -> Append from which 
+                    mssContainer["XYKeys"][_xyKey]["MergedSensorSignal"] .append(_sesVec[_iImg] * _upScl)    #  -> Append upscaled SEnsor Signal value
+                    mssContainer["XYKeys"][_xyKey]["GradeOfOverexposure"].append(_goeVec[_iImg])             #  -> Append if the value contains overexposure
+                    mssContainer["XYKeys"][_xyKey]["BoolOfOverexposure"] .append(_boeVec[_iImg])             #  -> Append if the value contains overexposure
+                    mssContainer["XYKeys"][_xyKey]["UpscaledFromSS"]     .append(_ssKey)                     #  -> Append from which 
                     break                                                                                   # Image finished -> Next one!
         
         
@@ -295,6 +313,7 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
     # Only Full images
     for _iImg in range(_nImgCnt):               # Iterate through all images
         _sesSum = 0
+        _sesGOESum = 0
         _sesBOE = False
         _sesFromSS = _ssKeys[0]
 
@@ -302,8 +321,9 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
             _xyKey = _xyKeys[_ixyKey]
             _xyInfo = mssContainer["XYKeys"][_xyKey]
 
-            _sesSum += _xyInfo["MergedSensorSignal"][_iImg]     # Summarize the subarea SEnsor Signals
-            _boeTemp  = _xyInfo["BoolOfOverexposure"][_iImg]    # Grab its BoolOfOverexposure
+            _sesSum    += _xyInfo["MergedSensorSignal"][_iImg]  # Summarize the subarea SEnsor Signals
+            _sesGOESum += _xyInfo["GradeOfOverexposure"][_iImg] # Summarize the GradeOfOverexposures to build a mean at the end!
+            _boeTemp   = _xyInfo["BoolOfOverexposure"][_iImg]   # Grab its BoolOfOverexposure
             if _boeTemp == True:                                #  -> when BOE is True
                 _sesBOE = True                                     #     mark the entire sesSum as "contains overexposure"
             
@@ -314,9 +334,11 @@ def MergeSensorsignalVectors(sesContainer, pcoContainer):
 
 
         # Append the values for the current image
-        mssContainer["MergedSensorSignal"]  .append(_sesSum)
-        mssContainer["BoolOfOverexposure"]  .append(_sesBOE)
-        mssContainer["UpscaledFromSS"]      .append(_sesFromSS)
+        mssContainer["MergedSensorSignal"]     .append(_sesSum)
+        _meanGOE = np.divide(_sesGOESum, _nxyKeys)
+        mssContainer["GradeOfOverexposureMean"].append(0.0 if _meanGOE < 1e-4 else _meanGOE) # Add 0 for "division-noise" (meanValue < than 0.01 %)
+        mssContainer["BoolOfOverexposure"]     .append(_sesBOE)
+        mssContainer["UpscaledFromSS"]         .append(_sesFromSS)
 
     try:
         mssContainer["ContainsOverexposure"] = mssContainer["XYKeys"][_xyKey]["BoolOfOverexposure"].__contains__(True) # If there is at least one overexposed value in the merged vector, make that visible by a simple bool
